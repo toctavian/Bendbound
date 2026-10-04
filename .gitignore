@@ -31,7 +31,26 @@ yarn-error.*
 *.pem
 
 # local env files
-.env*.local
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# signing, build exports, and local ride data
+*.cer
+*.pfx
+*.keystore
+*.ipa
+*.aab
+*.apk
+*.xcarchive/
+*.dSYM/
+*.dSYM.zip
+*.gpx
+*.sqlite*
+*.db
+*.db-shm
+*.db-wal
 
 # typescript
 *.tsbuildinfo
