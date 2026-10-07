@@ -1,3 +1,4 @@
+import { RouteColorPicker } from '@/components/RouteColorPicker';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -27,7 +28,7 @@ export default function BikeScreen() {
           {(Object.keys(motorcycles) as MotorcycleType[]).map((type) => {
             const selected = settings.motorcycleType === type;
             return <Pressable key={type} accessibilityRole="radio" accessibilityLabel={motorcycles[type].label} accessibilityState={{ checked: selected }} onPress={() => updateSettings({ motorcycleType: type })} style={[styles.bikeRow, selected && styles.selected]}>
-              <MotorcycleGlyph type={type} size={54} />
+              <MotorcycleGlyph type={type} size={81} />
               <View style={styles.bikeCopy}>
                 <Text style={styles.bikeLabel}>{motorcycles[type].label}</Text>
                 <Text style={styles.bikeModel}>{motorcycles[type].model}</Text>
@@ -36,6 +37,7 @@ export default function BikeScreen() {
             </Pressable>;
           })}
         </View>
+        <RouteColorPicker value={settings.routeColor} onChange={(routeColor) => updateSettings({ routeColor })} />
         <Text style={styles.sectionTitle}>Route preferences</Text>
         <View accessibilityRole="radiogroup" style={styles.profiles}>
           {(['fast', 'winding', 'twisty'] as const).map((routingProfile) => <Pressable key={routingProfile} accessibilityRole="radio" accessibilityLabel={`${routingProfile} routes`} accessibilityState={{ checked: settings.routingProfile === routingProfile }} onPress={() => updateSettings({ routingProfile })} style={[styles.profile, settings.routingProfile === routingProfile && styles.profileActive]}>
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
   sectionTitle: { color: colors.ink, fontSize: 18, fontWeight: '800', marginTop: 20, marginBottom: 12 },
   label: { color: colors.muted, fontSize: 12, marginBottom: 8 },
   input: { color: colors.ink, backgroundColor: colors.panelAlt, borderRadius: 6, paddingHorizontal: 12, minHeight: 48, fontSize: 16 },
-  bikeRow: { minHeight: 78, flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: colors.line },
+  bikeRow: { minHeight: 105, flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: colors.line },
   selected: { backgroundColor: colors.panelAlt },
   bikeCopy: { flex: 1, minWidth: 0 },
   bikeLabel: { color: colors.ink, fontSize: 16, fontWeight: '700' },

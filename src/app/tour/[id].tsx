@@ -41,6 +41,8 @@ export default function TourDetailScreen() {
 
   const openOnMap = () => {
     setActiveRoute({
+      stops: tour.stops,
+      roundTrip: tour.roundTrip,
       title: tour.title,
       route: tour.route,
       distanceKm: tour.distanceKm,
@@ -83,7 +85,7 @@ export default function TourDetailScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.map}>
-        {hasTrack ? <RideMap interactive route={tour.recording ? undefined : tour.route} trackSegments={tour.recording?.segments} showUser={false} /> : (
+        {hasTrack ? <RideMap interactive routeColor={settings.routeColor} maneuvers={tour.maneuvers} route={tour.recording ? undefined : tour.route} trackSegments={tour.recording?.segments} showUser={false} /> : (
           <View style={styles.empty}><Ionicons color={colors.muted} name="map-outline" size={32} /><Text style={styles.notice}>{legacyRide ? 'GPS track unavailable for this older ride' : 'No GPS track recorded'}</Text></View>
         )}
         <View style={[styles.topBar, { top: insets.top + 8 }]}>

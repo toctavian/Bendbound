@@ -1,0 +1,100 @@
+{
+  "verifiedAt": "2026-10-06T13:13:19Z",
+  "hostname": "api.bendboundapp.com",
+  "publicIp": "16.60.63.241",
+  "tls": {
+    "version": "TLSv1.2",
+    "issuer": [
+      [
+        [
+          "countryName",
+          "US"
+        ]
+      ],
+      [
+        [
+          "organizationName",
+          "Let's Encrypt"
+        ]
+      ],
+      [
+        [
+          "commonName",
+          "YE2"
+        ]
+      ]
+    ],
+    "expires": "Jan  4 08:40:13 2027 GMT",
+    "subjectAltName": [
+      [
+        "DNS",
+        "api.bendboundapp.com"
+      ]
+    ]
+  },
+  "checks": [
+    {
+      "check": "missing token",
+      "status": 401
+    },
+    {
+      "check": "invalid token",
+      "status": 401
+    },
+    {
+      "check": "HTTPS health",
+      "status": 200,
+      "seconds": 0.077,
+      "response": {
+        "status": "ready",
+        "engine": "valhalla",
+        "version": "3.9.0"
+      }
+    },
+    {
+      "check": "HTTPS /route",
+      "status": 200,
+      "seconds": 0.091,
+      "distanceKm": 8.234,
+      "maneuvers": 9,
+      "planner": null
+    },
+    {
+      "check": "HTTPS /round-trip",
+      "status": 200,
+      "seconds": 1.081,
+      "distanceKm": 19.071,
+      "maneuvers": 51,
+      "planner": {
+        "engine": "valhalla",
+        "valid": true,
+        "distanceKm": 19.071,
+        "distanceErrorKm": 0.9289999999999985,
+        "overlapRatio": 0,
+        "repeatedKm": 0,
+        "closed": true,
+        "nearStart": true,
+        "attempts": 11,
+        "elapsedMs": 1029
+      }
+    },
+    {
+      "check": "per-client rate limit; spoofed client headers do not bypass it",
+      "status": 429,
+      "requestsUntilLimited": 28,
+      "retryAfterSeconds": 58
+    },
+    {
+      "check": "HTTPS from a second network (AWS host)",
+      "status": 200,
+      "response": {
+        "status": "ready",
+        "engine": "valhalla",
+        "version": "3.9.0"
+      }
+    }
+  ],
+  "secondNetworkVerifiedAt": "2026-10-06T13:15:43.420Z",
+  "caddyMemoryMiB": 11.49,
+  "hostAvailableMemoryMiB": 1200
+}

@@ -4,6 +4,7 @@ import { seedTours } from '@/data/seed';
 import { AppSettings, DraftRoute, Tour } from '@/types';
 import { snapDraftToRoads } from '@/utils/routes';
 import { initialSettings, restoreSettings } from '@/utils/settings';
+import { acknowledgeRecordedTours, pendingRecordedTours } from '@/services/rideStore';
 
 type AppState = {
   ready: boolean;
@@ -21,6 +22,7 @@ const STORE_KEY = 'bendbound-state-v2';
 // Read only for migration; retain the original data as a recovery backup.
 const LEGACY_STORE_KEY = 'roams-state-v2';
 const ROUTING_VERSION = 7;
+let persistence: Promise<unknown> = Promise.resolve();
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
@@ -62,7 +64,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
             return tour;
           }
         }));
-        setTours(roadSnapped);
+        const pending = pendingRecordedTours();
+        const restoredIds = new Set(roadSnapped.map((tour) => tour.id));
+        setTours([...pending.filter((tour) => !restoredIds.has(tour.id)), ...roadSnapped]);
         setSettings(restoreSettings(stored?.settings));
         setStorageLoaded(true);
       })
@@ -72,7 +76,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!ready || !storageLoaded) return;
-    Storage.setItem(STORE_KEY, JSON.stringify({ tours, settings, routingVersion: ROUTING_VERSION })).catch(() => undefined);
+    // Keep completed rides in the journal until the tour collection is durably written.
+    // Serialize writes so an older settings update cannot overwrite a saved ride.
+    persistence = persistence.catch(() => undefined)
+      .then(() => Storage.setItem(STORE_KEY, JSON.stringify({ tours, settings, routingVersion: ROUTING_VERSION })))
+      .then(() => acknowledgeRecordedTours(tours))
+      .catch(() => console.warn('App data could not be saved; completed recordings remain in the recovery journal.'));
   }, [ready, settings, storageLoaded, tours]);
 
   const value = useMemo<AppState>(

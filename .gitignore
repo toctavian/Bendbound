@@ -58,3 +58,10 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Local routing graphs, engine binaries and benchmark runs
+/routing/.data/
+/routing/.tools/
+/routing/results/
+/automation/.state/
+__pycache__/

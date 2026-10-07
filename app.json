@@ -3,14 +3,15 @@
     "name": "Bendbound",
     "slug": "bendbound",
     "scheme": "bendbound",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/bendbound-logo.png",
     "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.octavian.bendbound",
-      "buildNumber": "1"
+      "buildNumber": "1",
+      "appleTeamId": "U5CJCX8BV2"
     },
     "android": {
       "icon": "./assets/bendbound-logo.png",
@@ -24,12 +25,26 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Allow Bendbound to use your location for route planning and ride recording."
+          "locationWhenInUsePermission": "Allow Bendbound to use your location for route planning and ride recording.",
+          "locationAlwaysAndWhenInUsePermission": "Allow Bendbound to record your active ride when the app is in the background or your screen is locked. Tracking stops when you pause or finish.",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
         }
       ],
       "expo-sqlite",
       "expo-sharing",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "enableSceneSupport": true,
+            "usePrecompiledModules": false
+          }
+        }
+      ],
+      "@maplibre/maplibre-react-native"
     ],
     "experiments": {
       "typedRoutes": true

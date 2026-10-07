@@ -1,3 +1,4 @@
+import { RouteColorPicker } from '@/components/RouteColorPicker';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -95,6 +96,7 @@ export default function ProfileScreen() {
               </Pressable>)}
             </View>
           </View>
+          <RouteColorPicker value={settings.routeColor} onChange={(routeColor) => updateSettings({ routeColor })} />
           <ToggleRow icon="trail-sign-outline" label="Avoid motorways" detail="Prefer enjoyable motorcycle roads" value={settings.avoidMotorways} onPress={() => updateSettings({ avoidMotorways: !settings.avoidMotorways })} />
           <MenuRow icon="cloud-offline-outline" label="Offline maps" detail="Not available" onPress={offlineUnavailable} />
           <ToggleRow icon="volume-high-outline" label="Voice instructions" value={settings.voiceGuidance} onPress={() => updateSettings({ voiceGuidance: !settings.voiceGuidance })} />

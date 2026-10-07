@@ -6,18 +6,18 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RideMap } from '@/components/RideMap';
 import { ActionButton } from '@/components/ui';
 import { useApp } from '@/state/AppProvider';
-import { Tour } from '@/types';
+import { RouteColor, Tour } from '@/types';
 import { colors, spacing } from '@/theme';
 import { formatDuration } from '@/utils/routes';
 import { formatRidingTime, toursForCollection } from '@/utils/recording';
 
-function TourCard({ tour }: { tour: Tour }) {
+function TourCard({ tour, routeColor }: { tour: Tour; routeColor?: RouteColor }) {
   const legacyRide = tour.completed && !tour.recording;
   const hasTrack = !legacyRide && tour.route.length > 1;
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={tour.title} onPress={() => router.push(`/tour/${tour.id}`)} style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
       <View style={styles.mapPreview}>
-        {hasTrack ? <RideMap compact interactive={false} route={tour.recording ? undefined : tour.route} trackSegments={tour.recording?.segments} showUser={false} /> : (
+        {hasTrack ? <RideMap routeColor={routeColor} compact interactive={false} route={tour.recording ? undefined : tour.route} trackSegments={tour.recording?.segments} showUser={false} /> : (
           <View style={styles.noTrack}><Ionicons color={colors.muted} name="map-outline" size={26} /><Text style={styles.place}>{legacyRide ? 'GPS track unavailable for this older ride' : 'No GPS track recorded'}</Text></View>
         )}
         <View style={styles.mapBadge}>
@@ -41,7 +41,7 @@ function TourCard({ tour }: { tour: Tour }) {
 
 export default function ToursScreen() {
   const insets = useSafeAreaInsets();
-  const { tours, ready } = useApp();
+  const { tours, ready, settings } = useApp();
   const [collection, setCollection] = useState<'rides' | 'saved'>('rides');
   const visibleTours = toursForCollection(tours, collection);
 
@@ -61,7 +61,7 @@ export default function ToursScreen() {
           key={collection}
           data={visibleTours}
           keyExtractor={(tour) => tour.id}
-          renderItem={({ item }) => <TourCard tour={item} />}
+          renderItem={({ item }) => <TourCard tour={item} routeColor={settings.routeColor} />}
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={<View style={styles.empty}>

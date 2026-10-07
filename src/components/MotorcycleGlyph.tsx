@@ -16,7 +16,7 @@ const sprites = {
 } satisfies Record<MotorcycleType, number>;
 
 // All assets face north; the map rotates the enclosing view with the rider's heading.
-export function MotorcycleGlyph({ type, size = 42 }: { type: MotorcycleType; size?: number }) {
+export function MotorcycleGlyph({ type, size = 63 }: { type: MotorcycleType; size?: number }) {
   return (
     <Image
       accessible={false}

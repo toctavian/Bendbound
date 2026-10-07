@@ -1,0 +1,43 @@
+name: bendbound-routing
+services:
+  valhalla:
+    image: ghcr.io/valhalla/valhalla:3.9.0@sha256:511c095b8caf393dccceb8b519ec96b6f85a0166b2288ba014a8a748acc5a63c
+    entrypoint: ["/bin/bash", "/bootstrap.sh"]
+    volumes:
+      - ./.data/map:/input:ro
+      - ./.data/valhalla:/data
+      - ./valhalla/bootstrap.sh:/bootstrap.sh:ro
+    ports: ["127.0.0.1:8002:8002"]
+    restart: unless-stopped
+    mem_limit: 3g
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/status', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15m
+  api:
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+    command: ["node", "/app/server.mjs"]
+    environment:
+      VALHALLA_URL: http://valhalla:8002
+      PORT: "8080"
+    volumes: ["./service:/app:ro"]
+    ports: ["${ROUTING_BIND:-127.0.0.1}:8088:8080"]
+    depends_on:
+      valhalla:
+        condition: service_healthy
+    restart: unless-stopped
+    mem_limit: 256m
+  graphhopper:
+    profiles: [benchmark]
+    image: eclipse-temurin:21-jre@sha256:cff19e6215689161eb6162c11b86b0c60ddf802164f2eaf48d570f8fb79a36c5
+    command: ["java", "-Xmx2g", "-jar", "/tools/graphhopper-web-11.1.jar", "server", "/config.yml"]
+    volumes:
+      - ./.tools:/tools:ro
+      - ./.data/map:/input:ro
+      - ./.data/graphhopper:/data
+      - ./graphhopper/config.yml:/config.yml:ro
+    ports: ["127.0.0.1:8989:8989"]
+    restart: unless-stopped
+    mem_limit: 2500m

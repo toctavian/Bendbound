@@ -1,0 +1,16 @@
+# Greater London, Valhalla only, on a 2 GiB host with 2 GiB host swap.
+services:
+  valhalla:
+    mem_limit: 1400m
+    memswap_limit: 3g
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"
+  api:
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"

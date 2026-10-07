@@ -1,0 +1,2489 @@
+{
+  "timestamp": "2026-10-05T21-29-52.115Z",
+  "map": {
+    "source": "https://download.geofabrik.de/europe/united-kingdom/england/greater-london-latest.osm.pbf",
+    "sha256": "38b3981827e3657ffddfbb97f7566175222d88535e6cc981f1cc60280e41a9ac",
+    "preparedAt": "2026-10-05T21:20:00.718Z"
+  },
+  "versions": {
+    "valhalla": {
+      "version": "3.9.0",
+      "tileset_last_modified": 1791235384,
+      "available_actions": [
+        "route",
+        "locate",
+        "sources_to_targets",
+        "optimized_route",
+        "isochrone",
+        "trace_route",
+        "trace_attributes",
+        "height",
+        "transit_available",
+        "expansion",
+        "centroid",
+        "status",
+        "tile"
+      ]
+    },
+    "graphhopper": {
+      "bbox": [
+        -0.517785,
+        51.283228,
+        0.369185,
+        51.698481
+      ],
+      "profiles": [
+        {
+          "name": "motorcycle"
+        }
+      ],
+      "version": "11.1",
+      "elevation": false,
+      "encoded_values": {
+        "car_access": [
+          "true",
+          "false"
+        ],
+        "car_average_speed": [
+          ">number",
+          "<number"
+        ],
+        "track_type": [
+          "MISSING",
+          "GRADE1",
+          "GRADE2",
+          "GRADE3",
+          "GRADE4",
+          "GRADE5"
+        ],
+        "road_access": [
+          "YES",
+          "DESTINATION",
+          "CUSTOMERS",
+          "DELIVERY",
+          "PRIVATE",
+          "AGRICULTURAL",
+          "FORESTRY",
+          "NO"
+        ],
+        "road_class": [
+          "OTHER",
+          "MOTORWAY",
+          "TRUNK",
+          "PRIMARY",
+          "SECONDARY",
+          "TERTIARY",
+          "RESIDENTIAL",
+          "UNCLASSIFIED",
+          "SERVICE",
+          "ROAD",
+          "TRACK",
+          "BRIDLEWAY",
+          "STEPS",
+          "CYCLEWAY",
+          "PATH",
+          "LIVING_STREET",
+          "FOOTWAY",
+          "PEDESTRIAN",
+          "PLATFORM",
+          "CORRIDOR",
+          "CONSTRUCTION",
+          "BUSWAY"
+        ],
+        "curvature": [
+          ">number",
+          "<number"
+        ],
+        "surface": [
+          "MISSING",
+          "PAVED",
+          "ASPHALT",
+          "CONCRETE",
+          "PAVING_STONES",
+          "COBBLESTONE",
+          "UNPAVED",
+          "COMPACTED",
+          "FINE_GRAVEL",
+          "GRAVEL",
+          "GROUND",
+          "DIRT",
+          "GRASS",
+          "SAND",
+          "WOOD",
+          "OTHER"
+        ],
+        "road_environment": [
+          "OTHER",
+          "ROAD",
+          "FERRY",
+          "TUNNEL",
+          "BRIDGE",
+          "FORD"
+        ],
+        "roundabout": [
+          "true",
+          "false"
+        ],
+        "road_class_link": [
+          "true",
+          "false"
+        ],
+        "max_speed": [
+          ">number",
+          "<number"
+        ],
+        "ferry_speed": [
+          ">number",
+          "<number"
+        ],
+        "motorcycle_subnetwork": [
+          "true",
+          "false"
+        ]
+      },
+      "import_date": "2026-10-05T21:23:26Z",
+      "data_date": "2026-10-04T20:20:21Z"
+    }
+  },
+  "benchmark": {
+    "maxAttempts": 24,
+    "budgetMs": 25000,
+    "area": "Greater London",
+    "notes": "Pilot feasibility comparison, not proof of motorcycle access equivalence or winding quality. Stock GraphHopper motorcycle uses car_access. Geometry overlap validator cannot distinguish stacked roads. No claim of optimality or impossibility for failed cases."
+  },
+  "summary": {
+    "valhalla": {
+      "valid": 33,
+      "cases": 36,
+      "medianMs": 431,
+      "p95Ms": 1568
+    },
+    "graphhopper": {
+      "valid": 36,
+      "cases": 36,
+      "medianMs": 145,
+      "p95Ms": 303
+    }
+  },
+  "rows": [
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "fast"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 19.114,
+      "distanceErrorKm": 0.8859999999999992,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 18,
+      "elapsedMs": 1062
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "fast"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 21.663516,
+      "distanceErrorKm": 1.6635160000000013,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 335,
+      "attempts": 8
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "winding"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 21.663516,
+      "distanceErrorKm": 1.6635160000000013,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 216,
+      "attempts": 8
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "winding"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 19.071,
+      "distanceErrorKm": 0.9289999999999985,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 11,
+      "elapsedMs": 431
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "twisty"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 23.199,
+      "distanceErrorKm": 3.1990000000000016,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 11,
+      "elapsedMs": 464
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "twisty"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 21.663516,
+      "distanceErrorKm": 1.6635160000000013,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 145,
+      "attempts": 8
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "fast"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 21.663516,
+      "distanceErrorKm": 1.6635160000000013,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 146,
+      "attempts": 8
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "fast"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 21.911,
+      "distanceErrorKm": 1.9110000000000014,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 17,
+      "elapsedMs": 538
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "winding"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 23.561,
+      "distanceErrorKm": 3.561,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 24,
+      "elapsedMs": 754
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "winding"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 21.663516,
+      "distanceErrorKm": 1.6635160000000013,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 151,
+      "attempts": 8
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "twisty"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 21.663516,
+      "distanceErrorKm": 1.6635160000000013,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 223,
+      "attempts": 8
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "twisty"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 29.031,
+      "distanceErrorKm": 9.030999999999999,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 11,
+      "elapsedMs": 415
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "fast"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 38.689,
+      "distanceErrorKm": 1.311,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 11,
+      "elapsedMs": 648
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "fast"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 47.521968,
+      "distanceErrorKm": 7.521968000000001,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 231,
+      "attempts": 10
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "winding"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 47.521968,
+      "distanceErrorKm": 7.521968000000001,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 229,
+      "attempts": 10
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "winding"
+      },
+      "engine": "valhalla",
+      "valid": false,
+      "elapsedMs": 1354,
+      "code": "NO_MATCH",
+      "diagnostics": {
+        "elapsedMs": 1354,
+        "attempts": [
+          {
+            "attempt": 1,
+            "valid": false,
+            "distanceKm": 64.388,
+            "distanceErrorKm": 24.388000000000005,
+            "overlapRatio": 0.11340511129334022,
+            "repeatedKm": 7.291631628392607,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 2,
+            "valid": false,
+            "distanceKm": 1.488,
+            "distanceErrorKm": 38.512,
+            "overlapRatio": 0.25103153965285807,
+            "repeatedKm": 0.37347566405947025,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 3,
+            "valid": false,
+            "distanceKm": 0.669,
+            "distanceErrorKm": 39.331,
+            "overlapRatio": 0.16007341623560936,
+            "repeatedKm": 0.10714691589955429,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 2
+          },
+          {
+            "attempt": 4,
+            "valid": false,
+            "distanceKm": 44.754,
+            "distanceErrorKm": 4.753999999999998,
+            "overlapRatio": 0.21382231603869697,
+            "repeatedKm": 9.558410044590442,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 5,
+            "valid": false,
+            "distanceKm": 1.488,
+            "distanceErrorKm": 38.512,
+            "overlapRatio": 0.25103153965285807,
+            "repeatedKm": 0.37347566405947025,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 6,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 7,
+            "valid": false,
+            "distanceKm": 32.237,
+            "distanceErrorKm": 7.762999999999998,
+            "overlapRatio": 0.022799743140902575,
+            "repeatedKm": 0.7341576020528691,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 8,
+            "valid": false,
+            "distanceKm": 0.422,
+            "distanceErrorKm": 39.578,
+            "overlapRatio": 0,
+            "repeatedKm": 0,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 9,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 10,
+            "valid": false,
+            "distanceKm": 44.363,
+            "distanceErrorKm": 4.3629999999999995,
+            "overlapRatio": 0.032726292385499685,
+            "repeatedKm": 1.4499896439738011,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 11,
+            "valid": false,
+            "distanceKm": 34.713,
+            "distanceErrorKm": 5.286999999999999,
+            "overlapRatio": 0.0018432912458200344,
+            "repeatedKm": 0.06390637490286957,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 12,
+            "valid": false,
+            "distanceKm": 35.219,
+            "distanceErrorKm": 4.780999999999999,
+            "overlapRatio": 0.006705866780293614,
+            "repeatedKm": 0.23587708646826022,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 1
+          },
+          {
+            "attempt": 13,
+            "valid": false,
+            "distanceKm": 36.722,
+            "distanceErrorKm": 3.2779999999999987,
+            "overlapRatio": 0.008304912264017417,
+            "repeatedKm": 0.30468153221773114,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 14,
+            "valid": false,
+            "distanceKm": 0.422,
+            "distanceErrorKm": 39.578,
+            "overlapRatio": 0,
+            "repeatedKm": 0,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 15,
+            "valid": false,
+            "distanceKm": 40.329,
+            "distanceErrorKm": 0.3290000000000006,
+            "overlapRatio": 0.016246862484622027,
+            "repeatedKm": 0.6546308597748582,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 16,
+            "valid": false,
+            "distanceKm": 42.687,
+            "distanceErrorKm": 2.6869999999999976,
+            "overlapRatio": 0.037953360413964105,
+            "repeatedKm": 1.6181799979859461,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 17,
+            "valid": false,
+            "distanceKm": 36.563,
+            "distanceErrorKm": 3.4369999999999976,
+            "overlapRatio": 0.005559656079050037,
+            "repeatedKm": 0.20302339611999673,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 18,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 19,
+            "valid": false,
+            "distanceKm": 39.992,
+            "distanceErrorKm": 0.008000000000002672,
+            "overlapRatio": 0.029011737265510172,
+            "repeatedKm": 1.1588778597790368,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 20,
+            "valid": false,
+            "distanceKm": 0.422,
+            "distanceErrorKm": 39.578,
+            "overlapRatio": 0,
+            "repeatedKm": 0,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 21,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 22,
+            "valid": false,
+            "distanceKm": 40.074,
+            "distanceErrorKm": 0.07399999999999807,
+            "overlapRatio": 0.07609607613197299,
+            "repeatedKm": 3.0460721371821218,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 23,
+            "valid": false,
+            "distanceKm": 29.596,
+            "distanceErrorKm": 10.404,
+            "overlapRatio": 0,
+            "repeatedKm": 0,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 24,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          }
+        ]
+      }
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "twisty"
+      },
+      "engine": "valhalla",
+      "valid": false,
+      "elapsedMs": 1568,
+      "code": "NO_MATCH",
+      "diagnostics": {
+        "elapsedMs": 1568,
+        "attempts": [
+          {
+            "attempt": 1,
+            "valid": false,
+            "distanceKm": 66.406,
+            "distanceErrorKm": 26.406000000000006,
+            "overlapRatio": 0.11522501080135632,
+            "repeatedKm": 7.640278822558871,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 2,
+            "valid": false,
+            "distanceKm": 1.488,
+            "distanceErrorKm": 38.512,
+            "overlapRatio": 0.25103153965285807,
+            "repeatedKm": 0.37347566405947025,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 3,
+            "valid": false,
+            "distanceKm": 0.669,
+            "distanceErrorKm": 39.331,
+            "overlapRatio": 0.16007341623560936,
+            "repeatedKm": 0.10714691589955429,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 2
+          },
+          {
+            "attempt": 4,
+            "valid": false,
+            "distanceKm": 48.435,
+            "distanceErrorKm": 8.435000000000002,
+            "overlapRatio": 0.14552845885627885,
+            "repeatedKm": 7.041416034982571,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 5,
+            "valid": false,
+            "distanceKm": 29.894,
+            "distanceErrorKm": 10.106000000000002,
+            "overlapRatio": 0.023220320968028865,
+            "repeatedKm": 0.6934219435274506,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 6,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 7,
+            "valid": false,
+            "distanceKm": 38.663,
+            "distanceErrorKm": 1.3370000000000033,
+            "overlapRatio": 0.12455480044352249,
+            "repeatedKm": 4.8096089302589125,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 8,
+            "valid": false,
+            "distanceKm": 0.422,
+            "distanceErrorKm": 39.578,
+            "overlapRatio": 0,
+            "repeatedKm": 0,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 9,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 10,
+            "valid": false,
+            "distanceKm": 39.945,
+            "distanceErrorKm": 0.054999999999999716,
+            "overlapRatio": 0.014268891908063686,
+            "repeatedKm": 0.5693972865136858,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 11,
+            "valid": false,
+            "distanceKm": 29.413,
+            "distanceErrorKm": 10.587,
+            "overlapRatio": 0,
+            "repeatedKm": 0,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 12,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 13,
+            "valid": false,
+            "distanceKm": 36.282,
+            "distanceErrorKm": 3.7180000000000035,
+            "overlapRatio": 0.04498455306960076,
+            "repeatedKm": 1.6305925824713512,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 14,
+            "valid": false,
+            "distanceKm": 0.422,
+            "distanceErrorKm": 39.578,
+            "overlapRatio": 0,
+            "repeatedKm": 0,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 15,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 16,
+            "valid": false,
+            "distanceKm": 39.262,
+            "distanceErrorKm": 0.7379999999999995,
+            "overlapRatio": 0.07433634069289512,
+            "repeatedKm": 2.9157902273604943,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 17,
+            "valid": false,
+            "distanceKm": 33.637,
+            "distanceErrorKm": 6.3629999999999995,
+            "overlapRatio": 0.009844701244697376,
+            "repeatedKm": 0.3308942852360672,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 18,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 19,
+            "valid": false,
+            "distanceKm": 47.521,
+            "distanceErrorKm": 7.521000000000001,
+            "overlapRatio": 0.021738532045091484,
+            "repeatedKm": 1.031639268730467,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 20,
+            "valid": false,
+            "distanceKm": 0.422,
+            "distanceErrorKm": 39.578,
+            "overlapRatio": 0,
+            "repeatedKm": 0,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 21,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 22,
+            "valid": false,
+            "distanceKm": 36.598,
+            "distanceErrorKm": 3.402000000000001,
+            "overlapRatio": 0.0900090676857214,
+            "repeatedKm": 3.2903674539799397,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 23,
+            "valid": false,
+            "distanceKm": 28.214,
+            "distanceErrorKm": 11.786000000000001,
+            "overlapRatio": 0,
+            "repeatedKm": 0,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 24,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          }
+        ]
+      }
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "twisty"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 47.521968,
+      "distanceErrorKm": 7.521968000000001,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 243,
+      "attempts": 10
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "fast"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 47.521968,
+      "distanceErrorKm": 7.521968000000001,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 221,
+      "attempts": 10
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "fast"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 41.483,
+      "distanceErrorKm": 1.482999999999997,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 17,
+      "elapsedMs": 921
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "winding"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 37.854,
+      "distanceErrorKm": 2.146000000000001,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 24,
+      "elapsedMs": 1621
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "winding"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 47.521968,
+      "distanceErrorKm": 7.521968000000001,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 195,
+      "attempts": 10
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "twisty"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 47.521968,
+      "distanceErrorKm": 7.521968000000001,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 207,
+      "attempts": 10
+    },
+    {
+      "fixture": {
+        "name": "Greenwich",
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "direction": 90,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "twisty"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 35.714,
+      "distanceErrorKm": 4.286000000000001,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 23,
+      "elapsedMs": 1435
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "fast"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 28.555,
+      "distanceErrorKm": 8.555,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 2,
+      "elapsedMs": 113
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "fast"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 21.816167,
+      "distanceErrorKm": 1.816167,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 69,
+      "attempts": 2
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "winding"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 21.816167,
+      "distanceErrorKm": 1.816167,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 70,
+      "attempts": 2
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "winding"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 27.425,
+      "distanceErrorKm": 7.425000000000001,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 2,
+      "elapsedMs": 115
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "twisty"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 29.754,
+      "distanceErrorKm": 9.754000000000001,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 2,
+      "elapsedMs": 115
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "twisty"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 21.816167,
+      "distanceErrorKm": 1.816167,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 64,
+      "attempts": 2
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "fast"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 21.816167,
+      "distanceErrorKm": 1.816167,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 65,
+      "attempts": 2
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "fast"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 12.722,
+      "distanceErrorKm": 7.2780000000000005,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 2,
+      "elapsedMs": 73
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "winding"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 15.842,
+      "distanceErrorKm": 4.1579999999999995,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 2,
+      "elapsedMs": 80
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "winding"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 21.816167,
+      "distanceErrorKm": 1.816167,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 67,
+      "attempts": 2
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "twisty"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 21.816167,
+      "distanceErrorKm": 1.816167,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 65,
+      "attempts": 2
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "twisty"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 15.842,
+      "distanceErrorKm": 4.1579999999999995,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 2,
+      "elapsedMs": 84
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "fast"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 41.433,
+      "distanceErrorKm": 1.4329999999999998,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 14,
+      "elapsedMs": 934
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "fast"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 43.394697,
+      "distanceErrorKm": 3.3946970000000007,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 293,
+      "attempts": 4
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "winding"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 43.394697,
+      "distanceErrorKm": 3.3946970000000007,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 296,
+      "attempts": 4
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "winding"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 39.63,
+      "distanceErrorKm": 0.36999999999999744,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 5,
+      "elapsedMs": 403
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "twisty"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 49.35,
+      "distanceErrorKm": 9.350000000000001,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 2,
+      "elapsedMs": 204
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "twisty"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 43.394697,
+      "distanceErrorKm": 3.3946970000000007,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 279,
+      "attempts": 4
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "fast"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 43.394697,
+      "distanceErrorKm": 3.3946970000000007,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 303,
+      "attempts": 4
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "fast"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 43.694,
+      "distanceErrorKm": 3.6940000000000026,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 3,
+      "elapsedMs": 275
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "winding"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 48.708,
+      "distanceErrorKm": 8.707999999999998,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 2,
+      "elapsedMs": 177
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "winding"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 43.394697,
+      "distanceErrorKm": 3.3946970000000007,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 276,
+      "attempts": 4
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "twisty"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 43.394697,
+      "distanceErrorKm": 3.3946970000000007,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 282,
+      "attempts": 4
+    },
+    {
+      "fixture": {
+        "name": "Richmond",
+        "center": {
+          "latitude": 51.461,
+          "longitude": -0.303
+        },
+        "direction": 45,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "twisty"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 34.75,
+      "distanceErrorKm": 5.25,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 5,
+      "elapsedMs": 423
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "fast"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 23.961,
+      "distanceErrorKm": 3.9609999999999985,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 2,
+      "elapsedMs": 135
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "fast"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 22.368322,
+      "distanceErrorKm": 2.368321999999999,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 20,
+      "attempts": 1
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "winding"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 22.368322,
+      "distanceErrorKm": 2.368321999999999,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 20,
+      "attempts": 1
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "winding"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 17.015,
+      "distanceErrorKm": 2.9849999999999994,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 6,
+      "elapsedMs": 367
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "twisty"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 18.141,
+      "distanceErrorKm": 1.8590000000000018,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 9,
+      "elapsedMs": 521
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 20,
+        "avoidMotorways": true,
+        "profile": "twisty"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 22.368322,
+      "distanceErrorKm": 2.368321999999999,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 17,
+      "attempts": 1
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "fast"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 22.368322,
+      "distanceErrorKm": 2.368321999999999,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 20,
+      "attempts": 1
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "fast"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 26.407,
+      "distanceErrorKm": 6.407,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 2,
+      "elapsedMs": 153
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "winding"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 21.528,
+      "distanceErrorKm": 1.5279999999999987,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 2,
+      "elapsedMs": 146
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "winding"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 22.368322,
+      "distanceErrorKm": 2.368321999999999,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 19,
+      "attempts": 1
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "twisty"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 22.368322,
+      "distanceErrorKm": 2.368321999999999,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 18,
+      "attempts": 1
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 20,
+        "avoidMotorways": false,
+        "profile": "twisty"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 22.79,
+      "distanceErrorKm": 2.789999999999999,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 11,
+      "elapsedMs": 594
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "fast"
+      },
+      "engine": "valhalla",
+      "valid": false,
+      "elapsedMs": 1175,
+      "code": "NO_MATCH",
+      "diagnostics": {
+        "elapsedMs": 1175,
+        "attempts": [
+          {
+            "attempt": 1,
+            "valid": false,
+            "distanceKm": 50.121,
+            "distanceErrorKm": 10.121000000000002,
+            "overlapRatio": 0.012261708012280742,
+            "repeatedKm": 0.6139387676878453,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 2,
+            "valid": false,
+            "distanceKm": 1.375,
+            "distanceErrorKm": 38.625,
+            "overlapRatio": 0,
+            "repeatedKm": 0,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 3,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 4,
+            "valid": false,
+            "distanceKm": 37.783,
+            "distanceErrorKm": 2.2169999999999987,
+            "overlapRatio": 0.04481512958684239,
+            "repeatedKm": 1.6922318285641111,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 5,
+            "valid": false,
+            "distanceKm": 33.721,
+            "distanceErrorKm": 6.2790000000000035,
+            "overlapRatio": 0.000434518349590264,
+            "repeatedKm": 0.014645616932367654,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 6,
+            "valid": false,
+            "distanceKm": 34.122,
+            "distanceErrorKm": 5.878,
+            "overlapRatio": 0.012232210661699699,
+            "repeatedKm": 0.417173583534194,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 1
+          },
+          {
+            "attempt": 7,
+            "valid": false,
+            "distanceKm": 43.594,
+            "distanceErrorKm": 3.594000000000001,
+            "overlapRatio": 0.020220359770945873,
+            "repeatedKm": 0.8809267645007297,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 8,
+            "valid": false,
+            "distanceKm": 1.375,
+            "distanceErrorKm": 38.625,
+            "overlapRatio": 0,
+            "repeatedKm": 0,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 9,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 10,
+            "valid": false,
+            "distanceKm": 46.589,
+            "distanceErrorKm": 6.588999999999999,
+            "overlapRatio": 0.18500657482225488,
+            "repeatedKm": 8.61418537482501,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 11,
+            "valid": false,
+            "distanceKm": 1.853,
+            "distanceErrorKm": 38.147,
+            "overlapRatio": 0.09820853359893139,
+            "repeatedKm": 0.1821361042154516,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 12,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 13,
+            "valid": false,
+            "distanceKm": 35.386,
+            "distanceErrorKm": 4.613999999999997,
+            "overlapRatio": 0.04928627625874432,
+            "repeatedKm": 1.7422722624658618,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 14,
+            "valid": false,
+            "distanceKm": 29.373,
+            "distanceErrorKm": 10.626999999999999,
+            "overlapRatio": 0,
+            "repeatedKm": 0,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 15,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 16,
+            "code": "ENGINE_ROUTE",
+            "message": "No suitable edges near location"
+          },
+          {
+            "attempt": 17,
+            "valid": false,
+            "distanceKm": 29.373,
+            "distanceErrorKm": 10.626999999999999,
+            "overlapRatio": 0,
+            "repeatedKm": 0,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 18,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 19,
+            "valid": false,
+            "distanceKm": 41.679,
+            "distanceErrorKm": 1.679000000000002,
+            "overlapRatio": 0.1756421082929705,
+            "repeatedKm": 7.309361364262552,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 20,
+            "valid": false,
+            "distanceKm": 28.25,
+            "distanceErrorKm": 11.75,
+            "overlapRatio": 0.027930431028061413,
+            "repeatedKm": 0.7877665865504514,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 21,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          },
+          {
+            "attempt": 22,
+            "code": "ENGINE_ROUTE",
+            "message": "No suitable edges near location"
+          },
+          {
+            "attempt": 23,
+            "valid": false,
+            "distanceKm": 26.625,
+            "distanceErrorKm": 13.375,
+            "overlapRatio": 0.005813886886729006,
+            "repeatedKm": 0.15455763843184947,
+            "closed": true,
+            "nearStart": true,
+            "excludedLocations": 0
+          },
+          {
+            "attempt": 24,
+            "code": "ENGINE_ROUTE",
+            "message": "No path could be found for input"
+          }
+        ]
+      }
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "fast"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 40.188586,
+      "distanceErrorKm": 0.1885860000000008,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 61,
+      "attempts": 1
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "winding"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 40.188586,
+      "distanceErrorKm": 0.1885860000000008,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 64,
+      "attempts": 1
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "winding"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 33.404,
+      "distanceErrorKm": 6.5959999999999965,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 5,
+      "elapsedMs": 384
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "twisty"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 34.435,
+      "distanceErrorKm": 5.564999999999998,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 5,
+      "elapsedMs": 346
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 40,
+        "avoidMotorways": true,
+        "profile": "twisty"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 40.188586,
+      "distanceErrorKm": 0.1885860000000008,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 54,
+      "attempts": 1
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "fast"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 40.188586,
+      "distanceErrorKm": 0.1885860000000008,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 54,
+      "attempts": 1
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "fast"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 32.937,
+      "distanceErrorKm": 7.063000000000002,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 14,
+      "elapsedMs": 958
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "winding"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 37.741,
+      "distanceErrorKm": 2.2590000000000003,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 14,
+      "elapsedMs": 727
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "winding"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 40.188586,
+      "distanceErrorKm": 0.1885860000000008,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 55,
+      "attempts": 1
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "twisty"
+      },
+      "engine": "graphhopper",
+      "valid": true,
+      "distanceKm": 40.188586,
+      "distanceErrorKm": 0.1885860000000008,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "elapsedMs": 55,
+      "attempts": 1
+    },
+    {
+      "fixture": {
+        "name": "Enfield",
+        "center": {
+          "latitude": 51.651,
+          "longitude": -0.083
+        },
+        "direction": 180,
+        "targetKm": 40,
+        "avoidMotorways": false,
+        "profile": "twisty"
+      },
+      "engine": "valhalla",
+      "valid": true,
+      "distanceKm": 33.22,
+      "distanceErrorKm": 6.780000000000001,
+      "overlapRatio": 0,
+      "repeatedKm": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 11,
+      "elapsedMs": 667
+    }
+  ]
+}

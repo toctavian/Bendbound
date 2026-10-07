@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { ComponentProps, ReactNode } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View, type ViewProps } from 'react-native';
 import { colors, radii, spacing } from '@/theme';
 
 export type IconName = ComponentProps<typeof Ionicons>['name'];
@@ -80,10 +80,10 @@ export function IconButton({
   );
 }
 
-export function Sheet({ children, style }: { children: ReactNode; style?: object }) {
+export function Sheet({ children, style, showHandle = true, onLayout }: { children: ReactNode; style?: object; showHandle?: boolean; onLayout?: ViewProps['onLayout'] }) {
   return (
-    <View style={[styles.sheet, style]}>
-      <View style={styles.handle} />
+    <View style={[styles.sheet, style]} onLayout={onLayout}>
+      {showHandle ? <View style={styles.handle} /> : null}
       {children}
     </View>
   );

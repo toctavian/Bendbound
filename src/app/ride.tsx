@@ -3,26 +3,31 @@ import Slider from '@react-native-community/slider';
 import * as Haptics from 'expo-haptics';
 import * as Location from 'expo-location';
 import { Tabs } from 'expo-router';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Alert, AppState, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { MapType, Region } from 'react-native-maps';
 import { RideMap } from '@/components/RideMap';
+import { RoutePoiCards } from '@/components/RoutePoiCards';
+import { useRoutePois } from '@/hooks/useRoutePois';
+import { routeColors, routeColorOrDefault } from '@/data/routeColors';
 import { DriveOverlay } from '@/components/DriveOverlay';
 import { DestinationSearch } from '@/components/DestinationSearch';
+import { StandardTripPlanner } from '@/components/StandardTripPlanner';
 import { ActionButton, IconButton, Sheet, Stat, ToggleRow } from '@/components/ui';
 import { defaultCenter, nearbyPlaces } from '@/data/seed';
 import { useApp } from '@/state/AppProvider';
-import { Coordinate, DraftRoute, PointOfInterest, PoiCategory, RoutingProfile, TrackPoint } from '@/types';
+import { Coordinate, PointOfInterest, PoiCategory, RoutePointOfInterest, RoutingProfile, TrackPoint, TripStop } from '@/types';
 import { colors, spacing, tabBarStyle } from '@/theme';
 import { upcomingManeuver } from '@/utils/guidance';
-import { bearingBetween, closestRoutePoint, cumulativeRouteDistances, fetchRoadContext, RoadContext } from '@/utils/navigation';
-import { buildPointToPoint, buildRoundTrip, distanceBetween, formatDuration, pointAtBearing, repeatedRoadRatio, snapDraftToRoads, tourFromDraft } from '@/utils/routes';
-import { appendRecordingFix, formatRidingTime, pauseRecording, recordedDistance, recordingSeconds, RecordingSession, resumeRecording, startRecording, tourFromRecording } from '@/utils/recording';
-import { fetchNearbyPois, fetchScenicPois } from '@/utils/pois';
+import { bearingBetween, closestRoutePoint, cumulativeRouteDistances, fetchRoadContext, RoadContext, routeHeadingAtLocation } from '@/utils/navigation';
+import { buildPointToPoint, buildStandardTrip, calculateRoundTrip, distanceBetween, formatDuration, snapDraftToRoads, tourFromDraft } from '@/utils/routes';
+import { formatRidingTime, recordedDistance, recordingSeconds, RecordingSession } from '@/utils/recording';
+import { endRide, ensureBackgroundLocation, pauseRide, recoverRide, resumeRide, startRide, subscribeToRide } from '@/services/rideTracking';
+import type { ActiveRide } from '@/services/rideStore';
+import { fetchNearbyPois } from '@/utils/pois';
 import type { PlaceSuggestion } from '@/utils/places';
 
-type Mode = 'home' | 'round' | 'preview' | 'navigation' | 'recording';
+type Mode = 'home' | 'standard' | 'round' | 'preview' | 'navigation' | 'recording';
 const directions = [
   { label: 'N', value: 0 },
   { label: 'E', value: 90 },
@@ -37,6 +42,7 @@ export default function MapScreen() {
   const [location, setLocation] = useState<Coordinate>(defaultCenter);
   const [search, setSearch] = useState('');
   const [searchExpanded, setSearchExpanded] = useState(false);
+  const [tripStops, setTripStops] = useState<TripStop[]>([]);
   const planningSearch = useRef(false);
   const profile = settings.routingProfile ?? 'winding';
   const setProfile = (routingProfile: RoutingProfile) => updateSettings({ routingProfile });
@@ -47,10 +53,12 @@ export default function MapScreen() {
   const [elapsed, setElapsed] = useState(0);
   const [clockTime, setClockTime] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [mapType, setMapType] = useState<MapType>('standard');
   const [selectedPoi, setSelectedPoi] = useState<PoiCategory | null>(null);
   const [pois, setPois] = useState<PointOfInterest[]>([]);
   const [poiLoading, setPoiLoading] = useState(false);
+  const [recenterTarget, setRecenterTarget] = useState<Coordinate>();
+  const [previewHeight, setPreviewHeight] = useState(205);
+  const [selectedRoutePoi, setSelectedRoutePoi] = useState<RoutePointOfInterest>();
   const [mapCenter, setMapCenter] = useState<Coordinate>(defaultCenter);
   const [liveSpeedKph, setLiveSpeedKph] = useState(0);
   const [liveHeading, setLiveHeading] = useState(0);
@@ -61,11 +69,8 @@ export default function MapScreen() {
   const [routeIndex, setRouteIndex] = useState(0);
   const [distanceFromRouteKm, setDistanceFromRouteKm] = useState(0);
   const [roadContext, setRoadContext] = useState<RoadContext>({ name: null, speedLimitKph: null, roadClass: null });
-  const watchRef = useRef<Location.LocationSubscription | null>(null);
-  const headingWatchRef = useRef<Location.LocationSubscription | null>(null);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const recordingRef = useRef<RecordingSession | null>(null);
-  const sensorGeneration = useRef(0);
+  const restoredRide = useRef(false);
   const startingRide = useRef(false);
   const progressRef = useRef(-1);
   const headingRef = useRef(0);
@@ -73,6 +78,16 @@ export default function MapScreen() {
   const roadLookupRef = useRef<{ at: number; location: Coordinate | null; busy: boolean }>({ at: 0, location: null, busy: false });
   const visibleMode: Mode = activeRoute && mode === 'home' ? 'preview' : mode;
   const driving = visibleMode === 'navigation' || visibleMode === 'recording';
+  const roundPreview = visibleMode === 'preview' && activeRoute?.roundTrip === true;
+  const routePois = useRoutePois(roundPreview ? activeRoute?.route : undefined);
+  const selectedRoutePoiId = routePois.points.find((point) => point === selectedRoutePoi)?.id;
+  const selectRoutePoi = (point: RoutePointOfInterest) => {
+    setSelectedRoutePoi(point);
+    setRecenterTarget({ ...point.routePoint });
+  };
+  const routeHeading = useMemo(() => visibleMode === 'navigation'
+    ? routeHeadingAtLocation(activeRoute?.route ?? [], location, routeIndex)
+    : null, [activeRoute?.route, location, routeIndex, visibleMode]);
   const poiRegionKey = `${mapCenter.latitude.toFixed(2)},${mapCenter.longitude.toFixed(2)}`;
   const routeDistances = useMemo(() => cumulativeRouteDistances(activeRoute?.route ?? []), [activeRoute?.route]);
   const totalRouteKm = routeDistances[routeDistances.length - 1] ?? 0;
@@ -88,18 +103,40 @@ export default function MapScreen() {
   const gpsReady = lastFixAt > 0 && clockTime - lastFixAt < 10000 && gpsAccuracy != null && gpsAccuracy >= 0 && gpsAccuracy <= 50;
 
   useEffect(() => {
-    const generation = sensorGeneration;
-    Location.getLastKnownPositionAsync({ maxAge: 300000 })
-      .then((last) => last && setLocation({ latitude: last.coords.latitude, longitude: last.coords.longitude }))
-      .catch(() => undefined);
-    return () => {
-      generation.current++;
-      recordingRef.current = null;
-      watchRef.current?.remove();
-      headingWatchRef.current?.remove();
-      if (timerRef.current) clearInterval(timerRef.current);
+    let mounted = true;
+    let lastError: string | undefined;
+    const applyRide = (ride: ActiveRide | null) => {
+      if (!mounted) return;
+      recordingRef.current = ride?.session ?? null;
+      if (!ride) return;
+      setMode(ride.mode);
+      setTrackSegments(ride.session.segments);
+      setElapsed(recordingSeconds(ride.session, Date.now()));
+      setClockTime(Date.now());
+      setPaused(ride.session.activeSince === null);
+      if (ride.error && ride.error !== lastError) Alert.alert('Ride recording paused', ride.error);
+      lastError = ride.error;
     };
-  }, []);
+    const unsubscribe = subscribeToRide(applyRide);
+    const restore = () => {
+      recoverRide().then((ride) => {
+        if (!mounted) return;
+        if (ride) {
+          setActiveRoute(ride.route);
+          if (ride.lastFix) setLocation({ latitude: ride.lastFix.coords.latitude, longitude: ride.lastFix.coords.longitude });
+        }
+      }).catch((error) => {
+        if (mounted) Alert.alert('Could not restore recording', error instanceof Error ? error.message : 'Please reopen Bendbound.');
+      }).finally(() => { restoredRide.current = true; });
+    };
+    restore();
+    const appState = AppState.addEventListener('change', (state) => { if (state === 'active') restore(); });
+    Location.getLastKnownPositionAsync({ maxAge: 300000 })
+      .then((last) => { if (mounted && last && !recordingRef.current) setLocation({ latitude: last.coords.latitude, longitude: last.coords.longitude }); })
+      .catch(() => undefined);
+    // The task owns the recording. Leaving this screen must not stop it.
+    return () => { mounted = false; unsubscribe(); appState.remove(); };
+  }, [setActiveRoute]);
 
   useEffect(() => {
     if (!selectedPoi) return;
@@ -118,17 +155,7 @@ export default function MapScreen() {
     };
   }, [poiRegionKey, selectedPoi]);
 
-  const stopTracking = () => {
-    sensorGeneration.current++;
-    watchRef.current?.remove();
-    watchRef.current = null;
-    headingWatchRef.current?.remove();
-    headingWatchRef.current = null;
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = null;
-  };
-
-  const refreshRoadContext = (point: Coordinate, heading: number, force = false) => {
+  const refreshRoadContext = useCallback((point: Coordinate, heading: number, force = false) => {
     const lookup = roadLookupRef.current;
     const now = Date.now();
     const movedKm = lookup.location ? distanceBetween(lookup.location, point) : Number.POSITIVE_INFINITY;
@@ -138,16 +165,11 @@ export default function MapScreen() {
       .then(setRoadContext)
       .catch(() => undefined)
       .finally(() => { roadLookupRef.current.busy = false; });
-  };
+  }, []);
 
-  const handleTrackedPosition = (next: Location.LocationObject, trackingMode: 'navigation' | 'recording') => {
+  const handleTrackedPosition = useCallback((next: Location.LocationObject, trackingMode: 'navigation' | 'recording') => {
     if (!recordingRef.current || recordingRef.current.activeSince == null) return;
     const point = { latitude: next.coords.latitude, longitude: next.coords.longitude };
-    const updated = appendRecordingFix(recordingRef.current, { ...point, timestamp: next.timestamp, accuracy: next.coords.accuracy ?? -1 }, Date.now());
-    if (updated !== recordingRef.current) {
-      recordingRef.current = updated;
-      setTrackSegments(updated.segments);
-    }
     const gpsHeading = next.coords.heading != null && next.coords.heading >= 0 ? next.coords.heading : null;
     const movedEnough = lastPositionRef.current && distanceBetween(lastPositionRef.current, point) > 0.005;
     const calculatedHeading = movedEnough && lastPositionRef.current ? bearingBetween(lastPositionRef.current, point) : headingRef.current;
@@ -168,35 +190,49 @@ export default function MapScreen() {
       setDistanceFromRouteKm(match.distanceKm);
     }
     refreshRoadContext(point, nextHeading);
-  };
+  }, [activeRoute, refreshRoadContext]);
 
-  const startSensors = async (trackingMode: 'navigation' | 'recording') => {
-    const generation = ++sensorGeneration.current;
-    const subscription = await Location.watchPositionAsync(
+  useEffect(() => {
+    if (!driving || paused) return;
+    let cancelled = false;
+    let positionWatch: Location.LocationSubscription | undefined;
+    let headingWatch: Location.LocationSubscription | undefined;
+    // This watcher updates the visible map only; the background task is the sole track writer.
+    Location.watchPositionAsync(
       { accuracy: Location.Accuracy.BestForNavigation, distanceInterval: 3, timeInterval: 1000 },
-      (next) => { if (generation === sensorGeneration.current) handleTrackedPosition(next, trackingMode); },
-    );
-    if (generation !== sensorGeneration.current) { subscription.remove(); return; }
-    watchRef.current = subscription;
+      (next) => { if (!cancelled) handleTrackedPosition(next, activeRoute ? 'navigation' : 'recording'); },
+    ).then((subscription) => {
+      if (cancelled) subscription.remove();
+      else positionWatch = subscription;
+    }).catch(() => { if (!cancelled) setGpsAccuracy(null); });
     Location.watchHeadingAsync((next) => {
-      if (generation !== sensorGeneration.current) return;
+      if (cancelled) return;
       const heading = next.trueHeading >= 0 ? next.trueHeading : next.magHeading;
       headingRef.current = heading;
       setLiveHeading(heading);
-    }).then((headingSubscription) => {
-      if (generation !== sensorGeneration.current) headingSubscription.remove();
-      else headingWatchRef.current = headingSubscription;
+    }).then((subscription) => {
+      if (cancelled) subscription.remove();
+      else headingWatch = subscription;
     }).catch(() => undefined);
-  };
+    return () => { cancelled = true; positionWatch?.remove(); headingWatch?.remove(); };
+  }, [activeRoute, driving, handleTrackedPosition, paused]);
 
-  const startClock = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
+  useEffect(() => {
+    if (!driving || paused) return;
+    const timer = setInterval(() => {
       const now = Date.now();
       if (recordingRef.current) setElapsed(recordingSeconds(recordingRef.current, now));
       setClockTime(now);
     }, 1000);
-  };
+    return () => clearInterval(timer);
+  }, [driving, paused]);
+
+  const requestRecordingPermission = () => ensureBackgroundLocation(() => new Promise<boolean>((resolve) => {
+    Alert.alert('Record with the screen locked', 'Bendbound uses background location only during an active ride. Choose Always / Allow all the time on the next permission screen. Pause or finish to stop recording.', [
+      { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+      { text: 'Continue', onPress: () => resolve(true) },
+    ], { cancelable: false });
+  }));
 
   const getCurrentLocation = async () => {
     const permission = await Location.requestForegroundPermissionsAsync();
@@ -211,7 +247,8 @@ export default function MapScreen() {
   const locate = async () => {
     try {
       setBusy(true);
-      await getCurrentLocation();
+      const point = await getCurrentLocation();
+      setRecenterTarget(point);
       await Haptics.selectionAsync();
     } catch (error) {
       Alert.alert('Location unavailable', error instanceof Error ? error.message : 'Check location services and try again.');
@@ -229,7 +266,7 @@ export default function MapScreen() {
       const start = await getCurrentLocation().catch(() => location);
       const destination = { latitude: place.latitude, longitude: place.longitude };
       const draft = await snapDraftToRoads(
-        buildPointToPoint(start, destination, profile, place.name),
+        { ...buildPointToPoint(start, destination, profile, place.name), stops: [{ ...place }] },
         { avoidMotorways: settings.avoidMotorways },
       );
       setActiveRoute(draft);
@@ -245,25 +282,37 @@ export default function MapScreen() {
     }
   };
 
+  const createStandardTrip = async () => {
+    if (planningSearch.current) return;
+    planningSearch.current = true;
+    setBusy(true);
+    try {
+      const start = await getCurrentLocation().catch(() => location);
+      const draft = await snapDraftToRoads(buildStandardTrip(start, tripStops, profile), {
+        avoidMotorways: settings.avoidMotorways,
+      });
+      setActiveRoute(draft);
+      setSearchExpanded(false);
+      setMode('preview');
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error) {
+      Alert.alert('Could not create route', error instanceof Error ? error.message : 'Please try again.');
+    } finally {
+      planningSearch.current = false;
+      setBusy(false);
+    }
+  };
+
   const createRoundTrip = async () => {
     setBusy(true);
     try {
       const start = await getCurrentLocation().catch(() => location);
-      const searchCenter = pointAtBearing(start, roundDistance / 6, direction);
-      const scenicPois = await fetchScenicPois(searchCenter, Math.min(35, Math.max(10, roundDistance / 4))).catch(() => []);
-      const draft = buildRoundTrip(start, roundDistance, direction, profile, scenicPois);
-      const routingOptions = { avoidMotorways: settings.avoidMotorways, heading: direction };
-      let routed = await snapDraftToRoads(draft, routingOptions);
-      if (repeatedRoadRatio(routed.route) > 0.04) {
-        try {
-          const alternative = await snapDraftToRoads(buildRoundTrip(start, roundDistance, direction, profile, scenicPois, 1), routingOptions);
-          const score = (candidate: DraftRoute) => repeatedRoadRatio(candidate.route) * 5 + Math.abs(candidate.distanceKm - roundDistance) / roundDistance;
-          if (score(alternative) < score(routed)) routed = alternative;
-        } catch {
-          // The first route is still valid if the wider alternative cannot be calculated.
-        }
-      }
-      setActiveRoute({ ...routed, title: `${routed.distanceKm} km round trip` });
+      // POIs are matched to the completed route by useRoutePois. Forcing them
+      // into the search can introduce dead-end detours and delays route creation.
+      const routed = await calculateRoundTrip(start, roundDistance, direction, profile, [], {
+        avoidMotorways: settings.avoidMotorways,
+      });
+      setActiveRoute(routed);
       setMode('preview');
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error) {
@@ -291,11 +340,12 @@ export default function MapScreen() {
   };
 
   const beginTracking = async (nextMode: 'navigation' | 'recording') => {
-    if (startingRide.current || recordingRef.current) return;
+    if (startingRide.current || recordingRef.current || !restoredRide.current) return;
     startingRide.current = true;
     try {
+      await requestRecordingPermission();
       const start = await getCurrentLocation();
-      recordingRef.current = startRecording(Date.now());
+      await startRide(nextMode, nextMode === 'navigation' ? activeRoute : null);
       setTrackSegments([]);
       setElapsed(0);
       setClockTime(Date.now());
@@ -316,13 +366,8 @@ export default function MapScreen() {
       setMapFollowing(true);
       setMode(nextMode);
       refreshRoadContext(start, initialHeading, true);
-      await startSensors(nextMode);
-      if (recordingRef.current?.activeSince != null) startClock();
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
     } catch (error) {
-      stopTracking();
-      recordingRef.current = null;
-      setMode('home');
       Alert.alert('Ride could not start', error instanceof Error ? error.message : 'Check location services.');
     } finally {
       startingRide.current = false;
@@ -331,71 +376,80 @@ export default function MapScreen() {
 
   const togglePause = async () => {
     const session = recordingRef.current;
-    if (!session) return;
-    if (session.activeSince != null) {
-      recordingRef.current = pauseRecording(session, Date.now());
-      setElapsed(recordingSeconds(recordingRef.current, Date.now()));
-      setPaused(true);
-      stopTracking();
-    } else {
-      recordingRef.current = resumeRecording(session, Date.now());
-      setPaused(false);
-      try {
-        await startSensors(mode === 'navigation' ? 'navigation' : 'recording');
-        if (recordingRef.current?.activeSince != null) startClock();
-      } catch (error) {
-        stopTracking();
-        if (recordingRef.current) recordingRef.current = pauseRecording(recordingRef.current, Date.now());
-        setPaused(true);
-        Alert.alert('Could not resume ride', error instanceof Error ? error.message : 'Check location services.');
+    if (!session || startingRide.current) return;
+    startingRide.current = true;
+    try {
+      if (session.activeSince !== null) {
+        await pauseRide();
+      } else {
+        await requestRecordingPermission();
+        await resumeRide();
       }
+    } catch (error) {
+      Alert.alert('Could not update recording', error instanceof Error ? error.message : 'Check location services.');
+    } finally {
+      startingRide.current = false;
     }
   };
 
-  const finishRide = () => {
-    const session = recordingRef.current;
-    if (!session) return;
-    stopTracking();
-    const tour = tourFromRecording(session, Date.now(), mode === 'navigation' ? activeRoute?.title : undefined);
-    saveTour(tour);
-    recordingRef.current = null;
-    setActiveRoute(null);
-    setTrackSegments([]);
-    setMode('home');
-    Alert.alert('Ride saved', `${tour.title} is now in My Tours.${tour.route.length < 2 ? ' No usable GPS track was recorded.' : ''}`);
+  const finishRide = async (discard: boolean) => {
+    if (!recordingRef.current || startingRide.current) return;
+    startingRide.current = true;
+    try {
+      const tour = await endRide(discard);
+      if (tour) saveTour(tour);
+      recordingRef.current = null;
+      setActiveRoute(null);
+      setTrackSegments([]);
+      setTripStops([]);
+      setMode('home');
+      if (tour) Alert.alert('Ride saved', `${tour.title} is now in My Tours.${tour.route.length < 2 ? ' No usable GPS track was recorded.' : ''}`);
+    } catch (error) {
+      Alert.alert('Could not finish ride', error instanceof Error ? error.message : 'Your recording is still available. Please try again.');
+    } finally {
+      startingRide.current = false;
+    }
   };
 
   const reset = () => {
-    stopTracking();
-    recordingRef.current = null;
+    if (recordingRef.current) return;
     setActiveRoute(null);
+    setTripStops([]);
     setTrackSegments([]);
     setMode('home');
   };
 
   const elapsedLabel = formatRidingTime(elapsed);
 
-  const updateMapCenter = (region: Region) => {
+  const updateMapCenter = (region: Coordinate) => {
     setMapCenter({ latitude: region.latitude, longitude: region.longitude });
   };
 
   return (
     <View style={styles.screen}>
-      <Tabs.Screen options={{ tabBarStyle: driving || (visibleMode === 'home' && searchExpanded) ? { display: 'none' } : tabBarStyle }} />
+      <Tabs.Screen options={{ tabBarStyle: driving || visibleMode === 'standard' || (visibleMode === 'home' && searchExpanded) ? { display: 'none' } : tabBarStyle }} />
       <RideMap
-        bottomInset={driving ? 82 + insets.bottom : visibleMode === 'home' ? 390 : visibleMode === 'round' ? 420 : 205}
-        followHeading={cameraHeading}
+        bottomInset={driving ? 82 + insets.bottom : visibleMode === 'home' ? 390 : visibleMode === 'round' ? 420 : previewHeight}
+        followHeading={routeHeading ?? cameraHeading}
         followLocation={driving ? location : undefined}
         followSpeedKph={liveSpeedKph}
-        mapType={mapType}
+        recenterTarget={recenterTarget}
         motorcycleType={settings.motorcycleType}
         navigationMode={driving}
         following={mapFollowing}
         onFollowChange={setMapFollowing}
         onLongPress={planFromMap}
         onRegionChange={updateMapCenter}
-        pois={pois}
+        pois={visibleMode === 'home' ? pois : []}
+        roundTripPreview={roundPreview}
+        routePois={routePois.points}
+        selectedRoutePoiId={selectedRoutePoiId}
+        onRoutePoiSelect={selectRoutePoi}
+        routeColor={settings.routeColor}
         route={activeRoute?.route}
+        tripStops={activeRoute?.stops}
+        maneuvers={activeRoute?.maneuvers}
+        routeIndex={routeIndex}
         trackSegments={trackSegments}
       />
 
@@ -404,7 +458,6 @@ export default function MapScreen() {
           {visibleMode !== 'home' ? <IconButton icon="close" label="Close route" onPress={reset} /> : null}
           <View style={styles.controlSpacer} />
           <IconButton icon="locate" label="Use my location" onPress={locate} />
-          <IconButton active={mapType !== 'standard'} icon="layers-outline" label="Map layers" onPress={() => setMapType((value) => value === 'standard' ? 'hybrid' : 'standard')} />
         </View>
       ) : null}
 
@@ -429,7 +482,7 @@ export default function MapScreen() {
           </ScrollView>
           <ToggleRow icon="trail-sign-outline" label="Avoid motorways" value={settings.avoidMotorways} onPress={() => updateSettings({ avoidMotorways: !settings.avoidMotorways })} />
           <View style={styles.actionRow}>
-            <View style={styles.flex}><ActionButton icon="git-compare-outline" label="New route" loading={busy} onPress={() => setSearchExpanded(true)} variant="primary" /></View>
+            <View style={styles.flex}><ActionButton icon="git-compare-outline" label="New route" loading={busy} onPress={() => { setTripStops([]); setMode('standard'); }} variant="primary" /></View>
             <View style={styles.flex}><ActionButton icon="sync-outline" label="Round trip" onPress={() => setMode('round')} variant="primary" /></View>
           </View>
           <View style={styles.recordRow}>
@@ -442,6 +495,11 @@ export default function MapScreen() {
           <Text style={styles.hint}>Tip: long-press anywhere on the map to set a destination.</Text>
         </DestinationSearch>
       ) : null}
+
+      {visibleMode === 'standard' ? <StandardTripPlanner stops={tripStops} center={mapCenter} busy={busy}
+        avoidMotorways={settings.avoidMotorways} onChange={setTripStops}
+        onAvoidMotorwaysChange={() => updateSettings({ avoidMotorways: !settings.avoidMotorways })}
+        onPlan={createStandardTrip} onCancel={() => setMode(activeRoute ? 'preview' : 'home')} /> : null}
 
       {visibleMode === 'round' ? (
         <Sheet>
@@ -486,13 +544,20 @@ export default function MapScreen() {
       ) : null}
 
       {visibleMode === 'preview' && activeRoute ? (
-        <Sheet>
+        <Sheet onLayout={(event) => setPreviewHeight(Math.ceil(event.nativeEvent.layout.height))}>
           <Text style={styles.routeTitle} numberOfLines={1}>{activeRoute.title}</Text>
           <View style={styles.statsRow}>
             <Stat label="Distance" value={`${activeRoute.distanceKm} km`} />
             <Stat label="Time" value={formatDuration(activeRoute.durationMin)} />
             <Stat label="Curves" value={`${activeRoute.curves}`} />
           </View>
+          {roundPreview ? <RoutePoiCards points={routePois.points} selectedId={selectedRoutePoiId}
+            tint={routeColors[routeColorOrDefault(settings.routeColor)].value} loading={routePois.loading} error={routePois.error}
+            onSelect={selectRoutePoi} onRetry={routePois.retry} /> : null}
+          {!activeRoute.roundTrip && activeRoute.stops?.length ? <View style={{ marginTop: spacing.md }}>
+            <ActionButton icon="list-outline" label={`Add / edit stops (${activeRoute.stops.length} places)`}
+              onPress={() => { setTripStops(activeRoute.stops!.map((stop) => ({ ...stop }))); setMode('standard'); }} />
+          </View> : null}
           <View style={styles.actionRow}>
             <IconButton icon="bookmark-outline" label="Save tour" onPress={() => { saveTour(tourFromDraft(activeRoute)); Alert.alert('Saved', 'The route was added to Saved.'); }} />
             <View style={styles.flex}><ActionButton icon="navigate" label="Start navigation" onPress={() => beginTracking('navigation')} variant="success" /></View>
@@ -524,9 +589,10 @@ export default function MapScreen() {
           voiceEnabled={settings.voiceGuidance}
           onToggleVoice={() => updateSettings({ voiceGuidance: !settings.voiceGuidance })}
           onTogglePause={togglePause}
-          onFinish={() => Alert.alert('Finish ride?', 'Save this ride to My tours.', [
+          onFinish={() => Alert.alert('Finish ride?', 'Save your recording to My Tours, or discard it. Discarding cannot be undone.', [
             { text: 'Cancel', style: 'cancel' },
-            { text: 'Finish & save', onPress: finishRide },
+            { text: 'Finish & discard', style: 'destructive', onPress: () => finishRide(true) },
+            { text: 'Finish & save', onPress: () => finishRide(false) },
           ])}
         />
       ) : null}

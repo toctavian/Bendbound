@@ -194,7 +194,7 @@ test('focus expands search; suggestions stay tappable with keyboard open and sel
 test('the map plans to the selected result coordinates, not the first geocoded match', async () => {
   const planned = [], activated = [];
   const { default: Screen } = load('src/app/ride.tsx', {
-    react: { useState: (v) => [typeof v === 'function' ? v() : v, () => {}], useRef: (v) => ({ current: v }), useMemo: (fn) => fn(), useEffect() {} },
+    react: { useState: (v) => [typeof v === 'function' ? v() : v, () => {}], useRef: (v) => ({ current: v }), useMemo: (fn) => fn(), useCallback: (fn) => fn, useEffect() {} },
     'react/jsx-runtime': { jsx, jsxs: jsx },
     'react-native': { StyleSheet: { create: (s) => s }, Keyboard: { dismiss() {} }, Alert: { alert: (...args) => assert.fail(args.join(' ')) }, View: 'View', Text: 'Text', Pressable: 'Pressable', ScrollView: 'ScrollView' },
     '@expo/vector-icons/Ionicons': { default: 'Icon' },
@@ -204,8 +204,12 @@ test('the map plans to the selected result coordinates, not the first geocoded m
     'expo-router': { Tabs: { Screen: 'Tabs.Screen' } },
     'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) },
     '@/components/RideMap': { RideMap: 'RideMap' },
+    '@/components/RoutePoiCards': { RoutePoiCards: 'RoutePoiCards' },
+    '@/hooks/useRoutePois': { useRoutePois: () => ({ points: [], loading: false, error: false }) },
+    '@/data/routeColors': {},
     '@/components/DriveOverlay': { DriveOverlay: 'DriveOverlay' },
     '@/components/DestinationSearch': { DestinationSearch: 'DestinationSearch' },
+    '@/components/StandardTripPlanner': { StandardTripPlanner: 'StandardTripPlanner' },
     '@/components/ui': { IconButton: 'IconButton', ActionButton: 'ActionButton', ToggleRow: 'ToggleRow' },
     '@/data/seed': { defaultCenter: center, nearbyPlaces: [] },
     '@/state/AppProvider': { useApp: () => ({ settings: { avoidMotorways: true }, setActiveRoute: (draft) => activated.push(draft) }) },
@@ -213,6 +217,7 @@ test('the map plans to the selected result coordinates, not the first geocoded m
     '@/utils/guidance': { upcomingManeuver: () => undefined },
     '@/utils/navigation': { cumulativeRouteDistances: () => [] },
     '@/utils/recording': { formatRidingTime: () => '0:00' },
+    '@/services/rideTracking': {},
     '@/utils/pois': {},
     '@/utils/routes': {
       buildPointToPoint: (...args) => { planned.push(args); return { title: args[3], route: [args[0], args[1]] }; },

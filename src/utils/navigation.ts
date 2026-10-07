@@ -96,6 +96,37 @@ export function bearingBetween(from: Coordinate, to: Coordinate) {
   return (toDeg(Math.atan2(y, x)) + 360) % 360;
 }
 
+// Use the direction of the nearest line segment, not a bearing toward a waypoint:
+// a GPS fix beside the road would otherwise point the camera across the route.
+export function routeHeadingAtLocation(route: Coordinate[], location: Coordinate, hint = -1): number | null {
+  const latitudeScale = 111.195;
+  const longitudeScale = latitudeScale * Math.cos(location.latitude * Math.PI / 180);
+  const start = hint < 0 ? 0 : Math.max(0, hint - 80);
+  const end = hint < 0 ? route.length - 1 : Math.min(route.length - 1, hint + 1200);
+  let closestDistance = Infinity;
+  let heading: number | null = null;
+
+  for (let index = start; index < end; index++) {
+    const from = route[index];
+    const to = route[index + 1];
+    const x = (from.longitude - location.longitude) * longitudeScale;
+    const y = (from.latitude - location.latitude) * latitudeScale;
+    const dx = (to.longitude - from.longitude) * longitudeScale;
+    const dy = (to.latitude - from.latitude) * latitudeScale;
+    const lengthSquared = dx * dx + dy * dy;
+    if (lengthSquared < 1e-12) continue;
+    const fraction = Math.max(0, Math.min(1, -(x * dx + y * dy) / lengthSquared));
+    const distance = Math.hypot(x + fraction * dx, y + fraction * dy);
+    if (distance < closestDistance) {
+      closestDistance = distance;
+      heading = bearingBetween(from, to);
+    }
+  }
+
+  // Keep the GPS heading when off route, or when there is no usable segment.
+  return closestDistance <= 0.075 ? heading : null;
+}
+
 export function cardinalDirection(heading: number) {
   const labels = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
   return labels[Math.round(((heading % 360) + 360) % 360 / 45) % labels.length];

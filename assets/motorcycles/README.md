@@ -2,7 +2,7 @@
 
 Original model-inspired illustrations generated with the built-in image generation tool, using actual overhead photographs as shape references. These are not manufacturer photographs, exact model-year replicas, or endorsements. The reference photos are linked below, not bundled in the app.
 
-All PNGs retain genuine alpha transparency, point north and contain the complete motorcycle. `MotorcycleGlyph` renders them at 42 points on the map and 54 points in settings with `contain`. Heading is applied by the enclosing map view; no disc, pin, border, or background is added.
+All PNGs retain genuine alpha transparency, point north and contain the complete motorcycle. `MotorcycleGlyph` renders them at 63 points on the map and 81 points in settings with `contain`. Heading is applied by the enclosing map view; no disc, pin, border, or background is added.
 
 ## Models and reference photos
 

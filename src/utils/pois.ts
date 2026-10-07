@@ -1,6 +1,6 @@
 import { Coordinate, PoiCategory, PointOfInterest } from '@/types';
 
-type OverpassElement = {
+export type OverpassElement = {
   id: number;
   type: string;
   lat?: number;
@@ -9,7 +9,7 @@ type OverpassElement = {
   tags?: Record<string, string>;
 };
 
-type OverpassResponse = { elements?: OverpassElement[] };
+type OverpassResponse = { elements?: OverpassElement[]; remark?: string };
 
 const overpassEndpoints = [
   'https://overpass.openstreetmap.fr/api/interpreter',
@@ -41,21 +41,32 @@ const searchRadii: Record<PoiCategory, number> = {
   forest: 10000,
 };
 
-async function requestOverpass(query: string): Promise<OverpassResponse> {
+export async function requestOverpass(query: string, signal?: AbortSignal): Promise<OverpassResponse> {
   let lastError: unknown;
 
   for (const endpoint of overpassEndpoints) {
+    if (signal?.aborted) throw new Error('POI lookup cancelled.');
     const controller = new AbortController();
+    const cancel = () => controller.abort();
+    signal?.addEventListener('abort', cancel);
     const timeout = setTimeout(() => controller.abort(), 9000);
 
     try {
-      const response = await fetch(`${endpoint}?data=${encodeURIComponent(query)}`, { signal: controller.signal });
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `data=${encodeURIComponent(query)}`,
+        signal: controller.signal,
+      });
       if (!response.ok) throw new Error(`POI service returned ${response.status}`);
-      return (await response.json()) as OverpassResponse;
+      const payload = (await response.json()) as OverpassResponse;
+      if (payload.remark || !Array.isArray(payload.elements)) throw new Error('POI service could not complete the search.');
+      return payload;
     } catch (error) {
       lastError = error;
     } finally {
       clearTimeout(timeout);
+      signal?.removeEventListener('abort', cancel);
     }
   }
 

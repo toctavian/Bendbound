@@ -13,6 +13,32 @@ function load(file, imports = {}) {
 }
 
 const guidance = load('src/utils/guidance.ts');
+const navigation = load('src/utils/navigation.ts', { '@/utils/routes': load('src/utils/routes.ts') });
+
+test('camera heading follows the nearest route segment even when GPS is beside the road', () => {
+  const route = [
+    { latitude: 51.5, longitude: 0 },
+    { latitude: 51.501, longitude: 0 },
+    { latitude: 51.501, longitude: 0.002 },
+  ];
+  assert.equal(navigation.routeHeadingAtLocation(route, { latitude: 51.5007, longitude: 0.0002 }), 0);
+  assert.ok(Math.abs(navigation.routeHeadingAtLocation(route, { latitude: 51.5011, longitude: 0.001 }) - 90) < 0.01);
+  assert.equal(navigation.routeHeadingAtLocation([...route].reverse(), { latitude: 51.5007, longitude: 0.0002 }), 180);
+  // Sparse route geometry must be matched against the segment, not just its vertices.
+  const sparse = [route[0], { latitude: 51.51, longitude: 0 }];
+  assert.equal(navigation.routeHeadingAtLocation(sparse, { latitude: 51.505, longitude: 0.0002 }), 0);
+});
+
+test('camera heading handles duplicate points and falls back to GPS away from the route', () => {
+  const start = { latitude: 51.5, longitude: 0 };
+  const finish = { latitude: 51.501, longitude: 0 };
+  assert.equal(navigation.routeHeadingAtLocation([start, start, finish], start), 0);
+  assert.equal(navigation.routeHeadingAtLocation([start, finish], { latitude: 51.51, longitude: 0.01 }), null);
+  for (const route of [[], [start], [start, start]]) {
+    assert.equal(navigation.routeHeadingAtLocation(route, start), null);
+  }
+});
+
 const turn = { type: 10, instruction: 'Turn right onto High Street.', beginShapeIndex: 20, endShapeIndex: 80 };
 const arrival = { type: 4, instruction: 'You have arrived.', beginShapeIndex: 100, endShapeIndex: 100 };
 

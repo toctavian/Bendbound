@@ -1,0 +1,30 @@
+graphhopper:
+  datareader.file: /input/region.osm.pbf
+  graph.location: /data/graph-cache
+  graph.encoded_values: car_access,car_average_speed,track_type,road_access,road_class,curvature,surface
+  profiles:
+    - name: motorcycle
+      custom_model_files: [motorcycle.json]
+      turn_costs:
+        vehicle_types: [motorcycle,motor_vehicle]
+        u_turn_costs: 60
+  profiles_ch: []
+  profiles_lm: []
+  routing.max_visited_nodes: 1000000
+  routing.timeout_ms: 15000
+  import.osm.ignored_highways: footway,construction,cycleway,path,steps
+server:
+  application_connectors:
+    - type: http
+      port: 8989
+      bind_host: 0.0.0.0
+  admin_connectors:
+    - type: http
+      port: 8990
+      bind_host: 127.0.0.1
+  request_log:
+    appenders: []
+logging:
+  level: WARN
+  appenders:
+    - type: console

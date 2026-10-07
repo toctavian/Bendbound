@@ -9,6 +9,7 @@ import type { Coordinate } from '@/types';
 import type { PlaceSuggestion } from '@/utils/places';
 
 type Props = {
+  placeholder?: string;
   query: string;
   onChangeQuery: (query: string) => void;
   expanded: boolean;
@@ -19,7 +20,7 @@ type Props = {
   children: ReactNode;
 };
 
-export function DestinationSearch({ query, onChangeQuery, expanded, onExpandedChange, center, busy, onSelect, children }: Props) {
+export function DestinationSearch({ query, onChangeQuery, expanded, onExpandedChange, center, busy, onSelect, children, placeholder = 'Where do you want to ride?' }: Props) {
   const insets = useSafeAreaInsets();
   const input = useRef<TextInput>(null);
   const { places, loading, error, retry } = usePlaceSuggestions(query, center, expanded && !busy);
@@ -36,15 +37,15 @@ export function DestinationSearch({ query, onChangeQuery, expanded, onExpandedCh
   }, [busy, expanded, onExpandedChange]);
 
   return (
-    <KeyboardAvoidingView pointerEvents="box-none" style={StyleSheet.absoluteFill} behavior={Platform.OS === 'ios' ? 'padding' : undefined} enabled={expanded}>
+    <KeyboardAvoidingView pointerEvents="box-none" style={[StyleSheet.absoluteFill, expanded && styles.expandedPanel, expanded && { top: insets.top + 56 }]} behavior={Platform.OS === 'ios' ? 'padding' : undefined} enabled={expanded}>
       <View pointerEvents="box-none" style={styles.container}>
-        <Sheet style={expanded ? { position: 'relative', flex: 1, marginTop: insets.top + 56, paddingBottom: Math.max(14, insets.bottom) } : { position: 'relative' }}>
+        <Sheet showHandle={false} style={expanded ? { position: 'relative', flex: 1, paddingBottom: Math.max(14, insets.bottom) } : { position: 'relative' }}>
           <View style={styles.searchRow}>
             {expanded ? <IconButton icon="chevron-back" label="Close place search" onPress={close} /> : <Ionicons color={colors.muted} name="search" size={21} />}
             <TextInput ref={input} accessibilityLabel="Search places" editable={!busy} maxLength={120} autoCorrect={false}
               onFocus={() => onExpandedChange(true)} onChangeText={onChangeQuery}
               onSubmitEditing={() => { onExpandedChange(true); if (error) retry(); }} submitBehavior="submit"
-              placeholder="Where do you want to ride?" placeholderTextColor={colors.muted} returnKeyType="search"
+              placeholder={placeholder} placeholderTextColor={colors.muted} returnKeyType="search"
               style={styles.searchInput} value={query} />
             {query && !busy ? <Pressable accessibilityRole="button" accessibilityLabel="Clear search" onPress={() => { onChangeQuery(''); input.current?.focus(); }} style={styles.clear}>
               <Ionicons color={colors.muted} name="close-circle" size={20} />
@@ -71,6 +72,8 @@ export function DestinationSearch({ query, onChangeQuery, expanded, onExpandedCh
 }
 
 const styles = StyleSheet.create({
+  // Paint the keyboard padding too, including the exposed rounded keyboard corners.
+  expandedPanel: { backgroundColor: colors.charcoal, borderTopLeftRadius: 14, borderTopRightRadius: 14 },
   container: { flex: 1, justifyContent: 'flex-end' },
   searchRow: { alignItems: 'center', backgroundColor: colors.panelAlt, borderRadius: 6, flexDirection: 'row', gap: 6, marginBottom: 8, paddingHorizontal: 6, minHeight: 50 },
   searchInput: { color: colors.ink, flex: 1, minWidth: 0, fontSize: 16, minHeight: 48, paddingHorizontal: 4 },

@@ -3,6 +3,8 @@ export type Coordinate = {
   longitude: number;
 };
 
+export type TripStop = Coordinate & { id: string; name: string; address?: string };
+
 export type PoiCategory = 'fuel' | 'pass' | 'meet' | 'sight' | 'forest';
 
 export type PointOfInterest = Coordinate & {
@@ -12,8 +14,16 @@ export type PointOfInterest = Coordinate & {
   detail: string;
 };
 
+export type RoutePointOfInterest = PointOfInterest & {
+  number: number;
+  routePoint: Coordinate;
+  distanceAlongKm: number;
+  distanceFromRouteKm: number;
+};
+
 export type RoutingProfile = 'fast' | 'winding' | 'twisty';
 export type MotorcycleType = 'sports' | 'adventure' | 'cruiser' | 'motocross' | 'funventure' | 'scooter' | 'bogdan' | 'radu' | 'petre' | 'foca';
+export type RouteColor = 'red' | 'blue' | 'purple' | 'green' | 'orange' | 'teal';
 export type SpeedUnit = 'km/h' | 'mph';
 
 export type NavigationManeuver = {
@@ -27,6 +37,8 @@ export type NavigationManeuver = {
 };
 
 export type Tour = {
+  stops?: TripStop[];
+  roundTrip?: boolean;
   id: string;
   title: string;
   place: string;
@@ -57,6 +69,7 @@ export type AppSettings = {
   motorcycleType: MotorcycleType;
   motorcycleName: string;
   routingProfile: RoutingProfile;
+  routeColor: RouteColor;
   avoidMotorways: boolean;
   offlineMaps: boolean;
   voiceGuidance: boolean;
@@ -67,6 +80,8 @@ export type AppSettings = {
 };
 
 export type DraftRoute = {
+  stops?: TripStop[];
+  roundTrip?: boolean;
   title: string;
   route: Coordinate[];
   distanceKm: number;

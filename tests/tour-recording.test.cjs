@@ -120,7 +120,7 @@ function toursHarness(tours) {
     'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0 }) },
     '@/components/RideMap': { RideMap: 'RideMap' },
     '@/components/ui': { ActionButton: 'ActionButton' },
-    '@/state/AppProvider': { useApp: () => ({ ready: true, tours }) },
+    '@/state/AppProvider': { useApp: () => ({ ready: true, tours, settings: { routeColor: 'purple' } }) },
     '@/theme': { colors: {}, spacing: {} },
     '@/utils/routes': routes,
     '@/utils/recording': recording,

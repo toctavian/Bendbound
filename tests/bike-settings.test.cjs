@@ -12,7 +12,8 @@ function load(file, imports = {}) {
   return module.exports;
 }
 const motorcycles = load('src/data/motorcycles.ts');
-const settingsUtils = load('src/utils/settings.ts', { '@/data/motorcycles': motorcycles });
+const routeColorData = load('src/data/routeColors.ts');
+const settingsUtils = load('src/utils/settings.ts', { '@/data/motorcycles': motorcycles, '@/data/routeColors': routeColorData });
 const jsx = (type, props) => ({ type, props });
 const rn = { StyleSheet: { create: (styles) => styles }, View: 'View', Text: 'Text', Pressable: 'Pressable', TextInput: 'TextInput', ScrollView: 'ScrollView' };
 
@@ -52,8 +53,8 @@ test('each motorcycle uses its own RGBA bitmap at a stable, compact size', () =>
     assert.equal(glyph.type, 'Image');
     assert.equal(glyph.props.source, `../../assets/motorcycles/${type}.png`);
     assert.equal(glyph.props.resizeMode, 'contain');
-    assert.deepEqual(glyph.props.style, { height: 42, width: 42 });
-    assert.deepEqual(MotorcycleGlyph({ type, size: 54 }).props.style, { height: 54, width: 54 });
+    assert.deepEqual(glyph.props.style, { height: 63, width: 63 });
+    assert.deepEqual(MotorcycleGlyph({ type, size: 81 }).props.style, { height: 81, width: 81 });
   }
   assert.equal(MotorcycleGlyph({ type: 'unknown' }).props.source, '../../assets/motorcycles/adventure.png');
 });
@@ -66,6 +67,8 @@ test('old settings gain safe defaults and unknown motorcycle types cannot break 
   assert.equal(settings.avoidMotorways, false);
   assert.equal(settings.voiceGuidance, false);
   assert.equal(settings.offlineMaps, false);
+  assert.equal(settings.routeColor, 'red');
+  for (const routeColor of ['invalid', '#ffffff', '__proto__', null]) assert.equal(settingsUtils.restoreSettings({ routeColor }).routeColor, 'red');
   assert.equal(settings.speedUnit, 'km/h');
   for (const speedUnit of ['knots', null, undefined, 42]) {
     assert.equal(settingsUtils.restoreSettings({ speedUnit }).speedUnit, 'km/h');
@@ -93,6 +96,7 @@ test('bike settings controls update the motorcycle, model, route profile and mot
     '@expo/vector-icons/Ionicons': { default: 'Icon' },
     'expo-router': { router: {} },
     'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0 }) },
+    '@/components/RouteColorPicker': { RouteColorPicker: 'RouteColorPicker' },
     '@/components/ui': { IconButton: 'IconButton', ToggleRow: 'ToggleRow' },
     '@/components/MotorcycleGlyph': { MotorcycleGlyph: 'MotorcycleGlyph' },
     '@/state/AppProvider': { useApp: () => ({ ready: true, settings, updateSettings: (next) => { settings = { ...settings, ...next }; } }) },
@@ -111,6 +115,9 @@ test('bike settings controls update the motorcycle, model, route profile and mot
   assert.equal(settings.routingProfile, 'twisty');
   find(Screen(), (node) => node.type === 'ToggleRow').props.onPress();
   assert.equal(settings.avoidMotorways, false);
+  find(Screen(), (node) => node.type === 'RouteColorPicker').props.onChange('purple');
+  assert.equal(settings.routeColor, 'purple');
+  assert.equal(find(Screen(), (node) => node.type === 'RouteColorPicker').props.value, 'purple');
 });
 
 test('profile bike and routes rows open settings or tours, while unsupported services report their status', () => {
@@ -126,12 +133,15 @@ test('profile bike and routes rows open settings or tours, while unsupported ser
     'expo-document-picker': {},
     'expo-file-system/legacy': {},
     'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0 }) },
+    '@/components/RouteColorPicker': { RouteColorPicker: 'RouteColorPicker' },
     '@/components/ui': { ActionButton: 'ActionButton', ToggleRow: 'ToggleRow' },
     '@/state/AppProvider': { useApp: () => ({ tours: [], settings, updateSettings: (next) => { settings = { ...settings, ...next }; } }) },
     '@/theme': { colors: {}, spacing: {} },
     '@/utils/routes': {},
     '@/data/motorcycles': motorcycles,
   });
+  find(Screen(), (node) => node.type === 'RouteColorPicker').props.onChange('teal');
+  assert.equal(settings.routeColor, 'teal');
   const screen = Screen();
   const logo = find(screen, (node) => node.type === 'Image');
   assert.equal(logo.props.source, 'bendbound-logo');
@@ -154,7 +164,7 @@ test('profile bike and routes rows open settings or tours, while unsupported ser
   }
 });
 
-function providerHarness(stored, { legacy = null, readFailure, writeFailure = false } = {}) {
+function providerHarness(stored, { legacy = null, readFailure, writeFailure = false, pending = [] } = {}) {
   const slots = [];
   let cursor = 0;
   let effects = [];
@@ -162,6 +172,7 @@ function providerHarness(stored, { legacy = null, readFailure, writeFailure = fa
   const storage = new Map([['bendbound-state-v2', stored], ['roams-state-v2', legacy]]);
   const reads = [];
   const writes = [];
+  const acknowledged = [];
   const react = {
     createContext: () => ({ Provider: 'Provider' }),
     useMemo: (factory) => { cursor++; return factory(); },
@@ -196,6 +207,13 @@ function providerHarness(stored, { legacy = null, readFailure, writeFailure = fa
     '@/data/seed': { seedTours: [] },
     '@/utils/routes': {},
     '@/utils/settings': settingsUtils,
+    '@/services/rideStore': {
+      pendingRecordedTours: () => pending,
+      acknowledgeRecordedTours: (tours) => {
+        assert.deepEqual(JSON.parse(storage.get('bendbound-state-v2')).tours, tours);
+        acknowledged.push(...tours.map((tour) => tour.id));
+      },
+    },
   });
   return {
     get value() { return value; },
@@ -203,37 +221,58 @@ function providerHarness(stored, { legacy = null, readFailure, writeFailure = fa
     get legacy() { return storage.get('roams-state-v2'); },
     reads,
     writes,
-    render() {
+    acknowledged,
+    async render() {
       cursor = 0;
       effects = [];
       value = AppProvider({ children: null }).props.value;
       effects.forEach((effect) => effect());
+      await new Promise((resolve) => setImmediate(resolve));
     },
   };
 }
 
+test('completed ride recovery merges once and is acknowledged only after a successful tour write', async (t) => {
+  t.mock.method(console, 'warn', () => {});
+  const ride = { id: 'recorded', title: 'Recovery ride', completed: true, route: [] };
+  const stored = JSON.stringify({ tours: [{ id: 'plan', route: [], saved: true }], settings: {}, routingVersion: 7 });
+  const failed = providerHarness(stored, { pending: [ride], writeFailure: true });
+  await failed.render(); await failed.render();
+  assert.equal(failed.value.tours[0].id, ride.id);
+  assert.deepEqual(failed.acknowledged, []);
+  assert.equal(failed.serialized, stored);
+  const retry = providerHarness(stored, { pending: [ride] });
+  await retry.render(); await retry.render();
+  assert.deepEqual(JSON.parse(retry.serialized).tours.map((tour) => tour.id), ['recorded', 'plan']);
+  assert.ok(retry.acknowledged.includes(ride.id));
+  const restarted = providerHarness(retry.serialized, { pending: [ride] });
+  await restarted.render(); await restarted.render();
+  assert.equal(restarted.value.tours.filter((tour) => tour.id === ride.id).length, 1);
+});
+
 test('bike settings are written to storage and restored across app restarts', async () => {
   const first = providerHarness(null);
-  first.render();
+  await first.render();
   await new Promise((resolve) => setImmediate(resolve));
-  first.render();
-  first.value.updateSettings({ motorcycleType: 'funventure', motorcycleName: 'My V-Strom', routingProfile: 'twisty', avoidMotorways: false, speedUnit: 'mph' });
-  first.render();
+  await first.render();
+  first.value.updateSettings({ motorcycleType: 'funventure', motorcycleName: 'My V-Strom', routingProfile: 'twisty', avoidMotorways: false, speedUnit: 'mph', routeColor: 'purple' });
+  await first.render();
   const second = providerHarness(first.serialized);
-  second.render();
+  await second.render();
   await new Promise((resolve) => setImmediate(resolve));
-  second.render();
+  await second.render();
   assert.equal(second.value.settings.motorcycleType, 'funventure');
   assert.equal(second.value.settings.motorcycleName, 'My V-Strom');
   assert.equal(second.value.settings.speedUnit, 'mph');
+  assert.equal(second.value.settings.routeColor, 'purple');
   assert.equal(second.value.settings.routingProfile, 'twisty');
   assert.equal(second.value.settings.avoidMotorways, false);
   second.value.updateSettings({ motorcycleType: 'scooter' });
-  second.render();
+  await second.render();
   const third = providerHarness(second.serialized);
-  third.render();
+  await third.render();
   await new Promise((resolve) => setImmediate(resolve));
-  third.render();
+  await third.render();
   assert.equal(third.value.settings.motorcycleType, 'scooter');
   assert.equal(third.value.settings.speedUnit, 'mph');
 });
@@ -247,9 +286,9 @@ test('rebranding preserves stored tours and preferences and updates only generat
   ];
   const legacy = JSON.stringify({ tours, settings: { speedUnit: 'mph', motorcycleType: 'funventure' }, routingVersion: 7 });
   const h = providerHarness(null, { legacy });
-  h.render();
+  await h.render();
   await new Promise((resolve) => setImmediate(resolve));
-  h.render();
+  await h.render();
   const expected = tours.map((tour, index) => ({ ...tour, place: ['Created in Bendbound', 'Recorded in Bendbound', 'Roams cafe'][index] }));
   assert.deepEqual(h.value.tours, expected);
   assert.deepEqual(JSON.parse(h.serialized).tours, expected);
@@ -264,9 +303,9 @@ test('new storage takes precedence over the legacy backup', async () => {
   const stored = JSON.stringify({ tours: [], settings: { motorcycleType: 'bogdan' }, routingVersion: 7 });
   const legacy = JSON.stringify({ tours: [{ id: 'deleted-tour' }], settings: { motorcycleType: 'funventure' } });
   const h = providerHarness(stored, { legacy });
-  h.render();
+  await h.render();
   await new Promise((resolve) => setImmediate(resolve));
-  h.render();
+  await h.render();
   assert.equal(h.value.settings.motorcycleType, 'bogdan');
   assert.deepEqual(h.value.tours, []);
   assert.deepEqual(h.reads, ['bendbound-state-v2']);
@@ -275,10 +314,10 @@ test('new storage takes precedence over the legacy backup', async () => {
 
 test('fresh installs persist defaults under the Bendbound key only', async () => {
   const h = providerHarness(null);
-  h.render();
+  await h.render();
   assert.deepEqual(h.writes, []);
   await new Promise((resolve) => setImmediate(resolve));
-  h.render();
+  await h.render();
   assert.equal(h.value.ready, true);
   assert.deepEqual(JSON.parse(h.serialized).settings, settingsUtils.initialSettings);
   assert.deepEqual(h.writes, ['bendbound-state-v2']);
@@ -291,12 +330,12 @@ test('unreadable saved data is never replaced with defaults or older data', asyn
   for (const invalid of ['{', 'null', '[]', '{"tours":{}}', '{"settings":[]}']) {
     for (const [stored, legacy] of [[invalid, valid], [null, invalid]]) {
       const h = providerHarness(stored, { legacy });
-      h.render();
+      await h.render();
       await new Promise((resolve) => setImmediate(resolve));
-      h.render();
+      await h.render();
       assert.equal(h.value.ready, true);
       h.value.updateSettings({ motorcycleType: 'petre' });
-      h.render();
+      await h.render();
       assert.deepEqual(h.writes, []);
       assert.equal(h.serialized, stored);
       assert.equal(h.legacy, legacy);
@@ -305,9 +344,9 @@ test('unreadable saved data is never replaced with defaults or older data', asyn
   }
   for (const readFailure of ['bendbound-state-v2', 'roams-state-v2']) {
     const h = providerHarness(null, { legacy: valid, readFailure });
-    h.render();
+    await h.render();
     await new Promise((resolve) => setImmediate(resolve));
-    h.render();
+    await h.render();
     assert.equal(h.value.ready, true);
     assert.deepEqual(h.writes, []);
     assert.equal(h.serialized, null);
@@ -318,34 +357,56 @@ test('unreadable saved data is never replaced with defaults or older data', asyn
 test('a failed migration write leaves the legacy backup intact for the next launch', async () => {
   const legacy = JSON.stringify({ tours: [], settings: { motorcycleType: 'foca' }, routingVersion: 7 });
   const h = providerHarness(null, { legacy, writeFailure: true });
-  h.render();
+  await h.render();
   await new Promise((resolve) => setImmediate(resolve));
-  h.render();
+  await h.render();
   await new Promise((resolve) => setImmediate(resolve));
   assert.equal(h.value.settings.motorcycleType, 'foca');
   assert.equal(h.serialized, null);
   assert.equal(h.legacy, legacy);
   const retry = providerHarness(h.serialized, { legacy: h.legacy });
-  retry.render();
+  await retry.render();
   await new Promise((resolve) => setImmediate(resolve));
-  retry.render();
+  await retry.render();
   assert.equal(JSON.parse(retry.serialized).settings.motorcycleType, 'foca');
 });
 
 test('every named motorcycle survives saving and restarting without overwriting custom bike names', async () => {
   for (const motorcycleType of ['funventure', 'bogdan', 'radu', 'petre', 'foca']) {
     const first = providerHarness(null);
-    first.render();
+    await first.render();
     await new Promise((resolve) => setImmediate(resolve));
-    first.render();
+    await first.render();
     first.value.updateSettings({ motorcycleType, motorcycleName: 'My personal bike', speedUnit: 'mph' });
-    first.render();
+    await first.render();
     const second = providerHarness(first.serialized);
-    second.render();
+    await second.render();
     await new Promise((resolve) => setImmediate(resolve));
-    second.render();
+    await second.render();
     assert.equal(second.value.settings.motorcycleType, motorcycleType);
     assert.equal(second.value.settings.motorcycleName, 'My personal bike');
     assert.equal(second.value.settings.speedUnit, 'mph');
+  }
+});
+
+
+test('route colour picker has one accessible selection and persists every offered colour', async () => {
+  let value = 'red';
+  const { RouteColorPicker } = load('src/components/RouteColorPicker.tsx', {
+    'react/jsx-runtime': { jsx, jsxs: jsx }, 'react-native': rn,
+    '@expo/vector-icons/Ionicons': { default: 'Icon' },
+    '@/data/routeColors': routeColorData, '@/theme': { colors: {} },
+  });
+  const render = () => RouteColorPicker({ value, onChange: (next) => { value = next; } });
+  for (const [color, metadata] of Object.entries(routeColorData.routeColors)) {
+    const selected = find(render(), (node) => node.props?.accessibilityLabel === `${metadata.label} route and arrows`);
+    selected.props.onPress();
+    assert.equal(value, color);
+    assert.equal(find(render(), (node) => node.props?.accessibilityLabel === `${metadata.label} route and arrows`).props.accessibilityState.checked, true);
+    const h = providerHarness(JSON.stringify({ tours: [], settings: { routeColor: color }, routingVersion: 7 }));
+    await h.render();
+    await new Promise((resolve) => setImmediate(resolve));
+    await h.render();
+    assert.equal(h.value.settings.routeColor, color);
   }
 });

@@ -1,0 +1,104 @@
+{
+  "verifiedAt": "2026-10-06T08:32:50.138Z",
+  "region": "eu-west-2",
+  "stackName": "bendbound-routing-london",
+  "instanceId": "i-0bd903e525ebce321",
+  "instanceType": "t4g.small",
+  "volumeId": "vol-0238ce34e4ba8f4d9",
+  "volumeGiB": 16,
+  "securityGroupId": "sg-0e76d37f3bf0a6cc2",
+  "access": "HTTPS bearer-token pilot from any network; SSM administration; TCP 80/443 only",
+  "cpuCredits": "standard",
+  "ssmVerificationCommandId": "493fe3e0-78fe-42fd-be26-bef032fa9b72",
+  "map": {
+    "source": "https://download.geofabrik.de/europe/united-kingdom/england/greater-london-latest.osm.pbf",
+    "sha256": "38b3981827e3657ffddfbb97f7566175222d88535e6cc981f1cc60280e41a9ac",
+    "preparedAt": "2026-10-06T08:24:59.388Z"
+  },
+  "checks": [
+    {
+      "check": "health",
+      "seconds": 0.039,
+      "response": {
+        "status": "ready",
+        "engine": "valhalla",
+        "version": "3.9.0"
+      }
+    },
+    {
+      "check": "route",
+      "seconds": 0.056,
+      "summary": {
+        "has_time_restrictions": false,
+        "has_toll": false,
+        "has_highway": false,
+        "has_ferry": false,
+        "min_lat": 51.474211,
+        "min_lon": -0.086409,
+        "max_lat": 51.505154,
+        "max_lon": -0.008918,
+        "time": 744.545,
+        "length": 8.234,
+        "cost": 1154.666
+      },
+      "legs": 1,
+      "maneuvers": 9,
+      "planner": null
+    },
+    {
+      "check": "round-trip",
+      "seconds": 0.852,
+      "summary": {
+        "has_time_restrictions": true,
+        "has_toll": true,
+        "has_highway": false,
+        "has_ferry": false,
+        "min_lat": 51.480714,
+        "min_lon": -0.055678,
+        "max_lat": 51.51566,
+        "max_lon": 0.018303,
+        "time": 1900.922,
+        "length": 19.071,
+        "cost": 4261.533
+      },
+      "legs": 1,
+      "maneuvers": 51,
+      "planner": {
+        "engine": "valhalla",
+        "valid": true,
+        "distanceKm": 19.071,
+        "distanceErrorKm": 0.9289999999999985,
+        "overlapRatio": 0,
+        "repeatedKm": 0,
+        "closed": true,
+        "nearStart": true,
+        "attempts": 11,
+        "elapsedMs": 847
+      }
+    }
+  ],
+  "observedResources": {
+    "valhallaMiB": 170.2,
+    "apiMiB": 85.39,
+    "hostAvailableMiB": 1247,
+    "swapUsedMiB": 21,
+    "diskAvailableGiB": 8.3,
+    "containerOomKilled": false,
+    "containerRestarts": 0
+  },
+  "estimatedMonthlyUSD": {
+    "running730Hours": 18.86,
+    "excludes": "Tax, charged data transfer, Route 53 hosted-zone/query charges and annual domain registration; no free-tier or credit assumptions",
+    "stoppedDiskAndElasticIp": 5.13
+  },
+  "routingUrl": "https://api.bendboundapp.com",
+  "publicIp": "16.60.63.241",
+  "elasticIpAllocationId": "eipalloc-0f5fba50f462d04fa",
+  "hostedZoneId": "Z07131531TX895IIR7J1N",
+  "httpsVerification": "https-verification.json",
+  "requestLimits": {
+    "perClientIpPerMinute": 30,
+    "globalPerMinute": 120,
+    "concurrent": 2
+  }
+}

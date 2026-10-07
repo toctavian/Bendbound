@@ -1,0 +1,17 @@
+{$ROUTING_HOSTNAME} {
+    request_body {
+        max_size 64KB
+    }
+    @pilot header Authorization "Bearer {$ROUTING_API_TOKEN}"
+    handle @pilot {
+        reverse_proxy api:8080 {
+            # Overwrite caller-supplied values so API limits use the actual peer.
+            header_up X-Routing-Client-IP {remote_host}
+            header_up -Authorization
+        }
+    }
+    handle {
+        header Content-Type application/json
+        respond `{"code":"UNAUTHORIZED","message":"This test build does not have valid routing access."}` 401
+    }
+}

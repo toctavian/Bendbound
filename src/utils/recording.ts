@@ -26,12 +26,12 @@ export function resumeRecording(session: RecordingSession, now: number): Recordi
   return { ...session, activeSince: now, segments: [...session.segments, []] };
 }
 
-export function appendRecordingFix(session: RecordingSession, point: TrackPoint, now: number): RecordingSession {
+export function appendRecordingFix(session: RecordingSession, point: TrackPoint, now: number, maxAgeMs = 15000): RecordingSession {
   if (session.activeSince == null || !Number.isFinite(point.latitude) || Math.abs(point.latitude) > 90
     || !Number.isFinite(point.longitude) || Math.abs(point.longitude) > 180
     || !Number.isFinite(point.accuracy) || point.accuracy < 0 || point.accuracy > 50
     || !Number.isFinite(point.timestamp) || point.timestamp < session.activeSince
-    || now - point.timestamp > 15000 || point.timestamp > now + 1000) return session;
+    || now - point.timestamp > maxAgeMs || point.timestamp > now + 1000) return session;
   const segment = session.segments[session.segments.length - 1] ?? [];
   const previous = segment[segment.length - 1];
   if (previous && point.timestamp <= previous.timestamp) return session;

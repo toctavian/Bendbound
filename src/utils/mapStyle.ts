@@ -1,0 +1,45 @@
+import type { StyleSpecification } from '@maplibre/maplibre-react-native';
+
+// One vector basemap, shared by browsing, previews and navigation. No raster
+// overlays, business labels or extruded buildings compete with the route.
+export const rideMapStyle: StyleSpecification = {
+  version: 8,
+  name: 'Bendbound',
+  glyphs: 'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
+  sources: {
+    openmaptiles: { type: 'vector', url: 'https://tiles.openfreemap.org/planet' },
+  },
+  layers: [
+    { id: 'background', type: 'background', paint: { 'background-color': '#eef0ec' } },
+    { id: 'green', type: 'fill', source: 'openmaptiles', 'source-layer': 'landcover',
+      filter: ['in', 'class', 'wood', 'grass'], paint: { 'fill-color': '#dbe5d4' } },
+    { id: 'parks', type: 'fill', source: 'openmaptiles', 'source-layer': 'park',
+      paint: { 'fill-color': '#dbe5d4', 'fill-opacity': 0.65 } },
+    { id: 'water', type: 'fill', source: 'openmaptiles', 'source-layer': 'water',
+      paint: { 'fill-color': '#b7d9e6' } },
+    { id: 'buildings', type: 'fill', source: 'openmaptiles', 'source-layer': 'building', minzoom: 16,
+      paint: { 'fill-color': '#dfe2df', 'fill-opacity': 0.65 } },
+    { id: 'road-casing', type: 'line', source: 'openmaptiles', 'source-layer': 'transportation',
+      filter: ['in', 'class', 'motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'minor', 'service'],
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': '#ced3d1', 'line-width': ['interpolate', ['linear'], ['zoom'], 6, 0.5, 12, 3, 16, 10, 19, 25] } },
+    { id: 'roads', type: 'line', source: 'openmaptiles', 'source-layer': 'transportation',
+      filter: ['in', 'class', 'motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'minor', 'service'],
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': '#ffffff', 'line-width': ['interpolate', ['linear'], ['zoom'], 6, 0.3, 12, 2, 16, 8, 19, 22] } },
+    { id: 'major-roads', type: 'line', source: 'openmaptiles', 'source-layer': 'transportation',
+      filter: ['in', 'class', 'motorway', 'trunk', 'primary'],
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': '#f5d7a2', 'line-width': ['interpolate', ['linear'], ['zoom'], 6, 1, 12, 3, 16, 8, 19, 22] } },
+    { id: 'road-labels', type: 'symbol', source: 'openmaptiles', 'source-layer': 'transportation_name', minzoom: 14,
+      filter: ['in', 'class', 'motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'minor'],
+      layout: { 'symbol-placement': 'line', 'symbol-spacing': 450, 'text-field': ['coalesce', ['get', 'name:en'], ['get', 'name']],
+        'text-font': ['Noto Sans Regular'], 'text-size': 11, 'text-padding': 12, 'text-max-angle': 25 },
+      paint: { 'text-color': '#667173', 'text-halo-color': '#ffffff', 'text-halo-width': 1.5 } },
+    { id: 'town-labels', type: 'symbol', source: 'openmaptiles', 'source-layer': 'place', minzoom: 7, maxzoom: 15,
+      filter: ['in', 'class', 'city', 'town', 'village'],
+      layout: { 'text-field': ['coalesce', ['get', 'name:en'], ['get', 'name']], 'text-font': ['Noto Sans Regular'],
+        'text-size': 13, 'text-padding': 24 },
+      paint: { 'text-color': '#526065', 'text-halo-color': '#ffffff', 'text-halo-width': 1.5 } },
+  ],
+};
