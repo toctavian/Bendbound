@@ -1,0 +1,1717 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Bendbound private group room/latest-point pilot and monitored cleanup; existing Cognito and session stack required. Local preparation only.",
+  "Parameters": {
+    "ResourcePrefix": {
+      "Type": "String",
+      "Default": "bendbound-group-pilot",
+      "AllowedPattern": "[a-z][a-z0-9-]{2,39}"
+    },
+    "CognitoUserPoolId": {
+      "Type": "String",
+      "AllowedPattern": "eu-west-2_[A-Za-z0-9]+"
+    },
+    "CognitoClientId": {
+      "Type": "String",
+      "AllowedPattern": "[A-Za-z0-9]+"
+    },
+    "SessionTableName": {
+      "Type": "String",
+      "AllowedPattern": "[A-Za-z0-9_.-]{3,255}"
+    },
+    "SessionFunctionArn": {
+      "Type": "String",
+      "AllowedPattern": "arn:aws:lambda:eu-west-2:[0-9]{12}:function:[A-Za-z0-9_-]+"
+    },
+    "ArtifactBucket": {
+      "Type": "String"
+    },
+    "ArtifactKey": {
+      "Type": "String"
+    },
+    "AlarmTopicArn": {
+      "Type": "String",
+      "Default": "",
+      "AllowedPattern": "(^$|arn:aws:sns:eu-west-2:[0-9]{12}:[A-Za-z0-9_-]+$)"
+    },
+    "EnableServices": {
+      "Type": "String",
+      "Default": "false",
+      "AllowedValues": [
+        "true",
+        "false"
+      ],
+      "Description": "Keep false while provisioning storage for account cleanup. Enable only after private identity/device gates."
+    },
+    "LobbyOnly": {
+      "Type": "String",
+      "Default": "true",
+      "AllowedValues": [
+        "true",
+        "false"
+      ],
+      "Description": "Keep true for invitations/roster pilot; rejects live sharing and start operations."
+    }
+  },
+  "Conditions": {
+    "HasAlarmTopic": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "AlarmTopicArn"
+            },
+            ""
+          ]
+        }
+      ]
+    },
+    "ServicesEnabled": {
+      "Fn::Equals": [
+        {
+          "Ref": "EnableServices"
+        },
+        "true"
+      ]
+    }
+  },
+  "Resources": {
+    "RoomTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Delete",
+      "UpdateReplacePolicy": "Delete",
+      "Properties": {
+        "TableName": {
+          "Fn::Sub": "${ResourcePrefix}-rooms"
+        },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "cleanupBucket",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "purgeAt",
+            "AttributeType": "N"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH"
+          }
+        ],
+        "SSESpecification": {
+          "SSEEnabled": true
+        },
+        "PointInTimeRecoverySpecification": {
+          "PointInTimeRecoveryEnabled": false
+        },
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true
+        },
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "ExpiryIndex",
+            "KeySchema": [
+              {
+                "AttributeName": "cleanupBucket",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "purgeAt",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "INCLUDE",
+              "NonKeyAttributes": [
+                "revision"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "LocationTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Delete",
+      "UpdateReplacePolicy": "Delete",
+      "Properties": {
+        "TableName": {
+          "Fn::Sub": "${ResourcePrefix}-points"
+        },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "sk",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "cleanupBucket",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "expiresAt",
+            "AttributeType": "N"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "sk",
+            "KeyType": "RANGE"
+          }
+        ],
+        "SSESpecification": {
+          "SSEEnabled": true
+        },
+        "PointInTimeRecoverySpecification": {
+          "PointInTimeRecoveryEnabled": false
+        },
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true
+        },
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "ExpiryIndex",
+            "KeySchema": [
+              {
+                "AttributeName": "cleanupBucket",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "expiresAt",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "INCLUDE",
+              "NonKeyAttributes": [
+                "pointVersion"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "RoomLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Sub": "/aws/lambda/${ResourcePrefix}-rooms"
+        },
+        "RetentionInDays": 7
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Sub": "/aws/lambda/${ResourcePrefix}-point-cleanup"
+        },
+        "RetentionInDays": 7
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "private-storage-and-logs",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:ConditionCheckItem"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SessionTableName}"
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:PutItem",
+                    "dynamodb:ConditionCheckItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "RoomTable",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:PutItem",
+                    "dynamodb:DeleteItem",
+                    "dynamodb:ConditionCheckItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "LocationTable",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "RoomLogGroup",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:UpdateItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "RoomBudgetTable",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "ROOM_RATE#create#*",
+                        "ROOM_RATE#redeem#*",
+                        "ROOM_RATE#fix#*",
+                        "ROOM_RATE#snapshot#*",
+                        "ROOM_RATE#invite#*",
+                        "ROOM_RATE#control#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "private-storage-and-logs",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:Query"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "${LocationTable.Arn}/index/ExpiryIndex"
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:DeleteItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "LocationTable",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "CleanupLogGroup",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomFunction": {
+      "Type": "AWS::Lambda::Function",
+      "DependsOn": "RoomLogGroup",
+      "Properties": {
+        "FunctionName": {
+          "Fn::Sub": "${ResourcePrefix}-rooms"
+        },
+        "Runtime": "nodejs22.x",
+        "Handler": "src/roomLambda.handler",
+        "Architectures": [
+          "arm64"
+        ],
+        "MemorySize": 256,
+        "Timeout": 20,
+        "ReservedConcurrentExecutions": 10,
+        "Role": {
+          "Fn::GetAtt": [
+            "RoomRole",
+            "Arn"
+          ]
+        },
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ArtifactBucket"
+          },
+          "S3Key": {
+            "Ref": "ArtifactKey"
+          }
+        },
+        "Environment": {
+          "Variables": {
+            "SESSION_TABLE_NAME": {
+              "Ref": "SessionTableName"
+            },
+            "ROOM_TABLE_NAME": {
+              "Ref": "RoomTable"
+            },
+            "LOCATION_TABLE_NAME": {
+              "Ref": "LocationTable"
+            },
+            "COGNITO_USER_POOL_ID": {
+              "Ref": "CognitoUserPoolId"
+            },
+            "COGNITO_CLIENT_ID": {
+              "Ref": "CognitoClientId"
+            },
+            "ROOM_BUDGET_TABLE_NAME": {
+              "Ref": "RoomBudgetTable"
+            },
+            "GROUP_LOBBY_ONLY": {
+              "Ref": "LobbyOnly"
+            }
+          }
+        },
+        "LoggingConfig": {
+          "LogFormat": "Text"
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupFunction": {
+      "Type": "AWS::Lambda::Function",
+      "DependsOn": "CleanupLogGroup",
+      "Properties": {
+        "FunctionName": {
+          "Fn::Sub": "${ResourcePrefix}-point-cleanup"
+        },
+        "Runtime": "nodejs22.x",
+        "Handler": "src/locationCleanupLambda.handler",
+        "Architectures": [
+          "arm64"
+        ],
+        "MemorySize": 256,
+        "Timeout": 55,
+        "ReservedConcurrentExecutions": 1,
+        "Role": {
+          "Fn::GetAtt": [
+            "CleanupRole",
+            "Arn"
+          ]
+        },
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ArtifactBucket"
+          },
+          "S3Key": {
+            "Ref": "ArtifactKey"
+          }
+        },
+        "Environment": {
+          "Variables": {
+            "SESSION_TABLE_NAME": {
+              "Ref": "SessionTableName"
+            },
+            "ROOM_TABLE_NAME": {
+              "Ref": "RoomTable"
+            },
+            "LOCATION_TABLE_NAME": {
+              "Ref": "LocationTable"
+            }
+          }
+        },
+        "LoggingConfig": {
+          "LogFormat": "Text"
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "GroupApi": {
+      "Type": "AWS::ApiGatewayV2::Api",
+      "Properties": {
+        "Name": {
+          "Fn::Sub": "${ResourcePrefix}-rooms"
+        },
+        "ProtocolType": "HTTP",
+        "DisableExecuteApiEndpoint": false
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomIntegration": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "GroupApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "RoomFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 20000
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "SessionIntegration": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "GroupApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Ref": "SessionFunctionArn"
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 20000
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CreateRoomRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "GroupApi"
+        },
+        "RouteKey": "POST /v1/rooms",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "RoomIntegration"
+              }
+            ]
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomOperationsRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "GroupApi"
+        },
+        "RouteKey": "ANY /v1/rooms/{proxy+}",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "RoomIntegration"
+              }
+            ]
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "BootstrapRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "GroupApi"
+        },
+        "RouteKey": "POST /v1/session",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "SessionIntegration"
+              }
+            ]
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "SessionStatusRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "GroupApi"
+        },
+        "RouteKey": "GET /v1/session",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "SessionIntegration"
+              }
+            ]
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "SessionRevokeRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "GroupApi"
+        },
+        "RouteKey": "DELETE /v1/session",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "SessionIntegration"
+              }
+            ]
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "GroupStage": {
+      "Type": "AWS::ApiGatewayV2::Stage",
+      "Properties": {
+        "ApiId": {
+          "Ref": "GroupApi"
+        },
+        "StageName": "$default",
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "ThrottlingBurstLimit": 40,
+          "ThrottlingRateLimit": 20
+        },
+        "RouteSettings": {
+          "POST /v1/session/logout": {
+            "ThrottlingBurstLimit": 2,
+            "ThrottlingRateLimit": 1
+          }
+        }
+      },
+      "DependsOn": [
+        "SessionLogoutRoute"
+      ],
+      "Condition": "ServicesEnabled"
+    },
+    "RoomInvokePermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "RoomFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Sub": "arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${GroupApi}/*/*/v1/rooms"
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomOperationsPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "RoomFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Sub": "arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${GroupApi}/*/*/v1/rooms/*"
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "SessionInvokePermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SessionFunctionArn"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Sub": "arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${GroupApi}/*/*/v1/session"
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupSchedule": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Name": {
+          "Fn::Sub": "${ResourcePrefix}-point-cleanup"
+        },
+        "ScheduleExpression": "rate(1 minute)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Id": "Cleanup",
+            "Arn": {
+              "Fn::GetAtt": [
+                "CleanupFunction",
+                "Arn"
+              ]
+            },
+            "Input": "{}",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 60,
+              "MaximumRetryAttempts": 0
+            }
+          }
+        ]
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupInvokePermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CleanupFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "CleanupSchedule",
+            "Arn"
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupAsyncConfig": {
+      "Type": "AWS::Lambda::EventInvokeConfig",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CleanupFunction"
+        },
+        "Qualifier": "$LATEST",
+        "MaximumEventAgeInSeconds": 60,
+        "MaximumRetryAttempts": 0
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupBacklogAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "Bendbound/GroupRides",
+        "MetricName": "CleanupBacklog",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "CleanupFunction"
+            }
+          }
+        ],
+        "Statistic": "Maximum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupFailureAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "Bendbound/GroupRides",
+        "MetricName": "CleanupFailed",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "CleanupFunction"
+            }
+          }
+        ],
+        "Statistic": "Maximum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupHeartbeatAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "Bendbound/GroupRides",
+        "MetricName": "CleanupSucceeded",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "CleanupFunction"
+            }
+          }
+        ],
+        "Statistic": "Maximum",
+        "Period": 60,
+        "EvaluationPeriods": 3,
+        "DatapointsToAlarm": 3,
+        "Threshold": 1,
+        "ComparisonOperator": "LessThanThreshold",
+        "TreatMissingData": "breaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupRetentionAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "Bendbound/GroupRides",
+        "MetricName": "OldestObservedOverdueMs",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "CleanupFunction"
+            }
+          }
+        ],
+        "Statistic": "Maximum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 60000,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupRuntimeErrorAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Errors",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "CleanupFunction"
+            }
+          }
+        ],
+        "Statistic": "Sum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupThrottleAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Throttles",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "CleanupFunction"
+            }
+          }
+        ],
+        "Statistic": "Sum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupDroppedEventAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "AWS/Lambda",
+        "MetricName": "AsyncEventsDropped",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "CleanupFunction"
+            }
+          }
+        ],
+        "Statistic": "Sum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomRuntimeErrorAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Errors",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "RoomFunction"
+            }
+          }
+        ],
+        "Statistic": "Sum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupDeliveryAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "AWS/Events",
+        "MetricName": "FailedInvocations",
+        "Dimensions": [
+          {
+            "Name": "RuleName",
+            "Value": {
+              "Ref": "CleanupSchedule"
+            }
+          }
+        ],
+        "Statistic": "Sum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomThrottleAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Throttles",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "RoomFunction"
+            }
+          }
+        ],
+        "Statistic": "Sum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "GroupApiServerErrorAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "AWS/ApiGateway",
+        "MetricName": "5xx",
+        "Dimensions": [
+          {
+            "Name": "ApiId",
+            "Value": {
+              "Ref": "GroupApi"
+            }
+          }
+        ],
+        "Statistic": "Sum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "SessionLogoutRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "GroupApi"
+        },
+        "RouteKey": "POST /v1/session/logout",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "SessionIntegration"
+              }
+            ]
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "SessionLogoutInvokePermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SessionFunctionArn"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Sub": "arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${GroupApi}/*/POST/v1/session/logout"
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomCleanupLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Sub": "/aws/lambda/${ResourcePrefix}-room-cleanup"
+        },
+        "RetentionInDays": 7
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomCleanupRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "private-storage-and-logs",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:Query"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "${RoomTable.Arn}/index/ExpiryIndex"
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:DeleteItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "RoomTable",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "RoomCleanupLogGroup",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomCleanupFunction": {
+      "Type": "AWS::Lambda::Function",
+      "DependsOn": "RoomCleanupLogGroup",
+      "Properties": {
+        "FunctionName": {
+          "Fn::Sub": "${ResourcePrefix}-room-cleanup"
+        },
+        "Runtime": "nodejs22.x",
+        "Handler": "src/roomCleanupLambda.handler",
+        "Architectures": [
+          "arm64"
+        ],
+        "MemorySize": 256,
+        "Timeout": 55,
+        "ReservedConcurrentExecutions": 1,
+        "Role": {
+          "Fn::GetAtt": [
+            "RoomCleanupRole",
+            "Arn"
+          ]
+        },
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ArtifactBucket"
+          },
+          "S3Key": {
+            "Ref": "ArtifactKey"
+          }
+        },
+        "Environment": {
+          "Variables": {
+            "ROOM_TABLE_NAME": {
+              "Ref": "RoomTable"
+            }
+          }
+        },
+        "LoggingConfig": {
+          "LogFormat": "Text"
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomCleanupSchedule": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Name": {
+          "Fn::Sub": "${ResourcePrefix}-room-cleanup"
+        },
+        "ScheduleExpression": "rate(1 minute)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Id": "Cleanup",
+            "Arn": {
+              "Fn::GetAtt": [
+                "RoomCleanupFunction",
+                "Arn"
+              ]
+            },
+            "Input": "{}",
+            "RetryPolicy": {
+              "MaximumEventAgeInSeconds": 60,
+              "MaximumRetryAttempts": 0
+            }
+          }
+        ]
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomCleanupInvokePermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "RoomCleanupFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "RoomCleanupSchedule",
+            "Arn"
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomCleanupAsyncConfig": {
+      "Type": "AWS::Lambda::EventInvokeConfig",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "RoomCleanupFunction"
+        },
+        "Qualifier": "$LATEST",
+        "MaximumEventAgeInSeconds": 60,
+        "MaximumRetryAttempts": 0
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomCleanupBacklogAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "Bendbound/GroupRides",
+        "MetricName": "CleanupBacklog",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "RoomCleanupFunction"
+            }
+          }
+        ],
+        "Statistic": "Maximum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomCleanupFailureAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "Bendbound/GroupRides",
+        "MetricName": "CleanupFailed",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "RoomCleanupFunction"
+            }
+          }
+        ],
+        "Statistic": "Maximum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomCleanupHeartbeatAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "Bendbound/GroupRides",
+        "MetricName": "CleanupSucceeded",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "RoomCleanupFunction"
+            }
+          }
+        ],
+        "Statistic": "Maximum",
+        "Period": 60,
+        "EvaluationPeriods": 3,
+        "DatapointsToAlarm": 3,
+        "Threshold": 1,
+        "ComparisonOperator": "LessThanThreshold",
+        "TreatMissingData": "breaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomCleanupRetentionAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "Bendbound/GroupRides",
+        "MetricName": "OldestObservedOverdueMs",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "RoomCleanupFunction"
+            }
+          }
+        ],
+        "Statistic": "Maximum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 60000,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomCleanupRuntimeErrorAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Errors",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "RoomCleanupFunction"
+            }
+          }
+        ],
+        "Statistic": "Sum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomCleanupThrottleAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Throttles",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "RoomCleanupFunction"
+            }
+          }
+        ],
+        "Statistic": "Sum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomCleanupDroppedEventAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "AWS/Lambda",
+        "MetricName": "AsyncEventsDropped",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "RoomCleanupFunction"
+            }
+          }
+        ],
+        "Statistic": "Sum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomCleanupDeliveryAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Group pilot operational alarm; inspect aggregates only, never log positions/tokens.",
+        "Namespace": "AWS/Events",
+        "MetricName": "FailedInvocations",
+        "Dimensions": [
+          {
+            "Name": "RuleName",
+            "Value": {
+              "Ref": "RoomCleanupSchedule"
+            }
+          }
+        ],
+        "Statistic": "Sum",
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "Threshold": 0,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": {
+          "Fn::If": [
+            "HasAlarmTopic",
+            [
+              {
+                "Ref": "AlarmTopicArn"
+              }
+            ],
+            []
+          ]
+        }
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomBudgetTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Delete",
+      "UpdateReplacePolicy": "Delete",
+      "Properties": {
+        "TableName": {
+          "Fn::Sub": "${ResourcePrefix}-room-budget"
+        },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH"
+          }
+        ],
+        "SSESpecification": {
+          "SSEEnabled": true
+        },
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true
+        },
+        "PointInTimeRecoverySpecification": {
+          "PointInTimeRecoveryEnabled": false
+        }
+      },
+      "Condition": "ServicesEnabled"
+    }
+  },
+  "Outputs": {
+    "GroupApiBaseUrl": {
+      "Value": {
+        "Fn::GetAtt": [
+          "GroupApi",
+          "ApiEndpoint"
+        ]
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "RoomTableName": {
+      "Value": {
+        "Ref": "RoomTable"
+      }
+    },
+    "LocationTableName": {
+      "Value": {
+        "Ref": "LocationTable"
+      }
+    },
+    "CleanupFunctionName": {
+      "Value": {
+        "Ref": "CleanupFunction"
+      },
+      "Condition": "ServicesEnabled"
+    },
+    "CleanupRuleName": {
+      "Value": {
+        "Ref": "CleanupSchedule"
+      },
+      "Condition": "ServicesEnabled"
+    }
+  }
+}

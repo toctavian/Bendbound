@@ -1,0 +1,1670 @@
+{
+  "verifiedAt": "2026-10-07T15:19:58.026832+00:00",
+  "base": "http://127.0.0.1:8088",
+  "checks": [
+    {
+      "check": "health",
+      "seconds": 0.275,
+      "response": {
+        "status": "ready",
+        "engine": "valhalla",
+        "version": "3.9.0",
+        "implementation": "road-catalogue-v1",
+        "area": {
+          "center": {
+            "latitude": 51.5074,
+            "longitude": -0.1278
+          },
+          "radiusKm": 100
+        },
+        "catalogue": {
+          "version": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+          "graph_version": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+          "sections": 21892,
+          "recommended_sections": 126,
+          "edges": 2299432
+        }
+      }
+    },
+    {
+      "check": "full-road-area-search",
+      "seconds": 0.322,
+      "returnedSections": 100,
+      "sample": [
+        {
+          "id": "section-d3c840f6c71c8c5558efc235bad5b8f7",
+          "name": "Guildford Road",
+          "ref": "A25",
+          "lengthKm": 0.8179752512480452,
+          "rating": 2.449578928866496,
+          "quality": 2.213684184094994,
+          "winding": 2.8742239673743466,
+          "twisty": 0.867319130793389,
+          "recommendationCount": 2,
+          "frequencyRating": 3,
+          "ratingBasis": "geometry-and-guide-frequency",
+          "surfaceConfidence": "mapped-paved",
+          "sources": [
+            {
+              "publisher": "Devitt",
+              "url": "https://www.devittinsurance.com/guides/best-biking-routes/south-east/"
+            },
+            {
+              "publisher": "WeBuyAnyBike247",
+              "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+            }
+          ],
+          "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                -0.4252916,
+                51.2145629
+              ],
+              [
+                -0.424929,
+                51.2145347
+              ],
+              [
+                -0.4245439,
+                51.2144868
+              ],
+              [
+                -0.4243004,
+                51.2144771
+              ],
+              [
+                -0.4241264,
+                51.2144771
+              ],
+              [
+                -0.4236919,
+                51.2144953
+              ],
+              [
+                -0.4232598,
+                51.2145449
+              ],
+              [
+                -0.4225156,
+                51.2146857
+              ],
+              [
+                -0.4222556,
+                51.2147037
+              ],
+              [
+                -0.421971,
+                51.2146985
+              ],
+              [
+                -0.4210954,
+                51.2146544
+              ],
+              [
+                -0.4206926,
+                51.2146516
+              ],
+              [
+                -0.4203544,
+                51.2146643
+              ],
+              [
+                -0.4199945,
+                51.2147043
+              ],
+              [
+                -0.4195484,
+                51.2147772
+              ],
+              [
+                -0.4187244,
+                51.2149381
+              ],
+              [
+                -0.4184799,
+                51.2149643
+              ],
+              [
+                -0.4183173,
+                51.2149681
+              ],
+              [
+                -0.4181476,
+                51.2149612
+              ],
+              [
+                -0.4178164,
+                51.2149249
+              ],
+              [
+                -0.4174952,
+                51.2148694
+              ],
+              [
+                -0.4172185,
+                51.2148357
+              ],
+              [
+                -0.4170395,
+                51.2148228
+              ],
+              [
+                -0.416935,
+                51.2148202
+              ],
+              [
+                -0.416847,
+                51.214819
+              ],
+              [
+                -0.4168017,
+                51.2148204
+              ],
+              [
+                -0.4162011,
+                51.2148236
+              ],
+              [
+                -0.4156593,
+                51.2148303
+              ],
+              [
+                -0.4154387,
+                51.2148399
+              ],
+              [
+                -0.4151402,
+                51.2148765
+              ],
+              [
+                -0.4148235,
+                51.2149288
+              ],
+              [
+                -0.4144335,
+                51.2149899
+              ],
+              [
+                -0.4140942,
+                51.2150327
+              ],
+              [
+                -0.4137655,
+                51.2150479
+              ]
+            ]
+          }
+        },
+        {
+          "id": "section-22a115f870b54e1a200498c55c741a4c",
+          "name": "Shere Road",
+          "ref": "A25",
+          "lengthKm": 1.4236697281583253,
+          "rating": 2.2650071517218984,
+          "quality": 1.950010216745569,
+          "winding": 2.3333542907601417,
+          "twisty": 1.0400512087718325,
+          "recommendationCount": 2,
+          "frequencyRating": 3,
+          "ratingBasis": "geometry-and-guide-frequency",
+          "surfaceConfidence": "mapped-paved",
+          "sources": [
+            {
+              "publisher": "Devitt",
+              "url": "https://www.devittinsurance.com/guides/best-biking-routes/south-east/"
+            },
+            {
+              "publisher": "WeBuyAnyBike247",
+              "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+            }
+          ],
+          "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                -0.5056431,
+                51.2329171
+              ],
+              [
+                -0.5055645,
+                51.2327874
+              ],
+              [
+                -0.5054716,
+                51.2326641
+              ],
+              [
+                -0.5053,
+                51.2324883
+              ],
+              [
+                -0.5050462,
+                51.2323186
+              ],
+              [
+                -0.5049816,
+                51.2322799
+              ],
+              [
+                -0.5049037,
+                51.2322382
+              ],
+              [
+                -0.5046853,
+                51.2321229
+              ],
+              [
+                -0.5045361,
+                51.232058
+              ],
+              [
+                -0.5043658,
+                51.2319955
+              ],
+              [
+                -0.5039897,
+                51.2318754
+              ],
+              [
+                -0.5034377,
+                51.2317081
+              ],
+              [
+                -0.5030967,
+                51.2316106
+              ],
+              [
+                -0.5027124,
+                51.2315299
+              ],
+              [
+                -0.5019243,
+                51.2313858
+              ],
+              [
+                -0.501721,
+                51.2313484
+              ],
+              [
+                -0.5014763,
+                51.2313109
+              ],
+              [
+                -0.5012439,
+                51.2312864
+              ],
+              [
+                -0.5009763,
+                51.2312687
+              ],
+              [
+                -0.5000948,
+                51.231243
+              ],
+              [
+                -0.4997518,
+                51.2312353
+              ],
+              [
+                -0.4994115,
+                51.2312206
+              ],
+              [
+                -0.4990734,
+                51.2312101
+              ],
+              [
+                -0.4987308,
+                51.2312083
+              ],
+              [
+                -0.4985118,
+                51.2311965
+              ],
+              [
+                -0.4983629,
+                51.2311774
+              ],
+              [
+                -0.4982198,
+                51.231152
+              ],
+              [
+                -0.4979998,
+                51.2310942
+              ],
+              [
+                -0.4977844,
+                51.2310268
+              ],
+              [
+                -0.4973509,
+                51.230896
+              ],
+              [
+                -0.4969083,
+                51.2307886
+              ],
+              [
+                -0.4964483,
+                51.2306815
+              ],
+              [
+                -0.4961086,
+                51.2305876
+              ],
+              [
+                -0.4959526,
+                51.2305263
+              ],
+              [
+                -0.495813,
+                51.2304577
+              ],
+              [
+                -0.4954963,
+                51.2302833
+              ],
+              [
+                -0.4951374,
+                51.2300927
+              ],
+              [
+                -0.494904,
+                51.2299808
+              ],
+              [
+                -0.4946643,
+                51.2298711
+              ],
+              [
+                -0.4941919,
+                51.2296504
+              ],
+              [
+                -0.4937281,
+                51.2294245
+              ],
+              [
+                -0.4934328,
+                51.2292788
+              ],
+              [
+                -0.4931433,
+                51.2291308
+              ],
+              [
+                -0.4928719,
+                51.2289792
+              ],
+              [
+                -0.4924349,
+                51.2287169
+              ],
+              [
+                -0.4922636,
+                51.2286195
+              ],
+              [
+                -0.4920655,
+                51.2285289
+              ],
+              [
+                -0.4919748,
+                51.2284904
+              ],
+              [
+                -0.4918581,
+                51.228457
+              ],
+              [
+                -0.4910027,
+                51.2282621
+              ],
+              [
+                -0.4908646,
+                51.2282211
+              ],
+              [
+                -0.4907388,
+                51.2281782
+              ],
+              [
+                -0.4906188,
+                51.228122
+              ],
+              [
+                -0.4905138,
+                51.2280594
+              ],
+              [
+                -0.4902209,
+                51.2278527
+              ],
+              [
+                -0.4899278,
+                51.2276656
+              ],
+              [
+                -0.4894813,
+                51.2274184
+              ],
+              [
+                -0.489058,
+                51.2271677
+              ],
+              [
+                -0.488547,
+                51.2268368
+              ]
+            ]
+          }
+        },
+        {
+          "id": "section-65649e2e74f7427080b4ea93d0adf792",
+          "name": "Coast Hill",
+          "ref": "A25",
+          "lengthKm": 0.95971490379737,
+          "rating": 2.252215606530073,
+          "quality": 1.9317365807572473,
+          "winding": 2.295869909245635,
+          "twisty": 1.5090300154485747,
+          "recommendationCount": 2,
+          "frequencyRating": 3,
+          "ratingBasis": "geometry-and-guide-frequency",
+          "surfaceConfidence": "unknown",
+          "sources": [
+            {
+              "publisher": "Devitt",
+              "url": "https://www.devittinsurance.com/guides/best-biking-routes/south-east/"
+            },
+            {
+              "publisher": "WeBuyAnyBike247",
+              "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+            }
+          ],
+          "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                -0.3888815,
+                51.2172229
+              ],
+              [
+                -0.3884797,
+                51.2176721
+              ],
+              [
+                -0.3874239,
+                51.2187475
+              ],
+              [
+                -0.3869472,
+                51.2191039
+              ],
+              [
+                -0.3865922,
+                51.2195044
+              ],
+              [
+                -0.3862933,
+                51.2200875
+              ],
+              [
+                -0.385981,
+                51.2203475
+              ],
+              [
+                -0.3845966,
+                51.2209485
+              ],
+              [
+                -0.3842428,
+                51.2211614
+              ],
+              [
+                -0.3836683,
+                51.2218898
+              ],
+              [
+                -0.3835206,
+                51.2220351
+              ],
+              [
+                -0.3832904,
+                51.2222308
+              ],
+              [
+                -0.3829732,
+                51.2224651
+              ],
+              [
+                -0.382448,
+                51.2226279
+              ],
+              [
+                -0.3819107,
+                51.2227631
+              ],
+              [
+                -0.3815773,
+                51.2228432
+              ],
+              [
+                -0.381196,
+                51.2229171
+              ],
+              [
+                -0.3807568,
+                51.2229836
+              ],
+              [
+                -0.3802875,
+                51.2230525
+              ],
+              [
+                -0.3798312,
+                51.2231127
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "check": "outside-area-rejected",
+      "status": 422
+    },
+    {
+      "check": "standard-route",
+      "seconds": 0.116,
+      "distanceKm": 8.234
+    },
+    {
+      "check": "Greenwich-20",
+      "input": {
+        "center": {
+          "latitude": 51.481,
+          "longitude": -0.009
+        },
+        "targetKm": 20,
+        "direction": 90,
+        "profile": "winding",
+        "avoidMotorways": true
+      },
+      "seconds": 11.548,
+      "planner": {
+        "valid": true,
+        "distanceKm": 19.071,
+        "distanceErrorKm": 0.9289999999999985,
+        "overlapRatio": 0,
+        "repeatedKm": 0,
+        "sharedAccessKm": 0,
+        "remainingRepeatedRatio": 0,
+        "closed": true,
+        "nearStart": true,
+        "engine": "valhalla",
+        "implementation": "road-catalogue-v1",
+        "attempts": 59,
+        "elapsedMs": 11541,
+        "score": 1.6519653768514573,
+        "selectedRoadSectionId": null,
+        "recommendedKm": 0,
+        "evaluatedKm": 1.4807387611093874,
+        "roads": [
+          {
+            "id": "section-b8116ee96e9c0479d81501b67b0005e7",
+            "name": "Rotherhithe Tunnel",
+            "ref": "A101",
+            "lengthKm": 1.480953934412327,
+            "rating": 1.5861780879510239,
+            "quality": 1.5861780879510239,
+            "winding": 1.5870319752841515,
+            "twisty": 0.724770130341991,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.4807387611093874,
+            "coverage": 0.9998547062822553,
+            "fullSection": true
+          }
+        ],
+        "ratingBasis": "geometry-and-independent-guide-frequency",
+        "area": {
+          "center": {
+            "latitude": 51.5074,
+            "longitude": -0.1278
+          },
+          "radiusKm": 100
+        }
+      },
+      "distanceKm": 19.071,
+      "maneuvers": 51
+    },
+    {
+      "check": "Dorking-40",
+      "input": {
+        "center": {
+          "latitude": 51.2328,
+          "longitude": -0.3297
+        },
+        "targetKm": 40,
+        "direction": 90,
+        "profile": "winding",
+        "avoidMotorways": true
+      },
+      "seconds": 6.096,
+      "planner": {
+        "valid": true,
+        "distanceKm": 39.996,
+        "distanceErrorKm": 0.003999999999997783,
+        "overlapRatio": 0,
+        "repeatedKm": 0,
+        "sharedAccessKm": 0,
+        "remainingRepeatedRatio": 0,
+        "closed": true,
+        "nearStart": true,
+        "engine": "valhalla",
+        "implementation": "road-catalogue-v1",
+        "attempts": 42,
+        "elapsedMs": 6086,
+        "score": 25.670789927442232,
+        "selectedRoadSectionId": "section-94e36babc3f74a9b8cf8f89109aa3f9a",
+        "recommendedKm": 0,
+        "evaluatedKm": 21.005670488225952,
+        "roads": [
+          {
+            "id": "section-16b2467a56c4f6aaf443eb164460ab4f",
+            "name": "Clayhall Lane",
+            "ref": "",
+            "lengthKm": 1.3040316281029074,
+            "rating": 3.8883539125102478,
+            "quality": 3.8883539125102478,
+            "winding": 3.51780521668033,
+            "twisty": 0.9323491520981825,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.3037943665493168,
+            "coverage": 0.9998180553688442,
+            "fullSection": true
+          },
+          {
+            "id": "section-7b59285664df448b060ded5dc5f7963d",
+            "name": "Ironsbottom",
+            "ref": "",
+            "lengthKm": 2.2466177978182187,
+            "rating": 2.1947970888531123,
+            "quality": 2.1947970888531123,
+            "winding": 1.2597294518041497,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 2.246215245945759,
+            "coverage": 0.9998208187111977,
+            "fullSection": true
+          },
+          {
+            "id": "section-15d51b0817520bdcd46203b07694db88",
+            "name": "Collendean Lane",
+            "ref": "",
+            "lengthKm": 1.4507912530027223,
+            "rating": 3.2833753810258672,
+            "quality": 3.2833753810258672,
+            "winding": 2.7111671747011554,
+            "twisty": 1.8839317438254064,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.4505297163405535,
+            "coverage": 0.9998197282609559,
+            "fullSection": true
+          },
+          {
+            "id": "section-f57b04c2ae43290629db2c73f5c86a73",
+            "name": "Broad Lane",
+            "ref": "",
+            "lengthKm": 1.8959894323503732,
+            "rating": 2.191141021691197,
+            "quality": 2.191141021691197,
+            "winding": 1.2548546955882627,
+            "twisty": 0.39235732837975007,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.8956267099008275,
+            "coverage": 0.9998086896248699,
+            "fullSection": true
+          },
+          {
+            "id": "section-94e36babc3f74a9b8cf8f89109aa3f9a",
+            "name": "Park Lane",
+            "ref": "",
+            "lengthKm": 0.7057454209554116,
+            "rating": 4.564406937198565,
+            "quality": 4.564406937198565,
+            "winding": 4.419209249598087,
+            "twisty": 4.419209249598087,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.7056179314260835,
+            "coverage": 0.9998193547906332,
+            "fullSection": true
+          },
+          {
+            "id": "section-03110b7f485cb28db85e944646b7fed2",
+            "name": "Red Lane",
+            "ref": "",
+            "lengthKm": 1.0437197833348841,
+            "rating": 2.989973491716311,
+            "quality": 2.989973491716311,
+            "winding": 2.3199646556217486,
+            "twisty": 1.7608068900075184,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.0435133286783906,
+            "coverage": 0.999802193404983,
+            "fullSection": true
+          },
+          {
+            "id": "section-b56081875e4e561defa253cd3e0aca89",
+            "name": "Pendleton Road",
+            "ref": "",
+            "lengthKm": 1.636686402835369,
+            "rating": 1.8604891462608029,
+            "quality": 1.8604891462608029,
+            "winding": 0.8139855283477362,
+            "twisty": 0.37589924508426686,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.636403041277626,
+            "coverage": 0.9998268687530781,
+            "fullSection": true
+          },
+          {
+            "id": "section-46089cba797c49788d4dcc0534a29065",
+            "name": "Blanks Lane",
+            "ref": "",
+            "lengthKm": 1.2921575772238871,
+            "rating": 2.2818983375468025,
+            "quality": 2.2818983375468025,
+            "winding": 1.375864450062402,
+            "twisty": 1.142056756409498,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.2919129897588066,
+            "coverage": 0.999810713902552,
+            "fullSection": true
+          },
+          {
+            "id": "section-396133ce54b685b01383ff52ac770e4e",
+            "name": "Shellwood Road",
+            "ref": "",
+            "lengthKm": 1.6445967623044953,
+            "rating": 1.789717641336345,
+            "quality": 1.789717641336345,
+            "winding": 0.7196235217817933,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.644281081621683,
+            "coverage": 0.9998080497967357,
+            "fullSection": true
+          },
+          {
+            "id": "section-b74d36942161e62867b6a2bda97326a2",
+            "name": "Wonham Lane",
+            "ref": "",
+            "lengthKm": 0.8772485281708523,
+            "rating": 2.907216703409118,
+            "quality": 2.907216703409118,
+            "winding": 3.178694505681864,
+            "twisty": 1.9483356381752122,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.8770837866928738,
+            "coverage": 0.9998122066065793,
+            "fullSection": true
+          },
+          {
+            "id": "section-00dea71f8992b70ab8385be3193e500e",
+            "name": "Norwood Hill",
+            "ref": "",
+            "lengthKm": 1.2269274327578097,
+            "rating": 2.0008842562716924,
+            "quality": 2.0008842562716924,
+            "winding": 1.0011790083622567,
+            "twisty": 0.7098513752169368,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.2267025153886226,
+            "coverage": 0.9998166824188768,
+            "fullSection": true
+          },
+          {
+            "id": "section-4a0dbbab0a8b466a5a5fdb54da445763",
+            "name": "Trumpets Hill Road",
+            "ref": "",
+            "lengthKm": 0.7605620576105202,
+            "rating": 3.173935554098671,
+            "quality": 3.173935554098671,
+            "winding": 3.4263292696471987,
+            "twisty": 2.7901450681078646,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.7604205520928797,
+            "coverage": 0.9998139461254679,
+            "fullSection": true
+          },
+          {
+            "id": "section-5405f3ab63af884235226d7692244fcb",
+            "name": "Old Reigate Road",
+            "ref": "",
+            "lengthKm": 1.1173523875249234,
+            "rating": 2.1362528469536306,
+            "quality": 2.1362528469536306,
+            "winding": 1.8491068595486062,
+            "twisty": 0.6624426369787378,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.1171365299101585,
+            "coverage": 0.9998068133051176,
+            "fullSection": true
+          },
+          {
+            "id": "section-9906db282aac1812d8633cd70ba4874d",
+            "name": "Brockhamhurst Road",
+            "ref": "",
+            "lengthKm": 1.1021793239550115,
+            "rating": 2.0545501798681434,
+            "quality": 2.0545501798681434,
+            "winding": 1.0727335731575245,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.1019644615788429,
+            "coverage": 0.9998050567893093,
+            "fullSection": true
+          },
+          {
+            "id": "section-972402a1b83a62a2ef4d375311283cd0",
+            "name": "Ironsbottom",
+            "ref": "",
+            "lengthKm": 0.8907892977235146,
+            "rating": 2.504970976015334,
+            "quality": 2.504970976015334,
+            "winding": 1.6537563643872564,
+            "twisty": 0.6832621712216483,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.890630744589088,
+            "coverage": 0.9998220082629733,
+            "fullSection": true
+          },
+          {
+            "id": "section-4008644fd64d800729c5cb7587f0d8f0",
+            "name": "Reigate Road",
+            "ref": "A25",
+            "lengthKm": 0.6054744992070141,
+            "rating": 1.6632744400008324,
+            "quality": 1.6632744400008324,
+            "winding": 1.7451783384632458,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.6053549557735632,
+            "coverage": 0.9998025623975784,
+            "fullSection": true
+          },
+          {
+            "id": "section-03e4f8f578d4b710246a74039edb074e",
+            "name": "Chart Lane South",
+            "ref": "",
+            "lengthKm": 0.6814998337410815,
+            "rating": 1.4488020653002478,
+            "quality": 1.4488020653002478,
+            "winding": 0.2650694204003305,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.6813627403464235,
+            "coverage": 0.9997988357621375,
+            "fullSection": true
+          },
+          {
+            "id": "section-7769c69c75fb1b119261394f45896787",
+            "name": "Park Lane",
+            "ref": "",
+            "lengthKm": 0.5272144676683367,
+            "rating": 1.629955279237595,
+            "quality": 1.629955279237595,
+            "winding": 0.5066070389834602,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.5271197903544553,
+            "coverage": 0.9998204197348753,
+            "fullSection": true
+          }
+        ],
+        "ratingBasis": "geometry-and-independent-guide-frequency",
+        "area": {
+          "center": {
+            "latitude": 51.5074,
+            "longitude": -0.1278
+          },
+          "radiusKm": 100
+        }
+      },
+      "distanceKm": 39.996,
+      "maneuvers": 41
+    },
+    {
+      "check": "Ashdown-60",
+      "input": {
+        "center": {
+          "latitude": 51.0786776,
+          "longitude": 0.101936
+        },
+        "targetKm": 60,
+        "direction": 90,
+        "profile": "winding",
+        "avoidMotorways": true
+      },
+      "seconds": 5.844,
+      "planner": {
+        "valid": true,
+        "distanceKm": 57.644,
+        "distanceErrorKm": 2.3560000000000016,
+        "overlapRatio": 0,
+        "repeatedKm": 0,
+        "sharedAccessKm": 0,
+        "remainingRepeatedRatio": 0,
+        "closed": true,
+        "nearStart": true,
+        "engine": "valhalla",
+        "implementation": "road-catalogue-v1",
+        "attempts": 53,
+        "elapsedMs": 5835,
+        "score": 24.422472576048825,
+        "selectedRoadSectionId": null,
+        "recommendedKm": 8.144126004723937,
+        "evaluatedKm": 33.24533282946245,
+        "roads": [
+          {
+            "id": "section-c78a9123a0ebdad256929345cb70bf65",
+            "name": "Piccadilly Lane",
+            "ref": "",
+            "lengthKm": 1.922819145466337,
+            "rating": 3.635526377182732,
+            "quality": 3.635526377182732,
+            "winding": 4.39254396197122,
+            "twisty": 3.9222375259385758,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.9227057640421958,
+            "coverage": 0.9999410337553543,
+            "fullSection": true
+          },
+          {
+            "id": "section-64d99232aeef9635d0a7404cac7ca1d3",
+            "name": "Broadwater Forest Lane",
+            "ref": "",
+            "lengthKm": 2.1338533396645785,
+            "rating": 3.2430952692111994,
+            "quality": 3.2430952692111994,
+            "winding": 2.6574603589482653,
+            "twisty": 1.8476658202567302,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 2.133696485398647,
+            "coverage": 0.9999264924805206,
+            "fullSection": true
+          },
+          {
+            "id": "section-e05850d4a14f4f666fa89f7ff6b2611d",
+            "name": "Hurstwood Road",
+            "ref": "",
+            "lengthKm": 2.634157554828104,
+            "rating": 2.3517719992687844,
+            "quality": 2.3517719992687844,
+            "winding": 1.469029332358379,
+            "twisty": 1.0908349414738066,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 2.561882387775576,
+            "coverage": 0.9725623219005802,
+            "fullSection": false
+          },
+          {
+            "id": "section-4f26ef605b8f71da5511465ecb0a2e6d",
+            "name": "Perrymans Lane",
+            "ref": "",
+            "lengthKm": 1.7227954250364967,
+            "rating": 3.1907085398437447,
+            "quality": 3.1907085398437447,
+            "winding": 3.563852652617913,
+            "twisty": 2.659030804905826,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.7226247601098104,
+            "coverage": 0.9999009372069334,
+            "fullSection": true
+          },
+          {
+            "id": "section-1e1a83d5a39ae50493410ba2c170919b",
+            "name": "Bunny Lane",
+            "ref": "",
+            "lengthKm": 1.9555380557980702,
+            "rating": 1.9921617875883728,
+            "quality": 1.9921617875883728,
+            "winding": 0.9895490501178305,
+            "twisty": 0.4055810614166161,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.955407924715312,
+            "coverage": 0.9999334551008239,
+            "fullSection": true
+          },
+          {
+            "id": "section-ded47a090915cf2b8d093a16c97fcbfe",
+            "name": "B2110",
+            "ref": "B2110",
+            "lengthKm": 1.9312393824324527,
+            "rating": 1.9629341546252295,
+            "quality": 1.9629341546252295,
+            "winding": 1.2413839327781175,
+            "twisty": 0.4040812299582806,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.9310609257558151,
+            "coverage": 0.9999075947403202,
+            "fullSection": true
+          },
+          {
+            "id": "section-2bd2200df2969c120ccaabaa9a4a7637",
+            "name": "Oldlands Hill",
+            "ref": "",
+            "lengthKm": 1.223688418255532,
+            "rating": 3.0637826105794725,
+            "quality": 3.0637826105794725,
+            "winding": 3.4396376842991208,
+            "twisty": 3.095426192476801,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.223561438173217,
+            "coverage": 0.9998962316873962,
+            "fullSection": true
+          },
+          {
+            "id": "section-fdeb60bf1b34914890e3118050edcfc7",
+            "name": "Chuck Hatch Road",
+            "ref": "B2026",
+            "lengthKm": 1.8367087110320168,
+            "rating": 1.9729555883230234,
+            "quality": 1.818507983318605,
+            "winding": 0.9952532387051998,
+            "twisty": 0.4077200436503245,
+            "recommendationCount": 1,
+            "frequencyRating": 2.3333333333333335,
+            "ratingBasis": "geometry-and-guide-frequency",
+            "surfaceConfidence": "unknown",
+            "sources": [
+              {
+                "publisher": "WeBuyAnyBike247",
+                "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+              }
+            ],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.8365148423683453,
+            "coverage": 0.9998944477899477,
+            "fullSection": true
+          },
+          {
+            "id": "section-713ca6a114e02e6255c0a46a46722da4",
+            "name": "B2110",
+            "ref": "B2110",
+            "lengthKm": 0.92749070769368,
+            "rating": 3.010636673222632,
+            "quality": 3.010636673222632,
+            "winding": 2.793535812181678,
+            "twisty": 2.390877279645738,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.9273988268668537,
+            "coverage": 0.9999009361214466,
+            "fullSection": true
+          },
+          {
+            "id": "section-4291f572f8631eb31090fa150bd0536a",
+            "name": "High Road",
+            "ref": "B2026",
+            "lengthKm": 1.4406812332210124,
+            "rating": 1.7564756206891996,
+            "quality": 1.5092508866988568,
+            "winding": 0.569260572887195,
+            "twisty": 0,
+            "recommendationCount": 1,
+            "frequencyRating": 2.3333333333333335,
+            "ratingBasis": "geometry-and-guide-frequency",
+            "surfaceConfidence": "unknown",
+            "sources": [
+              {
+                "publisher": "WeBuyAnyBike247",
+                "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+              }
+            ],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.4405287837503373,
+            "coverage": 0.9998941823720892,
+            "fullSection": true
+          },
+          {
+            "id": "section-9a7c08a991575c4ca770378a32fe99d0",
+            "name": "Cotchford Hill",
+            "ref": "B2026",
+            "lengthKm": 1.4028899581740266,
+            "rating": 1.6754097688152916,
+            "quality": 1.393442526878988,
+            "winding": 0.3976926324133161,
+            "twisty": 0,
+            "recommendationCount": 1,
+            "frequencyRating": 2.3333333333333335,
+            "ratingBasis": "geometry-and-guide-frequency",
+            "surfaceConfidence": "unknown",
+            "sources": [
+              {
+                "publisher": "WeBuyAnyBike247",
+                "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+              }
+            ],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.4027451478077106,
+            "coverage": 0.9998967771025289,
+            "fullSection": true
+          },
+          {
+            "id": "section-8cfcfb65f2597677eec05619ece39327",
+            "name": "B2026",
+            "ref": "B2026",
+            "lengthKm": 1.4448946387524373,
+            "rating": 1.6195672701241728,
+            "quality": 1.3136675287488186,
+            "winding": 0.27950744999825006,
+            "twisty": 0,
+            "recommendationCount": 1,
+            "frequencyRating": 2.3333333333333335,
+            "ratingBasis": "geometry-and-guide-frequency",
+            "surfaceConfidence": "unknown",
+            "sources": [
+              {
+                "publisher": "WeBuyAnyBike247",
+                "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+              }
+            ],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.4447433289000906,
+            "coverage": 0.999895279663798,
+            "fullSection": true
+          },
+          {
+            "id": "section-0e049ed4ff932175dfa4a9b8be0849a0",
+            "name": "Withyham Road",
+            "ref": "B2110",
+            "lengthKm": 0.8587142955756412,
+            "rating": 2.709397642004557,
+            "quality": 2.709397642004557,
+            "winding": 2.347255765932677,
+            "twisty": 0.748400936304933,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.754963622203065,
+            "coverage": 0.8791790541893487,
+            "fullSection": false
+          },
+          {
+            "id": "section-dcc9990b9a6c69d332487a846b735301",
+            "name": "Broadwater Forest Lane",
+            "ref": "",
+            "lengthKm": 0.8104159884984765,
+            "rating": 2.341332172193455,
+            "quality": 2.341332172193455,
+            "winding": 1.455109562924607,
+            "twisty": 0.8032544487140449,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.8103525361522987,
+            "coverage": 0.9999217039803283,
+            "fullSection": true
+          },
+          {
+            "id": "section-2d6532c984497e5d18df3649abdf2730",
+            "name": "Frant Road",
+            "ref": "A267",
+            "lengthKm": 0.9428699407010555,
+            "rating": 1.9682806312105448,
+            "quality": 1.9682806312105448,
+            "winding": 2.3708320640216303,
+            "twisty": 0.7105117380959032,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.9428111091346653,
+            "coverage": 0.9999376037310654,
+            "fullSection": true
+          },
+          {
+            "id": "section-26d7abc5c665e688a5975b7fd9dbedb9",
+            "name": "Station Road",
+            "ref": "",
+            "lengthKm": 0.8643726752438181,
+            "rating": 2.0709593104261477,
+            "quality": 2.0709593104261477,
+            "winding": 1.09461241390153,
+            "twisty": 0.4536346867334629,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.8643026252127176,
+            "coverage": 0.9999189585313063,
+            "fullSection": true
+          },
+          {
+            "id": "section-146c2cfe78e77351ec6083b420e6b60e",
+            "name": "Tunbridge Wells Road",
+            "ref": "",
+            "lengthKm": 0.9587816638468298,
+            "rating": 1.8347267002512269,
+            "quality": 1.8347267002512269,
+            "winding": 0.7796356003349696,
+            "twisty": 0.3577320443514794,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.9587219181882306,
+            "coverage": 0.9999376858560691,
+            "fullSection": true
+          },
+          {
+            "id": "section-65a2a47fbf1238bf76274e52a0e4fa06",
+            "name": "Tunbridge Wells Road",
+            "ref": "A267",
+            "lengthKm": 0.9067589358376729,
+            "rating": 1.8825658275164847,
+            "quality": 1.8825658275164847,
+            "winding": 2.1950068256748407,
+            "twisty": 1.3396167209182512,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.9067008985058034,
+            "coverage": 0.9999359947505608,
+            "fullSection": true
+          },
+          {
+            "id": "section-45e8392890cdb77bd734c83ea4ec36f4",
+            "name": "Jib Jacks Hill",
+            "ref": "B2026",
+            "lengthKm": 0.9060496769410574,
+            "rating": 1.8656332828915998,
+            "quality": 1.665190404130857,
+            "winding": 0.745991827350032,
+            "twisty": 0.33618985032456594,
+            "recommendationCount": 1,
+            "frequencyRating": 2.3333333333333335,
+            "ratingBasis": "geometry-and-guide-frequency",
+            "surfaceConfidence": "unknown",
+            "sources": [
+              {
+                "publisher": "WeBuyAnyBike247",
+                "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+              }
+            ],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.9059561609562814,
+            "coverage": 0.9998967871330282,
+            "fullSection": true
+          },
+          {
+            "id": "section-066a870e0c0b59e912482d4b35dd1029",
+            "name": "Castlefields",
+            "ref": "B2110",
+            "lengthKm": 0.5752573482093782,
+            "rating": 2.929518993429902,
+            "quality": 2.929518993429902,
+            "winding": 2.3251468318109936,
+            "twisty": 2.6733614717480028,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.5751989729933135,
+            "coverage": 0.9998985233022288,
+            "fullSection": true
+          },
+          {
+            "id": "section-64a19c8727db12a01d6e9743bebfad53",
+            "name": "East Street",
+            "ref": "",
+            "lengthKm": 0.9779106497687,
+            "rating": 1.6839999801375376,
+            "quality": 1.6839999801375376,
+            "winding": 1.1399999668958958,
+            "twisty": 0.3684435326775442,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.9778536533197636,
+            "coverage": 0.999941716097529,
+            "fullSection": true
+          },
+          {
+            "id": "section-bb64b98ff8c1d1a92e627945cd2c38ef",
+            "name": "Mayfield Road",
+            "ref": "A267",
+            "lengthKm": 0.8879593165135475,
+            "rating": 1.6319153992495607,
+            "quality": 1.6319153992495607,
+            "winding": 1.6808521010247397,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.8879023453564936,
+            "coverage": 0.9999358403521486,
+            "fullSection": true
+          },
+          {
+            "id": "section-e9806e59b068d9df586fb79a6ac8d85b",
+            "name": "Withyham Road",
+            "ref": "B2110",
+            "lengthKm": 0.5281613766146449,
+            "rating": 2.6526695071365705,
+            "quality": 2.6526695071365705,
+            "winding": 2.2632140846467714,
+            "twisty": 1.535571622234919,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.5281153992146085,
+            "coverage": 0.9999129481971378,
+            "fullSection": true
+          },
+          {
+            "id": "section-a2b8e34636c8b3ca1694f3370c5cadc6",
+            "name": "Summer Hill",
+            "ref": "A272",
+            "lengthKm": 0.6045155799909121,
+            "rating": 1.783081775147481,
+            "quality": 1.547259678782116,
+            "winding": 1.3783981951762931,
+            "twisty": 0.6440057295761331,
+            "recommendationCount": 1,
+            "frequencyRating": 2.3333333333333335,
+            "ratingBasis": "geometry-and-guide-frequency",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [
+              {
+                "publisher": "J&S Accessories",
+                "url": "https://jsaccessories.co.uk/blog/advice/motorbike-routes-in-south-east-england"
+              }
+            ],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.6044699942680752,
+            "coverage": 0.9999245913184941,
+            "fullSection": true
+          },
+          {
+            "id": "section-c9e1179a98daa71a7d3f33c995c2df55",
+            "name": "The Street",
+            "ref": "",
+            "lengthKm": 0.5502245598718611,
+            "rating": 1.9251798336553607,
+            "quality": 1.9251798336553607,
+            "winding": 1.5419663894256006,
+            "twisty": 0.7066946469351517,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.5501659526099295,
+            "coverage": 0.9998934848310927,
+            "fullSection": true
+          },
+          {
+            "id": "section-e6e986a540fdd5258ceda796e4c6741f",
+            "name": "Pound Green",
+            "ref": "A272",
+            "lengthKm": 0.5092130459348978,
+            "rating": 1.991642761858503,
+            "quality": 1.8452039455121474,
+            "winding": 2.1183670677172253,
+            "twisty": 0,
+            "recommendationCount": 1,
+            "frequencyRating": 2.3333333333333335,
+            "ratingBasis": "geometry-and-guide-frequency",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [
+              {
+                "publisher": "J&S Accessories",
+                "url": "https://jsaccessories.co.uk/blog/advice/motorbike-routes-in-south-east-england"
+              }
+            ],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.5091677466730969,
+            "coverage": 0.999911040649562,
+            "fullSection": true
+          },
+          {
+            "id": "section-f9431c849aecc1d60030e8ee4aac3634",
+            "name": "Mayfield Road",
+            "ref": "A267",
+            "lengthKm": 0.7399457017394677,
+            "rating": 1.2855467965693588,
+            "quality": 1.2855467965693588,
+            "winding": 0.9703524032191976,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.739899659487545,
+            "coverage": 0.9999377761749079,
+            "fullSection": true
+          },
+          {
+            "id": "section-e48e85f9931e0c2973b2938c2752b319",
+            "name": "Wellbrook Hill",
+            "ref": "A267",
+            "lengthKm": 0.7023057685280272,
+            "rating": 1.3197331714529954,
+            "quality": 1.3197331714529954,
+            "winding": 1.040478300416401,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.7022575667839435,
+            "coverage": 0.9999313664414508,
+            "fullSection": true
+          },
+          {
+            "id": "section-6c665dd891294d80aded37c17651df3b",
+            "name": "Argos Hill",
+            "ref": "A267",
+            "lengthKm": 0.5236574012302845,
+            "rating": 1.1029241081458674,
+            "quality": 1.1029241081458674,
+            "winding": 0.5957417602992152,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.5236220527387007,
+            "coverage": 0.9999324969121017,
+            "fullSection": true
+          }
+        ],
+        "ratingBasis": "geometry-and-independent-guide-frequency",
+        "area": {
+          "center": {
+            "latitude": 51.5074,
+            "longitude": -0.1278
+          },
+          "radiusKm": 100
+        }
+      },
+      "distanceKm": 57.644,
+      "maneuvers": 30
+    }
+  ]
+}

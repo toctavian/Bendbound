@@ -29,13 +29,74 @@ Run lint and typecheck before declaring any task done.
 - Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
 - Docs: https://docs.expo.dev/router/introduction.md
 
-## Building with EAS
+## iOS builds: prefer Xcode
 
-Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.
-Docs: https://docs.expo.dev/eas/index.md
+Octavian always prefers Xcode for iOS builds, signing, connected-device testing,
+archiving and distribution. Use the local iOS workspace as the default workflow.
+Prepare the required local configuration before asking the user to run or archive.
+Do not start EAS cloud builds or direct the user to Expo-hosted installation by
+default; use them only when explicitly requested or agreed for a specific need.
+Expo remains the app framework and dependency/configuration tooling.
 
 ## Rules
 
 - If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+
+## AWS MCP authentication
+
+For ANY AWS/MCP access issue, check/renew AWS login FIRST and then retry the
+configured MCP. This includes authentication failures, expired/invalid sessions,
+AccessDenied, Unknown tool and apparently missing AWS tools. The connector is
+known to be configured: do not declare it missing, search for alternatives or ask
+for reconnection before attempting login recovery.
+
+Run `aws login --profile bendbound --region eu-west-2` and let the user complete
+the browser sign-in. If it returns a browser error, diagnose the generated
+URL/region and retry a fresh flow instead of reusing a failing link. After login,
+retry MCP and verify access. Distinguish login failure from any remaining tool
+exposure/connection failure; never claim resource access from login alone.
+Use AWS MCP for resource operations; CLI login only restores authentication.
+Never persist sign-in URLs, authorization codes or credentials.
+
+## Fuel Finder data
+
+Before implementing or changing fuel-price ingestion, caching, presentation,
+comparisons or supplier selection, read [the saved access terms](docs/legal/fuel-finder-access-terms.md)
+and [the integration requirements](docs/place-discovery.md). Preserve provider
+prices and metadata, represent suppliers impartially, provide the discrepancy
+report link and OGL attribution, and satisfy the upstream freshness requirements.
+App-side fetching alone does not satisfy the Aggregator API polling requirement.
+
+## Group rides and accounts
+
+For group rides, login, account security or live rider location sharing, read
+[the shared implementation tracker](docs/group-rides-implementation.md) first.
+Use its task IDs and acceptance criteria. Update its checkboxes and work log with
+actual implementation, test, deployment and physical-device evidence before
+finishing a session. Keep unfinished checks pending; distinguish local code from
+deployed and device-validated behaviour. Never record secrets or rider coordinates
+in the tracker. Preserve existing offline planning, local recordings and settings.
+
+## Usage-limit handoff
+
+The user requests a checkpoint when approximately 5% of either the 5-hour or
+weekly allowance remains. Do not claim to monitor allowance without an actual
+verified snapshot. Keep regular durable checkpoints in
+`docs/group-rides-implementation.md`, including changed files, checks, deployment
+state, dependencies and exact resume steps. If a usage warning becomes visible,
+write that handoff before stopping. Never include credentials or rider locations.
+The former hourly group-work autopilot was removed at the user's request on
+2026-10-19; do not reinstall or resume it.
+
+### Verified working Bendbound login (2026-10-20)
+
+Run `aws login --profile bendbound --region eu-west-2` with its normal browser
+flow. Let AWS CLI open a fresh London sign-in URL with its generated localhost
+callback; leave the login process running until the browser completes. Do not
+manually alter the endpoint, redirect URI or generated query parameters, reuse
+old links, or switch regions as a routine workaround. This exact flow worked and
+was confirmed by Octavian. The enrollment CLI automatically retries configured
+MCP after login; actual approval and a subsequent read-only grant review both
+succeeded. Retain the method only, never sign-in URLs/codes or credentials.

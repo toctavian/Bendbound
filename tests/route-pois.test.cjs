@@ -10,7 +10,7 @@ function load(file, imports = {}, globals = {}) {
   return api;
 }
 const routes = load('src/utils/routes.ts');
-const service = (requestOverpass = async () => ({elements:[]})) => load('src/utils/routePois.ts', { '@/utils/routes': routes, '@/utils/pois': {requestOverpass} });
+const service = (requestOverpass = async () => ({elements:[]})) => load('src/utils/routePois.ts', { '@/utils/routes': routes, '@/utils/pois': {...load('src/utils/pois.ts'),requestOverpass} });
 const point = (x, y) => ({longitude:x/111195,latitude:y/111195});
 const loop = [point(0,0),point(5000,0),point(5000,5000),point(0,5000),point(0,0)];
 const poi = (id,x,y,name=id) => ({id,name,...point(x,y),category:'sight',detail:'viewpoint'});
@@ -49,9 +49,8 @@ test('place details preserve names, categories and addresses from real OSM metad
     {type:'node',id:4,lat:200,lon:0,tags:{name:'Bad'}},
     {type:'node',id:5,lat:0,lon:0,tags:{}},
   ]);
-  assert.equal(items.length,3);
-  assert.equal(items[0].detail,'cafe · High Street');
-  assert.deepEqual(items.map(p=>p.category),['meet','forest','pass']);
+  assert.equal(items.length,1);
+  assert.deepEqual(items.map(p=>p.category),['pass']);
 });
 
 test('corridor query retains a closed loop and returns only places near the final road geometry', async () => {

@@ -1,5 +1,14 @@
 # Self-hosted routing pilot
 
+**Active service, 2026-10-21:** The [UK service](../docs/uk-routing-expansion.md)
+serves `https://api.bendboundapp.com` using Valhalla's native graph with motorcycle
+ratings attached to its edges and shortcuts, served from a bounded-memory SQLite overlay.
+England, Wales, Scotland and Northern Ireland are enabled on the existing host/disk.
+PostGIS is temporarily stopped;
+its data and the Neo4j graph are preserved. See the [graph experiment](catalogue/graph/README.md)
+and [active deployment record](catalogue/ec2/deployment.json). The original
+Greater London pilot described below remains the rollback baseline.
+
 Valhalla 3.9.0 provides the app's motorcycle routes. GraphHopper 11.1 is a
 benchmark service only. Both import the exact same OSM PBF. Engine images are
 pinned by digest. The app's MapLibre renderer and map tiles are independent.
@@ -132,5 +141,6 @@ configured, retains its local policy checks.
 One app release is needed to remove the old client policy checks. Subsequent
 server policy changes do not require an app release as long as the response
 contract remains compatible. The deployed API already returns `planner.valid`.
-The shared-access server update is still pending deployment; existing TestFlight
-binaries still enforce zero repeats everywhere.
+The shared-access server update was deployed and verified on 2026-10-07; existing
+TestFlight binaries still enforce zero repeats everywhere. See the
+[deployment verification](ec2/shared-access-deployment.json).

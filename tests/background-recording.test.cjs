@@ -82,6 +82,25 @@ test('background batches are recorded without mounted views, sorted, validated a
   await h.deliver([fix(21)]);
   assert.equal(h.store.readRideState().active.session.segments[0].length, 3);
 });
+test('foreground fixes persist without background delivery and overlapping sources cannot double-count', async (t) => {
+  const h = harness(t);
+  await h.service.startRide('recording', null);
+  h.at(1); await h.service.recordForegroundFix(fix(1));
+  h.at(11); await h.service.recordForegroundFix(fix(11));
+  h.at(21); await h.deliver([fix(1), fix(11), fix(21)]);
+  await h.service.recordForegroundFix(fix(21));
+  const ride = h.store.readRideState().active;
+  assert.deepEqual(ride.session.segments[0].map(p=>p.timestamp), [1,11,21].map(s=>fix(s).timestamp));
+  assert.ok(recording.recordedDistance(ride.session.segments) > 0);
+  h.at(90); await h.service.recordForegroundFix(fix(90));
+  assert.equal(h.store.readRideState().active.session.segments.length, 2, 'a delivery outage must not create a straight connector');
+  const diagnostics = JSON.parse(h.database.get('bendbound-recording-diagnostics-v1'));
+  assert.ok(diagnostics.some(entry=>entry.event==='locations.foreground'));
+  assert.ok(!JSON.stringify(diagnostics).includes('latitude'));
+  await h.service.pauseRide();
+  h.at(100); await h.service.recordForegroundFix(fix(100));
+  assert.equal(h.store.readRideState().active.session.segments[1].length, 1);
+});
 
 test('pause stops the native task, ignores late fixes, and resume excludes paused time and travel', async (t) => {
   const h = harness(t);
@@ -138,15 +157,16 @@ test('permission denial or unsupported native build never starts GPS recording',
   assert.equal(h.store.readRideState().active, null);
 });
 
-test('recovery resumes a running task, but a stopped or stale cold-launch recording is paused at its last update', async (t) => {
+test('returning resumes a lost native registration; a stale cold launch still pauses safely', async (t) => {
   const h = harness(t);
   await h.service.startRide('recording', null);
   h.at(20); await h.deliver([fix(10)]);
   h.at(30); assert.notEqual((await h.service.recoverRide()).session.activeSince, null);
   h.at(300); h.state.running = false;
   const recovered = await h.service.recoverRide();
-  assert.equal(recovered.session.activeSince, null);
-  assert.equal(recovered.session.elapsedMs, 20000);
+  assert.notEqual(recovered.session.activeSince, null);
+  assert.equal(h.state.running, true);
+  assert.equal(recovered.session.elapsedMs, 0);
   assert.equal(recovered.session.segments[0].length, 1);
   await h.service.resumeRide();
   h.at(600);
@@ -230,18 +250,23 @@ test('finish menu exposes cancel, destructive discard and save; each invokes the
         useCallback: (fn) => fn, useMemo: (fn) => fn(), useEffect() {},
       },
       'react/jsx-runtime': { jsx, jsxs: jsx },
-      'react-native': { StyleSheet: { create: (s) => s }, Alert: { alert: (...args) => alerts.push(args) }, View: 'View', Text: 'Text' },
-      '@expo/vector-icons/Ionicons': {}, '@react-native-community/slider': {},
-      'expo-haptics': {}, 'expo-location': {}, 'expo-router': { Tabs: { Screen: 'Tabs.Screen' } },
+      'react-native': { useWindowDimensions: () => ({ width: 390, height: 844 }), StyleSheet: { create: (s) => s }, Alert: { alert: (...args) => alerts.push(args) }, View: 'View', Text: 'Text' },
+      '@/components/SavedToast': { SavedToast: 'SavedToast' }, '@/utils/savedRoutes': { findSavedRoute: () => undefined },
+    '@/components/GroupRidePanel': { GroupRidePanel: 'GroupRidePanel' },
+    '@expo/vector-icons/Ionicons': {}, '@react-native-community/slider': {},
+      'expo-haptics': {}, 'expo-location': {}, 'expo-router': { Tabs: { Screen: 'Tabs.Screen' }, useLocalSearchParams: () => ({}) },
       'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) },
-      '@/components/RideMap': { RideMap: 'RideMap' }, '@/components/DriveOverlay': { DriveOverlay: 'DriveOverlay' },
+      '@/components/PoiDetails': { PoiDetails: 'PoiDetails' }, '@/components/RideMap': { RideMap: 'RideMap' }, '@/components/DriveOverlay': { DriveOverlay: 'DriveOverlay' },
       '@/components/RoutePoiCards': {}, '@/components/DestinationSearch': {}, '@/components/StandardTripPlanner': {}, '@/components/ui': {},
       '@/hooks/useRoutePois': { useRoutePois: () => ({ points: [] }) }, '@/data/routeColors': {},
       '@/data/seed': { defaultCenter: { latitude: 51.5, longitude: 0 }, nearbyPlaces: [] },
       '@/state/AppProvider': { useApp: () => ({ settings: {}, activeRoute: null, saveTour: (tour) => saved.push(tour), setActiveRoute: (route) => routesSet.push(route) }) },
       '@/theme': { colors: {}, spacing: {} }, '@/utils/guidance': { upcomingManeuver: () => undefined },
       '@/utils/navigation': { cumulativeRouteDistances: () => [] }, '@/utils/pois': {}, '@/utils/routes': routes,
+      '@/hooks/useNavigationKeepAwake': { useNavigationKeepAwake() {} },
+    '@/utils/roundTripArea': { coneBufferKm: () => 1, coneRadiusKm: km => Math.max(5, Math.min(100, km / 2)) },
       '@/utils/recording': recording,
+      '@/utils/routeSharing': {},
       '@/services/rideTracking': { endRide: async (discard) => { ended.push(discard); return discard ? null : tour; } },
     });
     const overlay = Screen().props.children.flat(Infinity).find((child) => child?.type === 'DriveOverlay');

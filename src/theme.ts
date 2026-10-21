@@ -20,13 +20,20 @@ export const colors = {
   sky: '#292b2f',
 };
 
-export const radii = { sm: 6, md: 8 };
+// Compact controls, content surfaces and map sheets share one radius scale.
+export const radii = { sm: 10, md: 12, lg: 20 };
+export const typography = {
+  title: { fontSize: 28, fontWeight: '700' as const, letterSpacing: -0.6 },
+  heading: { fontSize: 20, fontWeight: '600' as const, letterSpacing: -0.3 },
+  body: { fontSize: 16, lineHeight: 23 },
+  caption: { fontSize: 13, lineHeight: 18 },
+};
 export const spacing = { xs: 6, sm: 10, md: 14, lg: 20, xl: 28 };
 
 export const tabBarStyle = {
   backgroundColor: colors.charcoal,
-  borderTopColor: colors.line,
-  height: 76,
+  borderTopColor: colors.panelAlt,
+  minHeight: 76,
   paddingBottom: 11,
-  paddingTop: 7,
+  paddingTop: 9,
 };

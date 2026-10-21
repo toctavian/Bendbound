@@ -100,5 +100,8 @@
     "perClientIpPerMinute": 30,
     "globalPerMinute": 120,
     "concurrent": 2
-  }
+  },
+  "latestServiceDeployment": "shared-access-deployment.json",
+  "currentState": "stopped",
+  "activeDeployment": "../catalogue/ec2/deployment.json"
 }

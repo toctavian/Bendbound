@@ -1,0 +1,11 @@
+**
+!service/
+!service/*.mjs
+!catalogue/
+!catalogue/Dockerfile
+!catalogue/package.json
+!catalogue/package-lock.json
+!catalogue/service/
+!catalogue/service/*.mjs
+
+!catalogue/service/*.json

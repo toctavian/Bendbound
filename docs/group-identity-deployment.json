@@ -1,0 +1,487 @@
+{
+  "verifiedOn": "2026-10-19",
+  "accountId": "843872332156",
+  "region": "eu-west-2",
+  "stackName": "bendbound-group-pilot-identity",
+  "stackStatus": "UPDATE_COMPLETE",
+  "userPoolId": "eu-west-2_HL8JRR9Ha",
+  "publicClientId": "3emdhqk5q5s25n9viloftun564",
+  "authDomain": "https://bendbound-group-pilot-843872332156.auth.eu-west-2.amazoncognito.com",
+  "appleReturnUrl": "https://bendbound-group-pilot-843872332156.auth.eu-west-2.amazoncognito.com/oauth2/idpresponse",
+  "appCallbackUrl": "bendbound://auth/callback",
+  "userPoolTier": "ESSENTIALS",
+  "appleProviderConfigured": true,
+  "accountPreviewEnabled": false,
+  "groupApiDeployed": false,
+  "templateSha256": "292522ec8e811e1d48b6fa6b7c348b78c696660459f892fce6b2d81d6a9cbb47",
+  "lambdaArtifactSha256": "03aaa08dfa9114ac73d1c6b349cb31fd8c8428474396cf28ad9f58453e0c13a5",
+  "lambdaQuotaRequest": {
+    "id": "dbe091f0205e4d529ff8ed7121545b72dVpS0cjX",
+    "desiredValue": 1001,
+    "lastObservedStatus": "CASE_OPENED",
+    "reason": "Current London limit 10 cannot reserve the required 17 while leaving AWS minimum 100 unreserved. AWS rejected 200 as below the default 1000; 1001 was accepted as a request."
+  },
+  "appleServicesId": "com.octavian.bendbound.signin",
+  "appleTeamId": "U5CJCX8BV2",
+  "appleKeyId": "VQSL8P2SUR",
+  "applePrivateKeySecretArn": "arn:aws:secretsmanager:eu-west-2:843872332156:secret:bendbound/groups/apple-sign-in-G065JC",
+  "appleAuthorizationRedirectVerified": true,
+  "appleUserSignInVerified": false,
+  "artifactStackName": "bendbound-group-artifacts",
+  "artifactBucketName": "bendbound-group-artifacts-843872332156-eu-west-2",
+  "temporarySigningKeyObjectVersionsRemaining": 0,
+  "lambdaCurrentConcurrentExecutions": 1000,
+  "lambdaArtifact": {
+    "bucket": "bendbound-group-artifacts-843872332156-eu-west-2",
+    "key": "deployments/group-rides/03aaa08dfa9114ac73d1c6b349cb31fd8c8428474396cf28ad9f58453e0c13a5/sessions.zip",
+    "versionId": "VWryILTmfqlpTrNcCVPbsDQ1q0XLhokS",
+    "sha256": "03aaa08dfa9114ac73d1c6b349cb31fd8c8428474396cf28ad9f58453e0c13a5",
+    "sizeBytes": 4032481,
+    "checksumVerified": true
+  },
+  "sessionApiDeployed": true,
+  "sessionStackName": "bendbound-group-pilot-sessions",
+  "sessionStackStatus": "UPDATE_COMPLETE",
+  "sessionApiBaseUrl": "https://hrgf3wma55.execute-api.eu-west-2.amazonaws.com",
+  "sessionTableName": "bendbound-group-pilot-sessions",
+  "sessionFunctionName": "bendbound-group-pilot-sessions",
+  "sessionFunctionRoleArn": "arn:aws:iam::843872332156:role/bendbound-group-pilot-sessions-SessionRole-P61voikZ0rvt",
+  "sessionFunctionCodeSha256": "A6qgjfqRFKxz0cazScsx/YyEKEdDls8orZ9YRT4ME6U=",
+  "sessionTableTtlStatus": "ENABLED",
+  "sessionReservedConcurrency": 5,
+  "sessionHttpRejectionChecks": [
+    {
+      "case": "missing bearer",
+      "status": 401,
+      "expected": 401,
+      "noStore": true
+    },
+    {
+      "case": "invalid bearer",
+      "status": 401,
+      "expected": 401,
+      "noStore": true
+    },
+    {
+      "case": "query credentials forbidden",
+      "status": 400,
+      "expected": 400,
+      "noStore": true
+    },
+    {
+      "case": "malformed logout capability",
+      "status": 400,
+      "expected": 400,
+      "noStore": true
+    }
+  ],
+  "sessionIamPolicySimulation": {
+    "user": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ],
+    "session": [
+      {
+        "decision": "allowed",
+        "missingContext": []
+      }
+    ],
+    "missing": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": [
+          "dynamodb:LeadingKeys"
+        ]
+      }
+    ],
+    "appleSecretRead": [
+      {
+        "decision": "implicitDeny"
+      }
+    ]
+  },
+  "sessionTemplateSha256": "a1e7813bb57ecb5ef4c017a5936a4284cac7fe0c8d443e02b613de4eea417032",
+  "artifactTemplateSha256": "e545a5fa2c0a54e5ebcbc5d8d169898b006ea3bfb7cca84aad961aaf961d6b5c",
+  "chosenIosSignIn": "native-apple",
+  "nativeAppleBridgeDeployed": true,
+  "nativeAppleUserSignInVerified": false,
+  "nativeAppleStackName": "bendbound-group-pilot-native-apple",
+  "nativeAppleStackStatus": "UPDATE_COMPLETE",
+  "nativeAppleApiBaseUrl": "https://n7q0mby84l.execute-api.eu-west-2.amazonaws.com",
+  "nativeAppleTriggerArn": "arn:aws:lambda:eu-west-2:843872332156:function:bendbound-group-pilot-native-apple-triggers",
+  "nativeAppleAuthTableName": "bendbound-group-pilot-native-auth",
+  "nativeAppleVaultKeyArn": "arn:aws:kms:eu-west-2:843872332156:key/3c460725-5c95-4c0b-ae85-258abe6ca66a",
+  "nativeAppleArtifact": {
+    "bucket": "bendbound-group-artifacts-843872332156-eu-west-2",
+    "key": "deployments/group-rides/1e44795203e90f6debd7be7d902490024c1754180832e1f0f62037cd510d247a/sessions.zip",
+    "versionId": "TRv5bm0bcRel6iRXwpDEe28lZ0Bvkk7e",
+    "sha256": "1e44795203e90f6debd7be7d902490024c1754180832e1f0f62037cd510d247a",
+    "sizeBytes": 4652962,
+    "checksumVerified": true
+  },
+  "nativeAppleTriggerWired": true,
+  "nativeAppleAuthFlow": [
+    "ALLOW_CUSTOM_AUTH"
+  ],
+  "nativeAppleAuthTtlEnabled": true,
+  "nativeAppleTerminationProtection": true,
+  "nativeAppleHttpChecks": {
+    "challengeStatus": 200,
+    "challengeNoStore": true,
+    "invalidApple": {
+      "status": 401,
+      "noStore": true,
+      "error": "UNAUTHORIZED"
+    },
+    "replay": {
+      "status": 401,
+      "noStore": true,
+      "error": "UNAUTHORIZED"
+    },
+    "bodyIdentity": {
+      "status": 400,
+      "noStore": true,
+      "error": "INVALID_REQUEST"
+    },
+    "queryCredential": {
+      "status": 400,
+      "noStore": true,
+      "error": "INVALID_REQUEST"
+    }
+  },
+  "nativeAppleIamSimulation": {
+    "bridgeMappingWrite": "implicitDeny",
+    "bridgeChallengeWrite": "allowed",
+    "bridgeVaultDecrypt": "implicitDeny",
+    "bridgeDataKeyWithPurpose": "allowed",
+    "triggerSecretRead": "implicitDeny"
+  },
+  "nativeAppleTesterMappingsCreated": 0,
+  "nativeAppleRealProviderVaultWriteVerified": false,
+  "nativeAppleTemplateSha256": "86debcbb2d56cd64a34d5f50924d0c4bf0d73218247ab4d8c06205b45f8e1351",
+  "nativeAppleUnknownMappingTriggerDenialVerified": true,
+  "nativeAppleEnrollmentOperatorFunctionName": "bendbound-group-pilot-native-apple-enrollment",
+  "nativeAppleEnrollmentDeployed": true,
+  "nativeApplePublicApprovalRouteStatus": 404,
+  "nativeAppleEnrollmentApprovedTesters": 0,
+  "nativeAppleEnrollmentOutcomeHandlingVerified": true,
+  "nativeAppleEnrollmentMissingRequestSmoke": {
+    "status": "not_applied",
+    "reason": "REQUEST_NOT_ELIGIBLE"
+  },
+  "nativeAppleEnrollmentRealApprovalVerified": false,
+  "nativeAppleEnrollmentIamSimulation": {
+    "bridgeOperatorInvoke": "implicitDeny",
+    "triggerOperatorInvoke": "implicitDeny",
+    "bridgeMappingWrite": "implicitDeny",
+    "bridgePendingWrite": "allowed",
+    "bridgeMappingFence": "allowed"
+  },
+  "nativeAppleProviderRecoveryDeployed": true,
+  "nativeAppleGrantTableName": "bendbound-group-pilot-apple-grants",
+  "nativeAppleGrantTtlEnabled": true,
+  "nativeAppleProviderCleanupFunctionName": "bendbound-group-pilot-apple-provider-cleanup",
+  "nativeAppleProviderCleanupRoleArn": "arn:aws:iam::843872332156:role/bendbound-group-pilot-native-ap-ProviderCleanupRole-4oPhKUlAVH7p",
+  "nativeAppleProviderCleanupFunctionUrls": 0,
+  "nativeApplePublicCleanupRouteStatus": 404,
+  "nativeAppleProviderCleanupNoHoldSmoke": {
+    "status": "unconfirmed",
+    "reason": "PROVIDER_CLEANUP_PENDING"
+  },
+  "nativeAppleProviderRecoveryMigrationPrecheck": {
+    "legacyVaultRecords": 0,
+    "nativeMappings": 0,
+    "verifiedImmediatelyBeforeExecution": true
+  },
+  "nativeAppleFunctions": [
+    {
+      "FunctionName": "bendbound-group-pilot-native-apple",
+      "CodeSha256": "HkR5UgPpD23r1759kCSQAkwXVBgIMuHw9iA3zVENJHo=",
+      "State": "Active",
+      "LastUpdateStatus": "Successful",
+      "Role": "arn:aws:iam::843872332156:role/bendbound-group-pilot-native-apple-BridgeRole-RlQsuotBgDDe"
+    },
+    {
+      "FunctionName": "bendbound-group-pilot-native-apple-triggers",
+      "CodeSha256": "HkR5UgPpD23r1759kCSQAkwXVBgIMuHw9iA3zVENJHo=",
+      "State": "Active",
+      "LastUpdateStatus": "Successful",
+      "Role": "arn:aws:iam::843872332156:role/bendbound-group-pilot-native-apple-TriggerRole-J4ePPiLzOfeu"
+    },
+    {
+      "FunctionName": "bendbound-group-pilot-native-apple-enrollment",
+      "CodeSha256": "HkR5UgPpD23r1759kCSQAkwXVBgIMuHw9iA3zVENJHo=",
+      "State": "Active",
+      "LastUpdateStatus": "Successful",
+      "Role": "arn:aws:iam::843872332156:role/bendbound-group-pilot-native-apple-OperatorRole-jB7h5SGZ041D"
+    },
+    {
+      "FunctionName": "bendbound-group-pilot-apple-provider-cleanup",
+      "CodeSha256": "HkR5UgPpD23r1759kCSQAkwXVBgIMuHw9iA3zVENJHo=",
+      "State": "Active",
+      "LastUpdateStatus": "Successful",
+      "Role": "arn:aws:iam::843872332156:role/bendbound-group-pilot-native-ap-ProviderCleanupRole-4oPhKUlAVH7p"
+    }
+  ],
+  "nativeAppleProviderRevocationVerified": false,
+  "nativeAppleAccountDeletionImplemented": true,
+  "nativeAppleProviderCleanupIamSimulation": {
+    "bridgeJournalWrite": [
+      {
+        "decision": "allowed",
+        "missingContext": []
+      }
+    ],
+    "bridgeHoldFence": [
+      {
+        "decision": "allowed",
+        "missingContext": []
+      }
+    ],
+    "cleanupJournalDelete": [
+      {
+        "decision": "allowed",
+        "missingContext": []
+      }
+    ],
+    "cleanupHoldFence": [
+      {
+        "decision": "allowed",
+        "missingContext": []
+      }
+    ],
+    "cleanupUserPut": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ],
+    "cleanupUserUpdate": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ],
+    "cleanupUserDelete": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ],
+    "cleanupEnrollmentInvoke": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ],
+    "cleanupCognitoDelete": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ],
+    "bridgeCleanupInvoke": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ],
+    "bridgeDecrypt": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ],
+    "cleanupDecrypt": [
+      {
+        "decision": "allowed",
+        "missingContext": []
+      }
+    ],
+    "cleanupGenerateKey": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ]
+  },
+  "roomStorageDeployed": true,
+  "roomStorageStackName": "bendbound-group-pilot-rooms",
+  "roomStorageStackStatus": "UPDATE_COMPLETE",
+  "roomServicesEnabled": true,
+  "roomTableName": "bendbound-group-pilot-rooms",
+  "locationTableName": "bendbound-group-pilot-points",
+  "accountDeletionDeployed": true,
+  "accountDeletionStackName": "bendbound-group-pilot-account-deletion",
+  "accountDeletionStackStatus": "UPDATE_COMPLETE",
+  "accountDeletionApiBaseUrl": "https://gme2nuylh7.execute-api.eu-west-2.amazonaws.com",
+  "accountDeletionArtifact": {
+    "bucket": "bendbound-group-artifacts-843872332156-eu-west-2",
+    "key": "deployments/group-rides/a7bf1429c5353e342dbae4234246b7c28724168f14d12ad79621d5e9367ad7e1/sessions.zip",
+    "versionId": "WD75ftiIPFyhPT0LiaI8zKdoIp7AEPnz",
+    "sha256": "a7bf1429c5353e342dbae4234246b7c28724168f14d12ad79621d5e9367ad7e1",
+    "sizeBytes": 4663057,
+    "checksumVerified": true
+  },
+  "accountDeletionFunctions": [
+    {
+      "FunctionName": "bendbound-group-pilot-account-deletion-api",
+      "CodeSha256": "p78UKcU1PjQtuuQjQka3wockFo8U0SrXliHV6TZ61+E=",
+      "State": "Active",
+      "LastUpdateStatus": "Successful",
+      "Role": "arn:aws:iam::843872332156:role/bendbound-group-pilot-account-deletion-ApiRole-1YpgFU3S2LI6"
+    },
+    {
+      "FunctionName": "bendbound-group-pilot-account-deletion-worker",
+      "CodeSha256": "p78UKcU1PjQtuuQjQka3wockFo8U0SrXliHV6TZ61+E=",
+      "State": "Active",
+      "LastUpdateStatus": "Successful",
+      "Role": "arn:aws:iam::843872332156:role/bendbound-group-pilot-account-deletion-WorkerRole-xd3UZoQx60QO"
+    }
+  ],
+  "accountDeletionHttpChecks": {
+    "missingBearer": {
+      "status": 401,
+      "noStore": true
+    },
+    "invalidBearer": {
+      "status": 401,
+      "noStore": true
+    },
+    "unknownReceipt": {
+      "status": 404,
+      "noStore": true
+    },
+    "bodyIdentity": {
+      "status": 400,
+      "noStore": true
+    },
+    "querySecret": {
+      "status": 400,
+      "noStore": true
+    }
+  },
+  "accountDeletionEmptyQueueSmoke": {
+    "worked": false
+  },
+  "accountDeletionIamSimulation": {
+    "workerCannotWriteUser": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ],
+    "workerCannotDeleteHold": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ],
+    "workerCanDeleteSession": [
+      {
+        "decision": "allowed",
+        "missingContext": []
+      }
+    ],
+    "workerCannotApproveMapping": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ],
+    "workerCanConditionHold": [
+      {
+        "decision": "allowed",
+        "missingContext": []
+      }
+    ],
+    "workerCanDeleteCognito": [
+      {
+        "decision": "allowed",
+        "missingContext": []
+      }
+    ],
+    "workerCannotDeleteOtherPool": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ],
+    "apiCannotDeleteCognito": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ],
+    "apiCannotDecrypt": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ],
+    "workerCanDecryptPurpose": [
+      {
+        "decision": "allowed",
+        "missingContext": []
+      }
+    ],
+    "workerCannotGenerateKey": [
+      {
+        "decision": "implicitDeny",
+        "missingContext": []
+      }
+    ]
+  },
+  "accountDeletionTemplateSha256": "f85027992a6794dc788b38eaa525fffd1d1762bb6a305e39691763725948bfef",
+  "roomStorageTemplateSha256": "c1ad7041eefee56fcf55663d23ae33ba53889b34879955eefe53ad8ad416975e",
+  "accountDeletionRealUserVerified": false,
+  "easProjectId": "94d6676b-ff2e-4463-83c7-31aef741ea7c",
+  "easProjectUrl": "https://expo.dev/accounts/toctavian/projects/bendbound",
+  "signedGroupPilotBuildCreated": true,
+  "accountDeletionProviderPaginationDeployed": true,
+  "accountDeletionStrictReceiptValidationVerified": true,
+  "groupPilotRegisteredDeviceCount": 1,
+  "groupPilotPhysicalDevicesAvailable": 1,
+  "groupPilotBuildId": "810cb2bb-d3f7-4459-9813-54c804451c53",
+  "groupPilotBuildUrl": "https://expo.dev/accounts/toctavian/projects/bendbound/builds/810cb2bb-d3f7-4459-9813-54c804451c53",
+  "groupPilotBuildStatus": "FINISHED",
+  "groupPilotPreviousBuildId": "c79b3ad4-dfc7-45f9-8dff-23ef91e79227",
+  "groupPilotPreviousBuildStatus": "ERRORED",
+  "groupPilotPreviousBuildFailure": "npm ci lockfile omitted native/router peers; fixed via Expo SDK57-compatible peers, regenerated lockfile and verified isolated clean install",
+  "groupPilotExpoVersion": "57.0.30",
+  "groupPilotCleanInstallVerified": true,
+  "groupPilotBuildCompletedAt": "2026-10-19T19:33:27.337Z",
+  "groupPilotIpaVerification": {
+    "buildId": "810cb2bb-d3f7-4459-9813-54c804451c53",
+    "bundleIdentifier": "com.octavian.bendbound",
+    "version": "1.1.0",
+    "buildNumber": "8",
+    "signatureValid": true,
+    "nativeAppleEntitlement": true,
+    "applicationIdentifierMatches": true,
+    "registeredDeviceCount": 1,
+    "backgroundLocationEnabled": true,
+    "ipaSha256": "62b37253569dd293c83cd6bc53ffff2faaa7eef3b9084d9a99239920c46aabd2"
+  },
+  "groupPilotDeviceLoginVerified": false,
+  "groupRoomsLobby": {
+    "stackName": "bendbound-group-pilot-rooms",
+    "status": "UPDATE_COMPLETE",
+    "apiBaseUrl": "https://9mwgvao1zk.execute-api.eu-west-2.amazonaws.com",
+    "lobbyOnly": true,
+    "liveSharingEnabled": false,
+    "artifactSha256": "f1b70660142ce3bc8a51ffd86a27b6b7f765c64a85ede08ac7fc893ee3f4b401",
+    "artifactKey": "deployments/group-rides/f1b70660142ce3bc8a51ffd86a27b6b7f765c64a85ede08ac7fc893ee3f4b401/sessions.zip",
+    "artifactVersion": "Rn8GopyD3wTQR3U.hjbThv6BTwkTiod0",
+    "functionActive": true,
+    "functionHashVerified": true,
+    "deviceCreateInviteJoinVerified": false,
+    "unauthenticatedDenialsVerified": true,
+    "roomCleanupInvocationVerified": true,
+    "roomRoleCannotModifyPilotGrantsVerified": true
+  },
+  "nativeDeviceSignInUserReported": true,
+  "localAccountPreviewEnabled": true
+}

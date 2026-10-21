@@ -65,3 +65,13 @@ yarn-error.*
 /routing/results/
 /automation/.state/
 __pycache__/
+
+# Server API credentials (not loaded into the Expo app)
+/.secrets.env
+
+# Local group-service deployment bundles
+/services/group-rides/.artifacts/
+
+/services/group-rides/**/__pycache__/
+
+/scripts/__pycache__/

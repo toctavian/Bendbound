@@ -1,0 +1,84 @@
+{
+  "type": "object",
+  "properties": {
+    "approved": {
+      "type": "boolean"
+    },
+    "reviewedLedgerSha256": {
+      "type": "string"
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "sectionId": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "sectionId",
+          "weight",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "adjustments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "observationId": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "observationId",
+          "weight",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "summary": {
+      "type": "string"
+    },
+    "reviewedBaselineSha256": {
+      "type": "string"
+    },
+    "reviewedProposalSha256": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "approved",
+    "reviewedLedgerSha256",
+    "decisions",
+    "adjustments",
+    "summary",
+    "reviewedBaselineSha256",
+    "reviewedProposalSha256"
+  ],
+  "additionalProperties": false
+}

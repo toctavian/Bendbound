@@ -1,0 +1,408 @@
+{
+  "verifiedAt": "2026-10-21T11:29:32.327990+00:00",
+  "routingUrl": "https://api.bendboundapp.com",
+  "publicIp": "16.60.63.241",
+  "region": "eu-west-2",
+  "stackName": "bendbound-routing-catalogue-london",
+  "instanceId": "i-0c392dc16f7c9d857",
+  "instanceType": "t3.medium",
+  "volumeId": "vol-0f2489723d2984ce6",
+  "volumeGiB": 64,
+  "securityGroupId": "sg-0fd7d5c8227ab578d",
+  "cpuCredits": "standard",
+  "legacy": {
+    "stackName": "bendbound-routing-london",
+    "instanceId": "i-0bd903e525ebce321",
+    "volumeId": "vol-0238ce34e4ba8f4d9",
+    "state": "stopped",
+    "preservedForRollback": true,
+    "stateVerifiedAt": "2026-10-07T15:28:45.984442+00:00"
+  },
+  "traffic": {
+    "elasticIpAllocationId": "eipalloc-0f5fba50f462d04fa",
+    "owningStack": "bendbound-routing-london",
+    "targetParameter": "ActiveRoutingInstanceId",
+    "changeSet": "catalogue-london-100km-cutover",
+    "dnsChanged": false
+  },
+  "area": {
+    "country": "GB",
+    "coverage": "United Kingdom",
+    "source": "Geofabrik United Kingdom extract boundary"
+  },
+  "mapSha256": "cedc7ee6abf1605e5e4994f962a7b515666dba88f2489766b1396b863e60adbb",
+  "catalogue": {
+    "evaluatedSourceSections": 138564,
+    "nativeRatedSections": 141445,
+    "sectionsWithGuideRecommendations": 134,
+    "indexedRatedPhysicalEdges": 1035781,
+    "sectionEdgeMemberships": 1036593,
+    "guidePublishers": 3,
+    "ratingBasis": "geometry-and-independent-guide-frequency; not rider votes"
+  },
+  "sourceChecksums": {
+    "routing/catalogue/service/catalogue.mjs": "7f9f229c71f3f0c2f4ef1b58b88f74467d2eea7559f2893665d33e84b725f10e",
+    "routing/catalogue/service/planner.mjs": "1be1899aca755a8828ddc1671b7f461ec267789a8e77935e823345a5b83fa52e",
+    "routing/catalogue/service/policy.mjs": "cefc803013cb117f613237a92c2c4665ba089398a9cb7efa4c4f727595515d7c",
+    "routing/catalogue/service/server.mjs": "f6257ce3b30e731f509740bcae19777825543ea06faa7163e1d5e2e986eaf28c",
+    "routing/service/engine.mjs": "d6c2650b7717f46745fc8940ec9c3ca4a1a24c2c3e92b408c7230fa925a28aee",
+    "routing/service/geometry.mjs": "83be2f72f7cca15ea6250f6cd54e93051dd17948249598fd81b16cad51aa82ba",
+    "routing/service/planner.mjs": "cf42926b1c42de5e98aa589e372f0ce2fcfd2fd5544a2e72725ac9cb0bda4e98",
+    "routing/service/rate-limit.mjs": "9de8afabe90a1cc4255e4e99c8023902c19874af7ba8a0697b07514d6e14d79c",
+    "routing/service/server.mjs": "75858b5c2f815b1fea52e3a565006e9ab51394fd4117fb88a0c569004f3d8f1e",
+    "routing/catalogue/service/logging.mjs": "8e7422af7b183662cac18399515b391eee6b9fa5b636f919fcfe0e69e6847bb6",
+    "routing/catalogue/Caddyfile": "ad8fdf29277da3e93a468f40f4d0f5bb779e3d28bfcbc72a88884aeac3302c13",
+    "routing/catalogue/cloudwatch.compose.yml": "da68bdbbe1f700135dd1d6f234cc5282d07b953897d6c5b219d3c5440bd3a37e",
+    "routing/catalogue/compose-aws.sh": "aca4a473e482290a602636939bd9bc6a1057cb488c13a156e0ab84c684fcb7b7",
+    "routing/catalogue/prepare.sh": "70cafd9ea8fb89f502c130ce85d0735f383df114503be9d84f8891da84124e9a",
+    "routing/catalogue/service/start-road.mjs": "475109bb1680d594b3836fc48f434b70bcbaa800243305fb3da242d0e294e6e4",
+    "routing/catalogue/service/cache.mjs": "fe1041e638c0ac6888070ace92421f9665ad971f614454d34d698a9ed35edf60",
+    "routing/catalogue/compose.yml": "1ef7a8baa55306a0f01d4fdbea0fb517d36e996ee8aef91c25a6db1276c41b32",
+    "routing/catalogue/service/road-use.mjs": "1509e5d804c4bf2f2662f633df16c24602aa061252b88802ad24a67fcaf7e937",
+    "routing/catalogue/service/ordinary-planner.mjs": "ef6b0dd6499550ee3b4a8ce34552e4c08e26d4822e8805f52cce67163d7d9546",
+    "routing/service/cone.mjs": "f24a7349a11d9a41496f0ae9b05dfc15213d1ca0e54732ef526fc2693f2a06ad",
+    "routing/catalogue/service/input.mjs": "159587cb274e175ca3b601dc17abc0043ad6ced2fb779f1c30e75a88a936ce3f",
+    "routing/catalogue/service/matching.mjs": "0789626453a6a3da50b9915d80be9a266b7fe6b70b856f40e09b17db8f554672",
+    "routing/catalogue/service/excursions.mjs": "c9302a0854e2c4a29cc80d161e4717b41c33c188cebefb4adad03638db6c5b52",
+    "routing/catalogue/service/catalogue-postgis.mjs": "89e463cfed5381c4289d2518913fdb8e24e992066082756f5762b2e0f2faf842",
+    "routing/catalogue/service/graph-catalogue.mjs": "4864023a6234898c7418af6fc6b402176c0d0d1274d2343d5684bfb40f36d72c",
+    "routing/catalogue/service/graph-engine.mjs": "660051fa0f407d3001fd6e5285616c61970ab4fcbb712aedfc04c014e3d3802b",
+    "routing/catalogue/service/valhalla-schema.json": "5600c62d14e3fe11de7d48842004ab4946213ef7da3fee18178f361901dafa64",
+    "routing/catalogue/graph.compose.yml": "49784bbe465091159a3f9d489dfa197f76e4ff68b52bb243ca8cee4f1fa541b1",
+    "routing/valhalla/bootstrap.sh": "78bf9aaa14b231a594db1f85520027659174b9ce0f43847f29cdc0593e9031e0",
+    "routing/catalogue/graph/bridge.py": "c283eda8cdd4bb85fa5e523c3fd26e233bc0ab44e446ae4362009d82e9294c19",
+    "routing/catalogue/graph/export.py": "1f0b2704ceaee901bc148e8b1637362a9be67b0931a768b977e2d05b0c2cd90f",
+    "routing/catalogue/service/route-shares.mjs": "6b0a61e7912c4063e16b30a29d50d9a36e5c0a51a9061a295b9af8897e0888a1",
+    "routing/catalogue/deploy-route-sharing.sh": "b8afbd3a3ad06e70424cb576f577ce293e297061f455ab2560661e706047c9e6",
+    "routing/catalogue/service/graph-catalogue-sqlite.mjs": "14cea4add096cdc644717dcd22d1a28e01dd16e100bec044580e52bb7acbe438",
+    "routing/catalogue/service/uk-boundary.json": "833c65e63a76405bbb90c1a3b3c4f828f47c508aaa434d547234fc7d16e58591",
+    "routing/catalogue/uk.compose.yml": "46b2db88bbf8f4e8a74575f8c8ba85686ca42c378412143e49c6e3fc522177a9"
+  },
+  "verification": {
+    "standardCpu": "standard-verification.json",
+    "publicHttps": "https-verification.json",
+    "postgisSpatialIndexExecutionMs": 2.333,
+    "localCatalogueTests": 56,
+    "localGeometryFeatureTests": 3,
+    "legacyRoutingTests": 11,
+    "appIntegrationAndSharedAccessTests": 14,
+    "lint": "passed",
+    "typecheck": "passed",
+    "e14Regression": "e14-verification.json",
+    "logging": "logging-verification.json",
+    "startRoads": "start-road-verification.json",
+    "optimisations": "optimisation-verification.json",
+    "roadReuse": "road-reuse-verification.json",
+    "directionalArea": "directional-area-verification.json",
+    "appTests": 142,
+    "roadMatching": "road-matching-verification.json",
+    "angleAndExcursions": "angle-excursion-verification.json"
+  },
+  "costBaselineMonthlyUSD": {
+    "newHostCompute730Hours": 34.456,
+    "newHost64GiBGp3": 5.9392,
+    "activeIpv4": 3.65,
+    "retainedLegacyDisk16GiB": 1.4848,
+    "total": 46.03,
+    "excludes": "Tax, transfer, DNS queries, domain renewal and CloudWatch usage; no credit/free-tier assumptions",
+    "hostedZone": 0.5
+  },
+  "temporaryBuildCpu": {
+    "mode": "unlimited during final import and validation; restored to standard",
+    "surplusCreditRateUsdPerVcpuHour": 0.05
+  },
+  "rollback": {
+    "startInstanceId": "i-0bd903e525ebce321",
+    "stackToUpdate": "bendbound-routing-london",
+    "parameter": "ActiveRoutingInstanceId",
+    "value": "",
+    "usePreviousTemplate": true,
+    "stopNewInstanceAfterVerification": true
+  },
+  "plannerUpdate": {
+    "verifiedAt": "2026-10-07T16:40:02.651628+00:00",
+    "ssmCommandId": "a5bd0d2f-2bde-4054-bee0-7aba10daefe9",
+    "changes": [
+      "Retain policy-valid routes that miss the suggested section, without claiming full-section traversal.",
+      "Reserve ordinary-loop search time; skip redundant fallback after success.",
+      "Stop after a verified full-section route; retain valid results if subsequent exploration encounters an engine error."
+    ],
+    "exactPhoneGpsRequestReproduced": false
+  },
+  "logging": {
+    "region": "eu-west-2",
+    "group": "/bendbound/routing/london",
+    "retentionInDays": 14,
+    "containers": [
+      "api",
+      "valhalla",
+      "caddy"
+    ],
+    "savedQueries": [
+      "Bendbound/Failed requests",
+      "Bendbound/Find request reference",
+      "Bendbound/Route latency and failures"
+    ],
+    "verifiedAt": "2026-10-07T16:53:59.229Z",
+    "details": "../LOGGING.md",
+    "startRoadLoggingVerifiedAt": "2026-10-07T17:03:07.591Z"
+  },
+  "optimisations": {
+    "graphMode": "on-demand",
+    "graphDataPreserved": true,
+    "cacheTtlSeconds": 60,
+    "routeCacheMaxMiB": 16,
+    "nearbyCacheMaxMiB": 8,
+    "verifiedAt": "2026-10-07T17:16:08.020Z",
+    "details": "../OPTIMISATIONS.md"
+  },
+  "roadUsePolicy": {
+    "name": "physical-segments-twice-10-percent",
+    "maxTraversals": 2,
+    "maxRepeatedRatio": 0.1,
+    "verifiedAt": "2026-10-07T18:28:39.196Z",
+    "details": "../ROAD_REUSE.md"
+  },
+  "directionalArea": {
+    "status": "deployed",
+    "enabledBy": "coneAngleDegrees, with legacy radiusKm support",
+    "openingAngleDegrees": 120,
+    "radiusRangeKm": [
+      5,
+      100
+    ],
+    "buffer": "15% of radius, minimum 1 km, maximum 5 km",
+    "legacyClients": "unchanged when radiusKm is absent",
+    "rollbackArchive": "/opt/bendbound/cone-routing-backup-20261008.tgz",
+    "appRelease": "UI needs new TestFlight build; none submitted",
+    "openingAngleRangeDegrees": [
+      10,
+      180
+    ],
+    "radiusDerivation": "half target distance capped at 100 km"
+  },
+  "activeCatalogueBackend": "valhalla",
+  "nativeGraph": {
+    "version": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2",
+    "ratingOverlaySchema": 3,
+    "ratedPhysicalEdges": 1035781,
+    "sections": 141445,
+    "recommendedSections": 134,
+    "unmappedOriginalSections": 173,
+    "unmappedRecommendedSections": 0,
+    "shortcutEdgesWithRatings": 104596,
+    "apiImage": "sha256:e6ac53017287993a8cfcbc104233b40263c51c820400cce4fec64bb98dc17019"
+  },
+  "postgisExperiment": {
+    "state": "stopped",
+    "volumePreserved": true,
+    "legacyAdapterPreserved": true,
+    "activationMarker": ".data/graph/enabled",
+    "rollbackArchive": "/opt/bendbound/valhalla-graph-backup-20261008.tgz",
+    "verification": "native-graph-verification.json"
+  },
+  "routeSharing": {
+    "status": "deployed",
+    "verifiedAt": "2026-10-10T10:17:39.187319+00:00",
+    "details": "../ROUTE_SHARING.md",
+    "verification": "route-sharing-verification.json",
+    "expiresAfterDays": 90,
+    "maxStorageMiB": 256,
+    "rollbackArchive": "/opt/bendbound/route-sharing-backup-20261010.tgz",
+    "apiImage": "sha256:4281f711bec193a6baf7aadb3a38f5034b40188caa5fcdcf56291b714839bed4",
+    "phoneBuild": "New signed iOS build required; not submitted"
+  },
+  "ukDeployment": {
+    "status": "live-verified",
+    "verifiedAt": "2026-10-21T11:29:32.327990+00:00",
+    "stage": "/opt/bendbound/routing/.data/uk-20261020",
+    "activationMarker": ".data/uk-enabled",
+    "activeSymlink": ".data/uk-current",
+    "apiImage": "sha256:e6ac53017287993a8cfcbc104233b40263c51c820400cce4fec64bb98dc17019",
+    "ssm": {
+      "preflight": "b171a7b1-31dc-4b2a-b8f9-49e9c6282835",
+      "small": "47b40142-bafc-47da-804e-919c0dd3a558",
+      "ratings": "1e6f6c39-f1d9-4278-8607-dcfa9a5f50b2",
+      "graph": "3dc3d8dd-19e9-4626-9a77-b446a062431f",
+      "staging": "8e17fa13-7194-4999-bd9d-d4f78e76bddc",
+      "activation": "a35c07fa-7566-4b97-a01f-8c9d9e34ce47",
+      "verification": "7b57ab2d-d992-43d3-9864-790d4412814e"
+    },
+    "artifacts": [
+      {
+        "bucket": "bendbound-group-artifacts-843872332156-eu-west-2",
+        "key": "uk-routing/20261021/8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2/tiles.tar"
+      },
+      {
+        "bucket": "bendbound-group-artifacts-843872332156-eu-west-2",
+        "key": "uk-routing/20261021/9150eda7fc93cbcd23db23b3bbf892c1838f5bd09b124d01bc705bd32e6520dd/admin.sqlite"
+      },
+      {
+        "bucket": "bendbound-group-artifacts-843872332156-eu-west-2",
+        "key": "uk-routing/20261021/f61ad19bf5276c9014c75fe14375c3d30622bff1478ba5d32b105d330e948b52/valhalla.json"
+      },
+      {
+        "bucket": "bendbound-group-artifacts-843872332156-eu-west-2",
+        "key": "uk-routing/20261021/54badfdfec37a131f103c9fefec76ffbce34f6967dfd48ef442c156c3110ab53/map.sha256"
+      },
+      {
+        "bucket": "bendbound-group-artifacts-843872332156-eu-west-2",
+        "key": "uk-routing/20261021/05478fee42d89429a2e12ad804c04828dbe73043a72d9ae4ebe38ad25ae7895f/ratings.sqlite"
+      },
+      {
+        "bucket": "bendbound-group-artifacts-843872332156-eu-west-2",
+        "key": "uk-routing/20261021/cf2b0b697a6532418a912734eb64c32ec17b242100081d3dd87fee65549ee6a4/api-image.tar.gz"
+      },
+      {
+        "bucket": "bendbound-group-artifacts-843872332156-eu-west-2",
+        "key": "uk-routing/20261021/ae2d7054c2b0decd70e03a687d34c0fb6fc871656a529ee0715e8afe9c231df7/deployment-config.tar.gz"
+      }
+    ],
+    "files": [
+      {
+        "file": "valhalla/tiles.tar",
+        "bytes": 2872217600,
+        "sha256": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2"
+      },
+      {
+        "file": "valhalla/admin.sqlite",
+        "bytes": 10067968,
+        "sha256": "9150eda7fc93cbcd23db23b3bbf892c1838f5bd09b124d01bc705bd32e6520dd"
+      },
+      {
+        "file": "valhalla/valhalla.json",
+        "bytes": 7324,
+        "sha256": "f61ad19bf5276c9014c75fe14375c3d30622bff1478ba5d32b105d330e948b52"
+      },
+      {
+        "file": "valhalla/map.sha256",
+        "bytes": 65,
+        "sha256": "54badfdfec37a131f103c9fefec76ffbce34f6967dfd48ef442c156c3110ab53"
+      },
+      {
+        "file": "graph/ratings.sqlite",
+        "bytes": 752939008,
+        "sha256": "05478fee42d89429a2e12ad804c04828dbe73043a72d9ae4ebe38ad25ae7895f"
+      },
+      {
+        "file": "api-image.tar.gz",
+        "bytes": 63680885,
+        "sha256": "cf2b0b697a6532418a912734eb64c32ec17b242100081d3dd87fee65549ee6a4"
+      },
+      {
+        "file": "deployment-config.tar.gz",
+        "bytes": 2349,
+        "sha256": "ae2d7054c2b0decd70e03a687d34c0fb6fc871656a529ee0715e8afe9c231df7"
+      }
+    ],
+    "verification": {
+      "publicHttps": {
+        "status": "verified",
+        "graphVersion": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2",
+        "health": {
+          "status": "ready",
+          "engine": "valhalla",
+          "version": "3.9.0",
+          "implementation": "road-catalogue-v1",
+          "area": {
+            "country": "GB",
+            "coverage": "United Kingdom",
+            "source": "Geofabrik United Kingdom extract boundary"
+          },
+          "catalogue": {
+            "version": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2",
+            "graph_version": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2",
+            "sections": 141445,
+            "recommended_sections": 134,
+            "indexed_rated_edges": 1035781,
+            "sourceSections": 138564,
+            "unmappedSections": 173,
+            "backend": "valhalla",
+            "postgis": "retired",
+            "connectivity": {
+              "mode": "valhalla",
+              "status": "online"
+            }
+          }
+        },
+        "cases": [
+          {
+            "area": "London",
+            "km": 7.0175299644470215,
+            "seconds": 0.38
+          },
+          {
+            "area": "England",
+            "km": 28.94700050354004,
+            "seconds": 0.13
+          },
+          {
+            "area": "Wales",
+            "km": 32.61619186401367,
+            "seconds": 0.08
+          },
+          {
+            "area": "Scotland",
+            "km": 72.43476104736328,
+            "seconds": 0.08
+          },
+          {
+            "area": "Northern Ireland",
+            "km": 12.706440925598145,
+            "seconds": 0.07
+          },
+          {
+            "type": "strict-cone-round-trip",
+            "seconds": 10.88,
+            "valid": true,
+            "distanceKm": 18.13698959350586,
+            "insideCone": true,
+            "maxTraversals": 2,
+            "repeatedRatio": 0.037317813771082106,
+            "verifiedRatio": 0.9999999989186668
+          }
+        ]
+      },
+      "sourceFilesMatched": 25,
+      "unauthenticatedHealthStatus": 401,
+      "oomKilled": false,
+      "ec2AndDiskUnchanged": true,
+      "freeDiskGiB": 39,
+      "availableRamMiB": 2867
+    },
+    "rollback": {
+      "command": "sudo bash /opt/bendbound/routing/.data/uk-rollback-20261021/rollback.sh",
+      "scriptSyntaxVerified": true,
+      "imagePreserved": "sha256:4281f711bec193a6baf7aadb3a38f5034b40188caa5fcdcf56291b714839bed4",
+      "previousArea": {
+        "center": {
+          "latitude": 51.5074,
+          "longitude": -0.1278
+        },
+        "serviceRadiusKm": 100,
+        "engineExtractRadiusKm": 130
+      },
+      "previousMapSha256": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+      "previousCatalogue": {
+        "evaluatedSections": 21892,
+        "sectionsWithGuideRecommendations": 126,
+        "physicalRoadEdges": 2299432,
+        "directedGraphRoads": 4345430,
+        "guidePublishers": 3,
+        "ratingBasis": "geometry-and-guide-frequency; not rider votes"
+      },
+      "previousNativeGraph": {
+        "version": "0c3c0afdf347c71eb9ebb3d4a93f0f1e24686fd88d69fe25753495c1ed2db7db",
+        "ratingOverlaySchema": 2,
+        "ratedPhysicalEdges": 223513,
+        "sections": 24688,
+        "recommendedSections": 133,
+        "unmappedOriginalSections": 13,
+        "unmappedRecommendedSections": 0,
+        "shortcutEdgesWithRatings": 28077,
+        "apiImage": "sha256:ee84b30cf14440a5791c2e4db62f5b56b3b5cc912961a8992c924c978a81972c"
+      }
+    },
+    "dailyResearchPublishing": "pending integration; this deployment is the verified national baseline"
+  }
+}

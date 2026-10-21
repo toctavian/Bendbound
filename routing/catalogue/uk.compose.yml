@@ -1,0 +1,28 @@
+# Add after graph.compose.yml only when a verified national graph is installed.
+# Empty .data/uk-enabled marker controls activation in compose-aws.sh.
+services:
+  valhalla:
+    entrypoint: [valhalla_service, /data/valhalla.json, "1"]
+    volumes: !override
+      - ../.data/uk-current/valhalla:/data:ro
+    mem_limit: 1536m
+    memswap_limit: 2g
+    cpus: 1.5
+  valhalla-graph:
+    environment:
+      GRAPH_TILE_CACHE_MB: "128"
+    volumes: !override
+      - ../.data/uk-current/valhalla:/data:ro
+      - ./graph:/graph:ro
+    mem_limit: 256m
+  api:
+    image: bendbound-routing-api:uk-20261020
+    pull_policy: never
+    environment:
+      ROUTING_COVERAGE: uk
+      GRAPH_RATINGS_FILE: /ratings/ratings.sqlite
+      NODE_OPTIONS: --max-old-space-size=1024
+    volumes: !override
+      - ../.data/route-shares:/shares
+      - ../.data/uk-current/graph:/ratings:ro
+    mem_limit: 1536m

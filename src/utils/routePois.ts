@@ -1,5 +1,5 @@
 import type { Coordinate, PoiCategory, PointOfInterest, RoutePointOfInterest } from '@/types';
-import { requestOverpass, type OverpassElement } from '@/utils/pois';
+import { requestOverpass, poiFromElement, type OverpassElement } from '@/utils/pois';
 import { distanceBetween } from '@/utils/routes';
 
 const corridorKm = 0.25;
@@ -74,17 +74,16 @@ export function parseRoutePois(elements: OverpassElement[]): PointOfInterest[] {
       : tags.amenity === 'cafe' || tags.amenity === 'pub' ? 'meet'
         : tags.natural === 'saddle' || tags.mountain_pass === 'yes' ? 'pass'
           : tags.natural === 'wood' || tags.landuse === 'forest' || tags.leisure === 'nature_reserve' ? 'forest' : 'sight';
-    const kind = tags.tourism ?? tags.amenity ?? tags.historic ?? tags.leisure ?? tags.natural ?? tags.landuse ?? 'Mountain pass';
-    const address = [tags['addr:housenumber'], tags['addr:street'], tags['addr:city']].filter(Boolean).join(' ');
-    return [{ id: `${element.type}-${element.id}`, latitude, longitude, category, name,
-      detail: [kind.replaceAll('_', ' '), address].filter(Boolean).join(' · ') }];
+    if (category === 'forest') return [];
+    const point = poiFromElement(element, category);
+    return point ? [point] : [];
   });
 }
 
 // Simplify only the query corridor (100 m tolerance); matching and map pins
 // always use the complete road geometry. The extra 100 m query radius covers bends.
-export function routePoiQuery(route: Coordinate[]): string {
-  if (route.length < 2 || !route.every(valid)) return '';
+export function routePoiCorridor(route: Coordinate[]): Coordinate[] {
+  if (route.length < 2 || !route.every(valid)) return [];
   const keep = new Set([0, route.length - 1]);
   const stack = [[0, route.length - 1]];
   while (stack.length) {
@@ -100,13 +99,33 @@ export function routePoiQuery(route: Coordinate[]): string {
       stack.push([start, furthest], [furthest, end]);
     }
   }
-  const line = [...keep].sort((a, b) => a - b).map((index) => `${route[index].latitude.toFixed(6)},${route[index].longitude.toFixed(6)}`).join(',');
-  const filters = ['["tourism"~"attraction|viewpoint"]', '["historic"]', '["amenity"~"fuel|cafe|pub"]',
-    '["natural"~"saddle|wood"]', '["mountain_pass"="yes"]', '["leisure"="nature_reserve"]', '["landuse"="forest"]'];
+  return [...keep].sort((a, b) => a - b).map((index) => route[index]);
+}
+
+export function routePoiQuery(route: Coordinate[]): string {
+  const corridor = routePoiCorridor(route);
+  if (!corridor.length) return '';
+  const line = corridor.map((point) => `${point.latitude.toFixed(6)},${point.longitude.toFixed(6)}`).join(',');
+  const filters = ['["tourism"~"attraction|viewpoint"]', '["historic"]', '["amenity"="fuel"]', '["amenity"~"cafe|pub|restaurant"]["name"~"Ace Caf|Squires|Loomies",i]',
+    '["natural"="saddle"]', '["mountain_pass"="yes"]'];
   return `[out:json][timeout:8];(\n${filters.map((filter) => `nwr${filter}["name"](around:350,${line});`).join('\n')}\n);out center 1000;`;
 }
 
 export async function fetchRoutePois(route: Coordinate[], signal?: AbortSignal): Promise<RoutePointOfInterest[]> {
+  const endpoint = process.env.EXPO_PUBLIC_POI_URL;
+  if (endpoint?.startsWith('https://')) {
+    const corridor = routePoiCorridor(route);
+    if (!corridor.length) return [];
+    const response = await fetch(endpoint.replace(/\/pois\/?$/, '/route-pois'), {
+      method: 'POST', signal,
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.EXPO_PUBLIC_ROUTING_TOKEN ?? ''}` },
+      body: JSON.stringify({ route: corridor }),
+    });
+    if (!response.ok) throw new Error('Route places are unavailable.');
+    const data = await response.json();
+    if (!Array.isArray(data.elements)) throw new Error('Invalid route place response.');
+    return pointsAlongRoute(route, parseRoutePois(data.elements));
+  }
   const query = routePoiQuery(route);
   if (!query) return [];
   const payload = await requestOverpass(query, signal);

@@ -1,0 +1,39 @@
+# Enabled by .data/graph/enabled. Keep database volumes and legacy adapter intact.
+services:
+  postgres:
+    profiles: [legacy-postgis]
+  valhalla-graph:
+    image: ghcr.io/valhalla/valhalla:3.9.0@sha256:511c095b8caf393dccceb8b519ec96b6f85a0166b2288ba014a8a748acc5a63c
+    entrypoint: [python3, /graph/bridge.py]
+    volumes:
+      - ../.data/valhalla:/data:ro
+      - ./graph:/graph:ro
+    mem_limit: 256m
+    restart: unless-stopped
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ${AWS_REGION:-eu-west-2}
+        awslogs-group: ${CLOUDWATCH_LOG_GROUP:-/bendbound/routing/london}
+        awslogs-create-group: "false"
+        tag: "{{.Name}}/{{.ID}}"
+        mode: non-blocking
+        max-buffer-size: "4m"
+    healthcheck:
+      test: [CMD, python3, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8003/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+  api:
+    environment:
+      NODE_OPTIONS: --max-old-space-size=320
+      CATALOGUE_BACKEND: valhalla
+      VALHALLA_GRAPH_URL: http://valhalla-graph:8003
+      GRAPH_RATINGS_FILE: /ratings/ratings.json.gz
+    volumes:
+      - ../.data/graph:/ratings:ro
+    depends_on: !override
+      valhalla:
+        condition: service_healthy
+      valhalla-graph:
+        condition: service_healthy

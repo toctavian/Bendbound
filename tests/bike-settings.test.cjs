@@ -15,7 +15,7 @@ const motorcycles = load('src/data/motorcycles.ts');
 const routeColorData = load('src/data/routeColors.ts');
 const settingsUtils = load('src/utils/settings.ts', { '@/data/motorcycles': motorcycles, '@/data/routeColors': routeColorData });
 const jsx = (type, props) => ({ type, props });
-const rn = { StyleSheet: { create: (styles) => styles }, View: 'View', Text: 'Text', Pressable: 'Pressable', TextInput: 'TextInput', ScrollView: 'ScrollView' };
+const rn = { useWindowDimensions: () => ({ width: 390, height: 844, fontScale: 1 }), StyleSheet: { create: (styles) => styles }, View: 'View', Text: 'Text', Pressable: 'Pressable', TextInput: 'TextInput', ScrollView: 'ScrollView' };
 
 test('named motorcycles retain the requested models and the existing Octav selection', () => {
   assert.equal(motorcycles.motorcycles.funventure.label, 'Octav');
@@ -100,7 +100,7 @@ test('bike settings controls update the motorcycle, model, route profile and mot
     '@/components/ui': { IconButton: 'IconButton', ToggleRow: 'ToggleRow' },
     '@/components/MotorcycleGlyph': { MotorcycleGlyph: 'MotorcycleGlyph' },
     '@/state/AppProvider': { useApp: () => ({ ready: true, settings, updateSettings: (next) => { settings = { ...settings, ...next }; } }) },
-    '@/theme': { colors: {}, spacing: {} },
+    '@/theme': load('src/theme.ts'),
     '@/data/motorcycles': motorcycles,
   });
   for (const [type, metadata] of Object.entries(motorcycles.motorcycles)) {
@@ -125,6 +125,8 @@ test('profile bike and routes rows open settings or tours, while unsupported ser
   const alerts = [];
   let settings = { ...settingsUtils.initialSettings };
   const { default: Screen } = load('src/app/profile.tsx', {
+    '@/hooks/useAccount': { useAccount: () => ({ account: null }) },
+    '@/components/AccountPanel': { AccountPanel: () => null },
     'react/jsx-runtime': { jsx, jsxs: jsx },
     'react-native': { ...rn, Image: 'Image', Alert: { alert: (...args) => alerts.push(args) } },
     '../../assets/bendbound-logo.png': 'bendbound-logo',
@@ -136,7 +138,7 @@ test('profile bike and routes rows open settings or tours, while unsupported ser
     '@/components/RouteColorPicker': { RouteColorPicker: 'RouteColorPicker' },
     '@/components/ui': { ActionButton: 'ActionButton', ToggleRow: 'ToggleRow' },
     '@/state/AppProvider': { useApp: () => ({ tours: [], settings, updateSettings: (next) => { settings = { ...settings, ...next }; } }) },
-    '@/theme': { colors: {}, spacing: {} },
+    '@/theme': load('src/theme.ts'),
     '@/utils/routes': {},
     '@/data/motorcycles': motorcycles,
   });
@@ -147,7 +149,7 @@ test('profile bike and routes rows open settings or tours, while unsupported ser
   assert.equal(logo.props.source, 'bendbound-logo');
   assert.equal(logo.props.accessibilityLabel, 'Bendbound');
   assert.equal(logo.props.resizeMode, 'contain');
-  for (const label of ['My motorcycle', 'Route preferences', 'My tours & saved routes', 'Offline map regions', 'Group rides']) {
+  for (const label of ['My motorcycle', 'Route preferences', 'My tours & saved routes', 'Offline map regions']) {
     const row = find(screen, (node) => node.props?.label === label);
     const button = row.type(row.props);
     assert.equal(button.props.accessibilityRole, 'button');
@@ -155,7 +157,7 @@ test('profile bike and routes rows open settings or tours, while unsupported ser
   }
   find(screen, (node) => node.props?.accessibilityLabel === 'Routes and bike settings').props.onPress();
   assert.deepEqual(navigation, ['/bike', '/bike', '/tours', '/bike']);
-  assert.deepEqual(alerts.map((args) => args[0]), ['Offline maps unavailable', 'Live group rides unavailable']);
+  assert.deepEqual(alerts.map((args) => args[0]), ['Offline maps unavailable']);
   for (const speedUnit of ['mph', 'km/h']) {
     const radio = find(Screen(), (node) => node.props?.accessibilityLabel === speedUnit);
     radio.props.onPress();
@@ -395,7 +397,7 @@ test('route colour picker has one accessible selection and persists every offere
   const { RouteColorPicker } = load('src/components/RouteColorPicker.tsx', {
     'react/jsx-runtime': { jsx, jsxs: jsx }, 'react-native': rn,
     '@expo/vector-icons/Ionicons': { default: 'Icon' },
-    '@/data/routeColors': routeColorData, '@/theme': { colors: {} },
+    '@/data/routeColors': routeColorData, '@/theme': load('src/theme.ts'),
   });
   const render = () => RouteColorPicker({ value, onChange: (next) => { value = next; } });
   for (const [color, metadata] of Object.entries(routeColorData.routeColors)) {

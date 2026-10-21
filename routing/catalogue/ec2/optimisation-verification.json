@@ -1,0 +1,2230 @@
+{
+  "verifiedAt": "2026-10-07T17:16:08.020Z",
+  "instanceId": "i-0c392dc16f7c9d857",
+  "instanceType": "t3.medium",
+  "region": "eu-west-2",
+  "deploymentCommandId": "2da194d2-d781-4793-b52d-d4a1bc9ed368",
+  "cloudFormation": {
+    "status": "UPDATE_COMPLETE",
+    "instances": [
+      {
+        "id": "i-0c392dc16f7c9d857",
+        "type": "t3.medium",
+        "state": {
+          "Code": 16,
+          "Name": "running"
+        },
+        "ip": "16.60.63.241"
+      }
+    ]
+  },
+  "creditMode": "standard",
+  "mediumResources": {
+    "status": "Success",
+    "stdout": "               total        used        free      shared  buff/cache   available\nMem:            3832         986        1420          98        1759        2846\nSwap:           2047           0        2047\nbendbound-catalogue-api-1\nbendbound-catalogue-caddy-1\nbendbound-catalogue-valhalla-1\nbendbound-catalogue-postgres-1\nbendbound-catalogue-api-1 95.46MiB / 512MiB\nbendbound-catalogue-caddy-1 49.16MiB / 128MiB\nbendbound-catalogue-valhalla-1 543.2MiB / 3.742GiB\nbendbound-catalogue-postgres-1 158.8MiB / 1GiB\nsome avg10=0.00 avg60=0.00 avg300=0.00 total=1\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1\n"
+  },
+  "graphOnDemand": {
+    "status": "Success",
+    "stdout": "{\"graphVersion\":\"dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf\"}\n               total        used        free      shared  buff/cache   available\nMem:            3832        1521         537          99        2112        2310\nSwap:           2047           0        2047\n",
+    "stderr": " Container bendbound-catalogue-neo4j-1  Starting\n Container bendbound-catalogue-neo4j-1  Started\n Container bendbound-catalogue-neo4j-1  Stopping\n Container bendbound-catalogue-neo4j-1  Stopped\n"
+  },
+  "cacheCloudWatchEvents": [
+    {
+      "logStreamName": "bendbound-catalogue-api-1/cc9fb4e2a2b4",
+      "timestamp": 1791393177700,
+      "message": "{\"timestamp\":\"2026-10-07T17:12:57.699Z\",\"service\":\"bendbound-routing\",\"event\":\"request.started\",\"level\":\"info\",\"requestId\":\"602d421f-2f0c-415f-a3a4-a4496e4b6baf\",\"method\":\"POST\",\"path\":\"/round-trip\"}",
+      "ingestionTime": 1791393181553,
+      "eventId": "39949402806273790362442488684752549671429099310492483585"
+    },
+    {
+      "logStreamName": "bendbound-catalogue-api-1/cc9fb4e2a2b4",
+      "timestamp": 1791393177702,
+      "message": "{\"timestamp\":\"2026-10-07T17:12:57.701Z\",\"service\":\"bendbound-routing\",\"event\":\"request.completed\",\"level\":\"info\",\"requestId\":\"602d421f-2f0c-415f-a3a4-a4496e4b6baf\",\"method\":\"POST\",\"path\":\"/round-trip\",\"status\":200,\"durationMs\":2,\"input\":{\"targetKm\":41,\"direction\":180,\"profile\":\"winding\",\"avoidMotorways\":true},\"planner\":{\"valid\":true,\"distanceKm\":42.325,\"distanceErrorKm\":1.3250000000000028,\"overlapRatio\":0.0060823935675258884,\"repeatedKm\":0.2571828124724559,\"sharedAccessKm\":0.2571330213050403,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempts\":37,\"elapsedMs\":9456,\"score\":5.2292644578229135,\"evaluatedKm\":7.733276277550011,\"recommendedKm\":0,\"implementation\":\"road-catalogue-v1\"},\"cache\":{\"status\":\"hit\",\"ageMs\":56}}",
+      "ingestionTime": 1791393181553,
+      "eventId": "39949402806318391852839549931035621107974396033504444418"
+    },
+    {
+      "logStreamName": "bendbound-catalogue-caddy-1/8498b4c689f4",
+      "timestamp": 1791393177702,
+      "message": "{\"level\":\"info\",\"ts\":1791393177.7021768,\"logger\":\"http.log.access.log0\",\"msg\":\"handled request\",\"request\":{\"proto\":\"HTTP/1.1\",\"method\":\"POST\",\"host\":\"api.bendboundapp.com\"},\"bytes_read\":139,\"user_id\":\"\",\"duration\":0.003888735,\"size\":59019,\"status\":200,\"requestId\":\"602d421f-2f0c-415f-a3a4-a4496e4b6baf\"}",
+      "ingestionTime": 1791393181554,
+      "eventId": "39949402806318391852839549931037066143583250137975619585"
+    }
+  ],
+  "tests": {
+    "catalogueAndLogging": 27,
+    "legacyAndApp": 25,
+    "lint": "passed",
+    "typecheck": "passed",
+    "appResponseValidation": "All nine cold/concurrent/cached responses accepted; maneuvers and shared-access validation passed."
+  },
+  "coldRouteChecks": {
+    "verifiedAt": "2026-10-07T17:12:09.647585+00:00",
+    "base": "https://api.bendboundapp.com",
+    "checks": [
+      {
+        "check": "health",
+        "seconds": 0.822,
+        "response": {
+          "status": "ready",
+          "engine": "valhalla",
+          "version": "3.9.0",
+          "implementation": "road-catalogue-v1",
+          "area": {
+            "center": {
+              "latitude": 51.5074,
+              "longitude": -0.1278
+            },
+            "radiusKm": 100
+          },
+          "catalogue": {
+            "version": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "graph_version": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "sections": 21892,
+            "recommended_sections": 126,
+            "edges": 2299432,
+            "connectivity": {
+              "mode": "on-demand",
+              "status": "prepared-on-demand"
+            }
+          }
+        }
+      },
+      {
+        "check": "full-road-area-search",
+        "seconds": 0.458,
+        "returnedSections": 100,
+        "sample": [
+          {
+            "id": "section-d3c840f6c71c8c5558efc235bad5b8f7",
+            "name": "Guildford Road",
+            "ref": "A25",
+            "lengthKm": 0.8179752512480452,
+            "rating": 2.449578928866496,
+            "quality": 2.213684184094994,
+            "winding": 2.8742239673743466,
+            "twisty": 0.867319130793389,
+            "recommendationCount": 2,
+            "frequencyRating": 3,
+            "ratingBasis": "geometry-and-guide-frequency",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [
+              {
+                "publisher": "Devitt",
+                "url": "https://www.devittinsurance.com/guides/best-biking-routes/south-east/"
+              },
+              {
+                "publisher": "WeBuyAnyBike247",
+                "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+              }
+            ],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "geometry": {
+              "type": "LineString",
+              "coordinates": [
+                [
+                  -0.4252916,
+                  51.2145629
+                ],
+                [
+                  -0.424929,
+                  51.2145347
+                ],
+                [
+                  -0.4245439,
+                  51.2144868
+                ],
+                [
+                  -0.4243004,
+                  51.2144771
+                ],
+                [
+                  -0.4241264,
+                  51.2144771
+                ],
+                [
+                  -0.4236919,
+                  51.2144953
+                ],
+                [
+                  -0.4232598,
+                  51.2145449
+                ],
+                [
+                  -0.4225156,
+                  51.2146857
+                ],
+                [
+                  -0.4222556,
+                  51.2147037
+                ],
+                [
+                  -0.421971,
+                  51.2146985
+                ],
+                [
+                  -0.4210954,
+                  51.2146544
+                ],
+                [
+                  -0.4206926,
+                  51.2146516
+                ],
+                [
+                  -0.4203544,
+                  51.2146643
+                ],
+                [
+                  -0.4199945,
+                  51.2147043
+                ],
+                [
+                  -0.4195484,
+                  51.2147772
+                ],
+                [
+                  -0.4187244,
+                  51.2149381
+                ],
+                [
+                  -0.4184799,
+                  51.2149643
+                ],
+                [
+                  -0.4183173,
+                  51.2149681
+                ],
+                [
+                  -0.4181476,
+                  51.2149612
+                ],
+                [
+                  -0.4178164,
+                  51.2149249
+                ],
+                [
+                  -0.4174952,
+                  51.2148694
+                ],
+                [
+                  -0.4172185,
+                  51.2148357
+                ],
+                [
+                  -0.4170395,
+                  51.2148228
+                ],
+                [
+                  -0.416935,
+                  51.2148202
+                ],
+                [
+                  -0.416847,
+                  51.214819
+                ],
+                [
+                  -0.4168017,
+                  51.2148204
+                ],
+                [
+                  -0.4162011,
+                  51.2148236
+                ],
+                [
+                  -0.4156593,
+                  51.2148303
+                ],
+                [
+                  -0.4154387,
+                  51.2148399
+                ],
+                [
+                  -0.4151402,
+                  51.2148765
+                ],
+                [
+                  -0.4148235,
+                  51.2149288
+                ],
+                [
+                  -0.4144335,
+                  51.2149899
+                ],
+                [
+                  -0.4140942,
+                  51.2150327
+                ],
+                [
+                  -0.4137655,
+                  51.2150479
+                ]
+              ]
+            }
+          },
+          {
+            "id": "section-22a115f870b54e1a200498c55c741a4c",
+            "name": "Shere Road",
+            "ref": "A25",
+            "lengthKm": 1.4236697281583253,
+            "rating": 2.2650071517218984,
+            "quality": 1.950010216745569,
+            "winding": 2.3333542907601417,
+            "twisty": 1.0400512087718325,
+            "recommendationCount": 2,
+            "frequencyRating": 3,
+            "ratingBasis": "geometry-and-guide-frequency",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [
+              {
+                "publisher": "Devitt",
+                "url": "https://www.devittinsurance.com/guides/best-biking-routes/south-east/"
+              },
+              {
+                "publisher": "WeBuyAnyBike247",
+                "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+              }
+            ],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "geometry": {
+              "type": "LineString",
+              "coordinates": [
+                [
+                  -0.5056431,
+                  51.2329171
+                ],
+                [
+                  -0.5055645,
+                  51.2327874
+                ],
+                [
+                  -0.5054716,
+                  51.2326641
+                ],
+                [
+                  -0.5053,
+                  51.2324883
+                ],
+                [
+                  -0.5050462,
+                  51.2323186
+                ],
+                [
+                  -0.5049816,
+                  51.2322799
+                ],
+                [
+                  -0.5049037,
+                  51.2322382
+                ],
+                [
+                  -0.5046853,
+                  51.2321229
+                ],
+                [
+                  -0.5045361,
+                  51.232058
+                ],
+                [
+                  -0.5043658,
+                  51.2319955
+                ],
+                [
+                  -0.5039897,
+                  51.2318754
+                ],
+                [
+                  -0.5034377,
+                  51.2317081
+                ],
+                [
+                  -0.5030967,
+                  51.2316106
+                ],
+                [
+                  -0.5027124,
+                  51.2315299
+                ],
+                [
+                  -0.5019243,
+                  51.2313858
+                ],
+                [
+                  -0.501721,
+                  51.2313484
+                ],
+                [
+                  -0.5014763,
+                  51.2313109
+                ],
+                [
+                  -0.5012439,
+                  51.2312864
+                ],
+                [
+                  -0.5009763,
+                  51.2312687
+                ],
+                [
+                  -0.5000948,
+                  51.231243
+                ],
+                [
+                  -0.4997518,
+                  51.2312353
+                ],
+                [
+                  -0.4994115,
+                  51.2312206
+                ],
+                [
+                  -0.4990734,
+                  51.2312101
+                ],
+                [
+                  -0.4987308,
+                  51.2312083
+                ],
+                [
+                  -0.4985118,
+                  51.2311965
+                ],
+                [
+                  -0.4983629,
+                  51.2311774
+                ],
+                [
+                  -0.4982198,
+                  51.231152
+                ],
+                [
+                  -0.4979998,
+                  51.2310942
+                ],
+                [
+                  -0.4977844,
+                  51.2310268
+                ],
+                [
+                  -0.4973509,
+                  51.230896
+                ],
+                [
+                  -0.4969083,
+                  51.2307886
+                ],
+                [
+                  -0.4964483,
+                  51.2306815
+                ],
+                [
+                  -0.4961086,
+                  51.2305876
+                ],
+                [
+                  -0.4959526,
+                  51.2305263
+                ],
+                [
+                  -0.495813,
+                  51.2304577
+                ],
+                [
+                  -0.4954963,
+                  51.2302833
+                ],
+                [
+                  -0.4951374,
+                  51.2300927
+                ],
+                [
+                  -0.494904,
+                  51.2299808
+                ],
+                [
+                  -0.4946643,
+                  51.2298711
+                ],
+                [
+                  -0.4941919,
+                  51.2296504
+                ],
+                [
+                  -0.4937281,
+                  51.2294245
+                ],
+                [
+                  -0.4934328,
+                  51.2292788
+                ],
+                [
+                  -0.4931433,
+                  51.2291308
+                ],
+                [
+                  -0.4928719,
+                  51.2289792
+                ],
+                [
+                  -0.4924349,
+                  51.2287169
+                ],
+                [
+                  -0.4922636,
+                  51.2286195
+                ],
+                [
+                  -0.4920655,
+                  51.2285289
+                ],
+                [
+                  -0.4919748,
+                  51.2284904
+                ],
+                [
+                  -0.4918581,
+                  51.228457
+                ],
+                [
+                  -0.4910027,
+                  51.2282621
+                ],
+                [
+                  -0.4908646,
+                  51.2282211
+                ],
+                [
+                  -0.4907388,
+                  51.2281782
+                ],
+                [
+                  -0.4906188,
+                  51.228122
+                ],
+                [
+                  -0.4905138,
+                  51.2280594
+                ],
+                [
+                  -0.4902209,
+                  51.2278527
+                ],
+                [
+                  -0.4899278,
+                  51.2276656
+                ],
+                [
+                  -0.4894813,
+                  51.2274184
+                ],
+                [
+                  -0.489058,
+                  51.2271677
+                ],
+                [
+                  -0.488547,
+                  51.2268368
+                ]
+              ]
+            }
+          },
+          {
+            "id": "section-65649e2e74f7427080b4ea93d0adf792",
+            "name": "Coast Hill",
+            "ref": "A25",
+            "lengthKm": 0.95971490379737,
+            "rating": 2.252215606530073,
+            "quality": 1.9317365807572473,
+            "winding": 2.295869909245635,
+            "twisty": 1.5090300154485747,
+            "recommendationCount": 2,
+            "frequencyRating": 3,
+            "ratingBasis": "geometry-and-guide-frequency",
+            "surfaceConfidence": "unknown",
+            "sources": [
+              {
+                "publisher": "Devitt",
+                "url": "https://www.devittinsurance.com/guides/best-biking-routes/south-east/"
+              },
+              {
+                "publisher": "WeBuyAnyBike247",
+                "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+              }
+            ],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "geometry": {
+              "type": "LineString",
+              "coordinates": [
+                [
+                  -0.3888815,
+                  51.2172229
+                ],
+                [
+                  -0.3884797,
+                  51.2176721
+                ],
+                [
+                  -0.3874239,
+                  51.2187475
+                ],
+                [
+                  -0.3869472,
+                  51.2191039
+                ],
+                [
+                  -0.3865922,
+                  51.2195044
+                ],
+                [
+                  -0.3862933,
+                  51.2200875
+                ],
+                [
+                  -0.385981,
+                  51.2203475
+                ],
+                [
+                  -0.3845966,
+                  51.2209485
+                ],
+                [
+                  -0.3842428,
+                  51.2211614
+                ],
+                [
+                  -0.3836683,
+                  51.2218898
+                ],
+                [
+                  -0.3835206,
+                  51.2220351
+                ],
+                [
+                  -0.3832904,
+                  51.2222308
+                ],
+                [
+                  -0.3829732,
+                  51.2224651
+                ],
+                [
+                  -0.382448,
+                  51.2226279
+                ],
+                [
+                  -0.3819107,
+                  51.2227631
+                ],
+                [
+                  -0.3815773,
+                  51.2228432
+                ],
+                [
+                  -0.381196,
+                  51.2229171
+                ],
+                [
+                  -0.3807568,
+                  51.2229836
+                ],
+                [
+                  -0.3802875,
+                  51.2230525
+                ],
+                [
+                  -0.3798312,
+                  51.2231127
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "check": "outside-area-rejected",
+        "status": 422
+      },
+      {
+        "check": "standard-route",
+        "seconds": 0.528,
+        "distanceKm": 8.234
+      },
+      {
+        "check": "E14-40-south",
+        "input": {
+          "center": {
+            "latitude": 51.487429,
+            "longitude": -0.020573
+          },
+          "targetKm": 40,
+          "direction": 180,
+          "profile": "winding",
+          "avoidMotorways": true
+        },
+        "seconds": 9.745,
+        "planner": {
+          "valid": true,
+          "distanceKm": 38.917,
+          "distanceErrorKm": 1.0829999999999984,
+          "overlapRatio": 0.006614666808519927,
+          "repeatedKm": 0.2571716152212986,
+          "sharedAccessKm": 0.2571330213050403,
+          "remainingRepeatedRatio": 0,
+          "closed": true,
+          "nearStart": true,
+          "engine": "valhalla",
+          "implementation": "road-catalogue-v1",
+          "attempts": 34,
+          "elapsedMs": 9612,
+          "score": 4.45997827900541,
+          "selectedRoadSectionId": null,
+          "recommendedKm": 0,
+          "evaluatedKm": 6.838450230218652,
+          "roads": [
+            {
+              "id": "section-b8116ee96e9c0479d81501b67b0005e7",
+              "name": "Rotherhithe Tunnel",
+              "ref": "A101",
+              "lengthKm": 1.480953934412327,
+              "rating": 1.5861780879510239,
+              "quality": 1.5861780879510239,
+              "winding": 1.5870319752841515,
+              "twisty": 0.724770130341991,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.4807387611093874,
+              "coverage": 0.9998547062822553,
+              "fullSection": true
+            },
+            {
+              "id": "section-e7dfac0e31cc19aa096bbfda2746441b",
+              "name": "Lee Road",
+              "ref": "B212",
+              "lengthKm": 0.8977689783583039,
+              "rating": 1.5357412801516857,
+              "quality": 1.5357412801516857,
+              "winding": 0.5549991735807132,
+              "twisty": 0.2675321332200315,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.8976510913356084,
+              "coverage": 0.9998686889104688,
+              "fullSection": true
+            },
+            {
+              "id": "section-cb4e10923ce7b517c145e065eab17257",
+              "name": "Perry Rise",
+              "ref": "B227",
+              "lengthKm": 0.6442055857390614,
+              "rating": 1.6299149954297112,
+              "quality": 1.6299149954297112,
+              "winding": 0.647300202662389,
+              "twisty": 0.5036100639451763,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.6441135002735913,
+              "coverage": 0.9998570557792286,
+              "fullSection": true
+            },
+            {
+              "id": "section-22c6df847b8b486f2a7a4984f327ba01",
+              "name": "Cranston Road",
+              "ref": "",
+              "lengthKm": 0.7179642482635845,
+              "rating": 1.4025482486693779,
+              "quality": 1.4025482486693779,
+              "winding": 0.2033976648925043,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.7178613443009078,
+              "coverage": 0.9998566725809458,
+              "fullSection": true
+            },
+            {
+              "id": "section-e8940668b9ff905f7d9c36fa8a980fdb",
+              "name": "Charlton Road",
+              "ref": "B210",
+              "lengthKm": 0.7700297501982881,
+              "rating": 1.202609597380655,
+              "quality": 1.202609597380655,
+              "winding": 0.11497718130467405,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.769932475255307,
+              "coverage": 0.9998736737860374,
+              "fullSection": true
+            },
+            {
+              "id": "section-1ecf88a5c668800b27ceee50e4c9f007",
+              "name": "Charlton Church Lane",
+              "ref": "",
+              "lengthKm": 0.6014188030418177,
+              "rating": 1.534287084043547,
+              "quality": 1.534287084043547,
+              "winding": 0.37904944539139535,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.6013431507301662,
+              "coverage": 0.9998742102653444,
+              "fullSection": true
+            },
+            {
+              "id": "section-38874bc1e1cc5d3a973bd512df544f69",
+              "name": "Brockley Rise",
+              "ref": "B218",
+              "lengthKm": 0.5976181734539673,
+              "rating": 1.193334284588545,
+              "quality": 1.193334284588545,
+              "winding": 0.10123597716821439,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.5975324425448965,
+              "coverage": 0.9998565456793668,
+              "fullSection": true
+            },
+            {
+              "id": "section-04c420d464462bc01151b5095918c731",
+              "name": "Prince of Wales Road",
+              "ref": "B212",
+              "lengthKm": 0.5840472918573163,
+              "rating": 1.2072443243227104,
+              "quality": 1.2072443243227104,
+              "winding": 0.12184344344105269,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.583970962285616,
+              "coverage": 0.9998693092618278,
+              "fullSection": true
+            },
+            {
+              "id": "section-532cde2f2e039ff2d83a4b0d1752edf8",
+              "name": "Wickham Road",
+              "ref": "",
+              "lengthKm": 0.5453832508513815,
+              "rating": 1.2499999999999998,
+              "quality": 1.2499999999999998,
+              "winding": 0,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.5453065023831722,
+              "coverage": 0.9998592760813804,
+              "fullSection": true
+            }
+          ],
+          "ratingBasis": "geometry-and-independent-guide-frequency",
+          "area": {
+            "center": {
+              "latitude": 51.5074,
+              "longitude": -0.1278
+            },
+            "radiusKm": 100
+          }
+        },
+        "distanceKm": 38.917,
+        "maneuvers": 64
+      },
+      {
+        "check": "E14-40-west",
+        "input": {
+          "center": {
+            "latitude": 51.487429,
+            "longitude": -0.020573
+          },
+          "targetKm": 40,
+          "direction": 270,
+          "profile": "winding",
+          "avoidMotorways": true
+        },
+        "seconds": 7.687,
+        "planner": {
+          "valid": true,
+          "distanceKm": 44.289,
+          "distanceErrorKm": 4.2890000000000015,
+          "overlapRatio": 0.005806190233926943,
+          "repeatedKm": 0.25696798251165254,
+          "sharedAccessKm": 0.2571330213050403,
+          "remainingRepeatedRatio": 0,
+          "closed": true,
+          "nearStart": true,
+          "engine": "valhalla",
+          "implementation": "road-catalogue-v1",
+          "attempts": 18,
+          "elapsedMs": 7573,
+          "score": 0.12435664802028223,
+          "selectedRoadSectionId": null,
+          "recommendedKm": 0,
+          "evaluatedKm": 1.7128528722798462,
+          "roads": [
+            {
+              "id": "section-3325c653b9d51730f8fe876c756efa55",
+              "name": "Highgate West Hill",
+              "ref": "",
+              "lengthKm": 1.170690499814624,
+              "rating": 2.2009614188645763,
+              "quality": 2.2009614188645763,
+              "winding": 1.2679485584861019,
+              "twisty": 0.6248763550752254,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.170492274059929,
+              "coverage": 0.9998306762079933,
+              "fullSection": true
+            },
+            {
+              "id": "section-1d73901e132d34174aa91c4fb960ed6b",
+              "name": "Market Road",
+              "ref": "",
+              "lengthKm": 0.5424487620156715,
+              "rating": 1.6396009641449352,
+              "quality": 1.6396009641449352,
+              "winding": 0.5194679521932467,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.5423605982199171,
+              "coverage": 0.9998374707402286,
+              "fullSection": true
+            }
+          ],
+          "ratingBasis": "geometry-and-independent-guide-frequency",
+          "area": {
+            "center": {
+              "latitude": 51.5074,
+              "longitude": -0.1278
+            },
+            "radiusKm": 100
+          }
+        },
+        "distanceKm": 44.289,
+        "maneuvers": 74
+      },
+      {
+        "check": "Greenwich-20",
+        "input": {
+          "center": {
+            "latitude": 51.481,
+            "longitude": -0.009
+          },
+          "targetKm": 20,
+          "direction": 90,
+          "profile": "winding",
+          "avoidMotorways": true
+        },
+        "seconds": 7.769,
+        "planner": {
+          "valid": true,
+          "distanceKm": 19.654,
+          "distanceErrorKm": 0.3460000000000001,
+          "overlapRatio": 0,
+          "repeatedKm": 0,
+          "sharedAccessKm": 0,
+          "remainingRepeatedRatio": 0,
+          "closed": true,
+          "nearStart": true,
+          "engine": "valhalla",
+          "implementation": "road-catalogue-v1",
+          "attempts": 35,
+          "elapsedMs": 7609,
+          "score": 2.089215376851456,
+          "selectedRoadSectionId": null,
+          "recommendedKm": 0,
+          "evaluatedKm": 1.4807387611093874,
+          "roads": [
+            {
+              "id": "section-b8116ee96e9c0479d81501b67b0005e7",
+              "name": "Rotherhithe Tunnel",
+              "ref": "A101",
+              "lengthKm": 1.480953934412327,
+              "rating": 1.5861780879510239,
+              "quality": 1.5861780879510239,
+              "winding": 1.5870319752841515,
+              "twisty": 0.724770130341991,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.4807387611093874,
+              "coverage": 0.9998547062822553,
+              "fullSection": true
+            }
+          ],
+          "ratingBasis": "geometry-and-independent-guide-frequency",
+          "area": {
+            "center": {
+              "latitude": 51.5074,
+              "longitude": -0.1278
+            },
+            "radiusKm": 100
+          }
+        },
+        "distanceKm": 19.654,
+        "maneuvers": 43
+      },
+      {
+        "check": "Dorking-40",
+        "input": {
+          "center": {
+            "latitude": 51.2328,
+            "longitude": -0.3297
+          },
+          "targetKm": 40,
+          "direction": 90,
+          "profile": "winding",
+          "avoidMotorways": true
+        },
+        "seconds": 2.255,
+        "planner": {
+          "valid": true,
+          "distanceKm": 39.996,
+          "distanceErrorKm": 0.003999999999997783,
+          "overlapRatio": 0,
+          "repeatedKm": 0,
+          "sharedAccessKm": 0,
+          "remainingRepeatedRatio": 0,
+          "closed": true,
+          "nearStart": true,
+          "engine": "valhalla",
+          "implementation": "road-catalogue-v1",
+          "attempts": 4,
+          "elapsedMs": 2088,
+          "score": 25.670789927442232,
+          "selectedRoadSectionId": "section-94e36babc3f74a9b8cf8f89109aa3f9a",
+          "recommendedKm": 0,
+          "evaluatedKm": 21.005670488225952,
+          "roads": [
+            {
+              "id": "section-16b2467a56c4f6aaf443eb164460ab4f",
+              "name": "Clayhall Lane",
+              "ref": "",
+              "lengthKm": 1.3040316281029074,
+              "rating": 3.8883539125102478,
+              "quality": 3.8883539125102478,
+              "winding": 3.51780521668033,
+              "twisty": 0.9323491520981825,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.3037943665493168,
+              "coverage": 0.9998180553688442,
+              "fullSection": true
+            },
+            {
+              "id": "section-7b59285664df448b060ded5dc5f7963d",
+              "name": "Ironsbottom",
+              "ref": "",
+              "lengthKm": 2.2466177978182187,
+              "rating": 2.1947970888531123,
+              "quality": 2.1947970888531123,
+              "winding": 1.2597294518041497,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 2.246215245945759,
+              "coverage": 0.9998208187111977,
+              "fullSection": true
+            },
+            {
+              "id": "section-15d51b0817520bdcd46203b07694db88",
+              "name": "Collendean Lane",
+              "ref": "",
+              "lengthKm": 1.4507912530027223,
+              "rating": 3.2833753810258672,
+              "quality": 3.2833753810258672,
+              "winding": 2.7111671747011554,
+              "twisty": 1.8839317438254064,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.4505297163405535,
+              "coverage": 0.9998197282609559,
+              "fullSection": true
+            },
+            {
+              "id": "section-f57b04c2ae43290629db2c73f5c86a73",
+              "name": "Broad Lane",
+              "ref": "",
+              "lengthKm": 1.8959894323503732,
+              "rating": 2.191141021691197,
+              "quality": 2.191141021691197,
+              "winding": 1.2548546955882627,
+              "twisty": 0.39235732837975007,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.8956267099008275,
+              "coverage": 0.9998086896248699,
+              "fullSection": true
+            },
+            {
+              "id": "section-94e36babc3f74a9b8cf8f89109aa3f9a",
+              "name": "Park Lane",
+              "ref": "",
+              "lengthKm": 0.7057454209554116,
+              "rating": 4.564406937198565,
+              "quality": 4.564406937198565,
+              "winding": 4.419209249598087,
+              "twisty": 4.419209249598087,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.7056179314260835,
+              "coverage": 0.9998193547906332,
+              "fullSection": true
+            },
+            {
+              "id": "section-03110b7f485cb28db85e944646b7fed2",
+              "name": "Red Lane",
+              "ref": "",
+              "lengthKm": 1.0437197833348841,
+              "rating": 2.989973491716311,
+              "quality": 2.989973491716311,
+              "winding": 2.3199646556217486,
+              "twisty": 1.7608068900075184,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.0435133286783906,
+              "coverage": 0.999802193404983,
+              "fullSection": true
+            },
+            {
+              "id": "section-b56081875e4e561defa253cd3e0aca89",
+              "name": "Pendleton Road",
+              "ref": "",
+              "lengthKm": 1.636686402835369,
+              "rating": 1.8604891462608029,
+              "quality": 1.8604891462608029,
+              "winding": 0.8139855283477362,
+              "twisty": 0.37589924508426686,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.636403041277626,
+              "coverage": 0.9998268687530781,
+              "fullSection": true
+            },
+            {
+              "id": "section-46089cba797c49788d4dcc0534a29065",
+              "name": "Blanks Lane",
+              "ref": "",
+              "lengthKm": 1.2921575772238871,
+              "rating": 2.2818983375468025,
+              "quality": 2.2818983375468025,
+              "winding": 1.375864450062402,
+              "twisty": 1.142056756409498,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.2919129897588066,
+              "coverage": 0.999810713902552,
+              "fullSection": true
+            },
+            {
+              "id": "section-396133ce54b685b01383ff52ac770e4e",
+              "name": "Shellwood Road",
+              "ref": "",
+              "lengthKm": 1.6445967623044953,
+              "rating": 1.789717641336345,
+              "quality": 1.789717641336345,
+              "winding": 0.7196235217817933,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.644281081621683,
+              "coverage": 0.9998080497967357,
+              "fullSection": true
+            },
+            {
+              "id": "section-b74d36942161e62867b6a2bda97326a2",
+              "name": "Wonham Lane",
+              "ref": "",
+              "lengthKm": 0.8772485281708523,
+              "rating": 2.907216703409118,
+              "quality": 2.907216703409118,
+              "winding": 3.178694505681864,
+              "twisty": 1.9483356381752122,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.8770837866928738,
+              "coverage": 0.9998122066065793,
+              "fullSection": true
+            },
+            {
+              "id": "section-00dea71f8992b70ab8385be3193e500e",
+              "name": "Norwood Hill",
+              "ref": "",
+              "lengthKm": 1.2269274327578097,
+              "rating": 2.0008842562716924,
+              "quality": 2.0008842562716924,
+              "winding": 1.0011790083622567,
+              "twisty": 0.7098513752169368,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.2267025153886226,
+              "coverage": 0.9998166824188768,
+              "fullSection": true
+            },
+            {
+              "id": "section-4a0dbbab0a8b466a5a5fdb54da445763",
+              "name": "Trumpets Hill Road",
+              "ref": "",
+              "lengthKm": 0.7605620576105202,
+              "rating": 3.173935554098671,
+              "quality": 3.173935554098671,
+              "winding": 3.4263292696471987,
+              "twisty": 2.7901450681078646,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.7604205520928797,
+              "coverage": 0.9998139461254679,
+              "fullSection": true
+            },
+            {
+              "id": "section-5405f3ab63af884235226d7692244fcb",
+              "name": "Old Reigate Road",
+              "ref": "",
+              "lengthKm": 1.1173523875249234,
+              "rating": 2.1362528469536306,
+              "quality": 2.1362528469536306,
+              "winding": 1.8491068595486062,
+              "twisty": 0.6624426369787378,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.1171365299101585,
+              "coverage": 0.9998068133051176,
+              "fullSection": true
+            },
+            {
+              "id": "section-9906db282aac1812d8633cd70ba4874d",
+              "name": "Brockhamhurst Road",
+              "ref": "",
+              "lengthKm": 1.1021793239550115,
+              "rating": 2.0545501798681434,
+              "quality": 2.0545501798681434,
+              "winding": 1.0727335731575245,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.1019644615788429,
+              "coverage": 0.9998050567893093,
+              "fullSection": true
+            },
+            {
+              "id": "section-972402a1b83a62a2ef4d375311283cd0",
+              "name": "Ironsbottom",
+              "ref": "",
+              "lengthKm": 0.8907892977235146,
+              "rating": 2.504970976015334,
+              "quality": 2.504970976015334,
+              "winding": 1.6537563643872564,
+              "twisty": 0.6832621712216483,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.890630744589088,
+              "coverage": 0.9998220082629733,
+              "fullSection": true
+            },
+            {
+              "id": "section-4008644fd64d800729c5cb7587f0d8f0",
+              "name": "Reigate Road",
+              "ref": "A25",
+              "lengthKm": 0.6054744992070141,
+              "rating": 1.6632744400008324,
+              "quality": 1.6632744400008324,
+              "winding": 1.7451783384632458,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.6053549557735632,
+              "coverage": 0.9998025623975784,
+              "fullSection": true
+            },
+            {
+              "id": "section-03e4f8f578d4b710246a74039edb074e",
+              "name": "Chart Lane South",
+              "ref": "",
+              "lengthKm": 0.6814998337410815,
+              "rating": 1.4488020653002478,
+              "quality": 1.4488020653002478,
+              "winding": 0.2650694204003305,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.6813627403464235,
+              "coverage": 0.9997988357621375,
+              "fullSection": true
+            },
+            {
+              "id": "section-7769c69c75fb1b119261394f45896787",
+              "name": "Park Lane",
+              "ref": "",
+              "lengthKm": 0.5272144676683367,
+              "rating": 1.629955279237595,
+              "quality": 1.629955279237595,
+              "winding": 0.5066070389834602,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.5271197903544553,
+              "coverage": 0.9998204197348753,
+              "fullSection": true
+            }
+          ],
+          "ratingBasis": "geometry-and-independent-guide-frequency",
+          "area": {
+            "center": {
+              "latitude": 51.5074,
+              "longitude": -0.1278
+            },
+            "radiusKm": 100
+          }
+        },
+        "distanceKm": 39.996,
+        "maneuvers": 41
+      },
+      {
+        "check": "Ashdown-60",
+        "input": {
+          "center": {
+            "latitude": 51.0786776,
+            "longitude": 0.101936
+          },
+          "targetKm": 60,
+          "direction": 90,
+          "profile": "winding",
+          "avoidMotorways": true
+        },
+        "seconds": 5.365,
+        "planner": {
+          "valid": true,
+          "distanceKm": 57.644,
+          "distanceErrorKm": 2.3560000000000016,
+          "overlapRatio": 0,
+          "repeatedKm": 0,
+          "sharedAccessKm": 0,
+          "remainingRepeatedRatio": 0,
+          "closed": true,
+          "nearStart": true,
+          "engine": "valhalla",
+          "implementation": "road-catalogue-v1",
+          "attempts": 53,
+          "elapsedMs": 5300,
+          "score": 24.422472576048825,
+          "selectedRoadSectionId": null,
+          "recommendedKm": 8.144126004723937,
+          "evaluatedKm": 33.24533282946245,
+          "roads": [
+            {
+              "id": "section-c78a9123a0ebdad256929345cb70bf65",
+              "name": "Piccadilly Lane",
+              "ref": "",
+              "lengthKm": 1.922819145466337,
+              "rating": 3.635526377182732,
+              "quality": 3.635526377182732,
+              "winding": 4.39254396197122,
+              "twisty": 3.9222375259385758,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.9227057640421958,
+              "coverage": 0.9999410337553543,
+              "fullSection": true
+            },
+            {
+              "id": "section-64d99232aeef9635d0a7404cac7ca1d3",
+              "name": "Broadwater Forest Lane",
+              "ref": "",
+              "lengthKm": 2.1338533396645785,
+              "rating": 3.2430952692111994,
+              "quality": 3.2430952692111994,
+              "winding": 2.6574603589482653,
+              "twisty": 1.8476658202567302,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 2.133696485398647,
+              "coverage": 0.9999264924805206,
+              "fullSection": true
+            },
+            {
+              "id": "section-e05850d4a14f4f666fa89f7ff6b2611d",
+              "name": "Hurstwood Road",
+              "ref": "",
+              "lengthKm": 2.634157554828104,
+              "rating": 2.3517719992687844,
+              "quality": 2.3517719992687844,
+              "winding": 1.469029332358379,
+              "twisty": 1.0908349414738066,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 2.561882387775576,
+              "coverage": 0.9725623219005802,
+              "fullSection": false
+            },
+            {
+              "id": "section-4f26ef605b8f71da5511465ecb0a2e6d",
+              "name": "Perrymans Lane",
+              "ref": "",
+              "lengthKm": 1.7227954250364967,
+              "rating": 3.1907085398437447,
+              "quality": 3.1907085398437447,
+              "winding": 3.563852652617913,
+              "twisty": 2.659030804905826,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.7226247601098104,
+              "coverage": 0.9999009372069334,
+              "fullSection": true
+            },
+            {
+              "id": "section-1e1a83d5a39ae50493410ba2c170919b",
+              "name": "Bunny Lane",
+              "ref": "",
+              "lengthKm": 1.9555380557980702,
+              "rating": 1.9921617875883728,
+              "quality": 1.9921617875883728,
+              "winding": 0.9895490501178305,
+              "twisty": 0.4055810614166161,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.955407924715312,
+              "coverage": 0.9999334551008239,
+              "fullSection": true
+            },
+            {
+              "id": "section-ded47a090915cf2b8d093a16c97fcbfe",
+              "name": "B2110",
+              "ref": "B2110",
+              "lengthKm": 1.9312393824324527,
+              "rating": 1.9629341546252295,
+              "quality": 1.9629341546252295,
+              "winding": 1.2413839327781175,
+              "twisty": 0.4040812299582806,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.9310609257558151,
+              "coverage": 0.9999075947403202,
+              "fullSection": true
+            },
+            {
+              "id": "section-2bd2200df2969c120ccaabaa9a4a7637",
+              "name": "Oldlands Hill",
+              "ref": "",
+              "lengthKm": 1.223688418255532,
+              "rating": 3.0637826105794725,
+              "quality": 3.0637826105794725,
+              "winding": 3.4396376842991208,
+              "twisty": 3.095426192476801,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.223561438173217,
+              "coverage": 0.9998962316873962,
+              "fullSection": true
+            },
+            {
+              "id": "section-fdeb60bf1b34914890e3118050edcfc7",
+              "name": "Chuck Hatch Road",
+              "ref": "B2026",
+              "lengthKm": 1.8367087110320168,
+              "rating": 1.9729555883230234,
+              "quality": 1.818507983318605,
+              "winding": 0.9952532387051998,
+              "twisty": 0.4077200436503245,
+              "recommendationCount": 1,
+              "frequencyRating": 2.3333333333333335,
+              "ratingBasis": "geometry-and-guide-frequency",
+              "surfaceConfidence": "unknown",
+              "sources": [
+                {
+                  "publisher": "WeBuyAnyBike247",
+                  "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+                }
+              ],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.8365148423683453,
+              "coverage": 0.9998944477899477,
+              "fullSection": true
+            },
+            {
+              "id": "section-713ca6a114e02e6255c0a46a46722da4",
+              "name": "B2110",
+              "ref": "B2110",
+              "lengthKm": 0.92749070769368,
+              "rating": 3.010636673222632,
+              "quality": 3.010636673222632,
+              "winding": 2.793535812181678,
+              "twisty": 2.390877279645738,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.9273988268668537,
+              "coverage": 0.9999009361214466,
+              "fullSection": true
+            },
+            {
+              "id": "section-4291f572f8631eb31090fa150bd0536a",
+              "name": "High Road",
+              "ref": "B2026",
+              "lengthKm": 1.4406812332210124,
+              "rating": 1.7564756206891996,
+              "quality": 1.5092508866988568,
+              "winding": 0.569260572887195,
+              "twisty": 0,
+              "recommendationCount": 1,
+              "frequencyRating": 2.3333333333333335,
+              "ratingBasis": "geometry-and-guide-frequency",
+              "surfaceConfidence": "unknown",
+              "sources": [
+                {
+                  "publisher": "WeBuyAnyBike247",
+                  "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+                }
+              ],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.4405287837503373,
+              "coverage": 0.9998941823720892,
+              "fullSection": true
+            },
+            {
+              "id": "section-9a7c08a991575c4ca770378a32fe99d0",
+              "name": "Cotchford Hill",
+              "ref": "B2026",
+              "lengthKm": 1.4028899581740266,
+              "rating": 1.6754097688152916,
+              "quality": 1.393442526878988,
+              "winding": 0.3976926324133161,
+              "twisty": 0,
+              "recommendationCount": 1,
+              "frequencyRating": 2.3333333333333335,
+              "ratingBasis": "geometry-and-guide-frequency",
+              "surfaceConfidence": "unknown",
+              "sources": [
+                {
+                  "publisher": "WeBuyAnyBike247",
+                  "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+                }
+              ],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.4027451478077106,
+              "coverage": 0.9998967771025289,
+              "fullSection": true
+            },
+            {
+              "id": "section-8cfcfb65f2597677eec05619ece39327",
+              "name": "B2026",
+              "ref": "B2026",
+              "lengthKm": 1.4448946387524373,
+              "rating": 1.6195672701241728,
+              "quality": 1.3136675287488186,
+              "winding": 0.27950744999825006,
+              "twisty": 0,
+              "recommendationCount": 1,
+              "frequencyRating": 2.3333333333333335,
+              "ratingBasis": "geometry-and-guide-frequency",
+              "surfaceConfidence": "unknown",
+              "sources": [
+                {
+                  "publisher": "WeBuyAnyBike247",
+                  "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+                }
+              ],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 1.4447433289000906,
+              "coverage": 0.999895279663798,
+              "fullSection": true
+            },
+            {
+              "id": "section-0e049ed4ff932175dfa4a9b8be0849a0",
+              "name": "Withyham Road",
+              "ref": "B2110",
+              "lengthKm": 0.8587142955756412,
+              "rating": 2.709397642004557,
+              "quality": 2.709397642004557,
+              "winding": 2.347255765932677,
+              "twisty": 0.748400936304933,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.754963622203065,
+              "coverage": 0.8791790541893487,
+              "fullSection": false
+            },
+            {
+              "id": "section-dcc9990b9a6c69d332487a846b735301",
+              "name": "Broadwater Forest Lane",
+              "ref": "",
+              "lengthKm": 0.8104159884984765,
+              "rating": 2.341332172193455,
+              "quality": 2.341332172193455,
+              "winding": 1.455109562924607,
+              "twisty": 0.8032544487140449,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.8103525361522987,
+              "coverage": 0.9999217039803283,
+              "fullSection": true
+            },
+            {
+              "id": "section-2d6532c984497e5d18df3649abdf2730",
+              "name": "Frant Road",
+              "ref": "A267",
+              "lengthKm": 0.9428699407010555,
+              "rating": 1.9682806312105448,
+              "quality": 1.9682806312105448,
+              "winding": 2.3708320640216303,
+              "twisty": 0.7105117380959032,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.9428111091346653,
+              "coverage": 0.9999376037310654,
+              "fullSection": true
+            },
+            {
+              "id": "section-26d7abc5c665e688a5975b7fd9dbedb9",
+              "name": "Station Road",
+              "ref": "",
+              "lengthKm": 0.8643726752438181,
+              "rating": 2.0709593104261477,
+              "quality": 2.0709593104261477,
+              "winding": 1.09461241390153,
+              "twisty": 0.4536346867334629,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.8643026252127176,
+              "coverage": 0.9999189585313063,
+              "fullSection": true
+            },
+            {
+              "id": "section-146c2cfe78e77351ec6083b420e6b60e",
+              "name": "Tunbridge Wells Road",
+              "ref": "",
+              "lengthKm": 0.9587816638468298,
+              "rating": 1.8347267002512269,
+              "quality": 1.8347267002512269,
+              "winding": 0.7796356003349696,
+              "twisty": 0.3577320443514794,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.9587219181882306,
+              "coverage": 0.9999376858560691,
+              "fullSection": true
+            },
+            {
+              "id": "section-65a2a47fbf1238bf76274e52a0e4fa06",
+              "name": "Tunbridge Wells Road",
+              "ref": "A267",
+              "lengthKm": 0.9067589358376729,
+              "rating": 1.8825658275164847,
+              "quality": 1.8825658275164847,
+              "winding": 2.1950068256748407,
+              "twisty": 1.3396167209182512,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.9067008985058034,
+              "coverage": 0.9999359947505608,
+              "fullSection": true
+            },
+            {
+              "id": "section-45e8392890cdb77bd734c83ea4ec36f4",
+              "name": "Jib Jacks Hill",
+              "ref": "B2026",
+              "lengthKm": 0.9060496769410574,
+              "rating": 1.8656332828915998,
+              "quality": 1.665190404130857,
+              "winding": 0.745991827350032,
+              "twisty": 0.33618985032456594,
+              "recommendationCount": 1,
+              "frequencyRating": 2.3333333333333335,
+              "ratingBasis": "geometry-and-guide-frequency",
+              "surfaceConfidence": "unknown",
+              "sources": [
+                {
+                  "publisher": "WeBuyAnyBike247",
+                  "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england"
+                }
+              ],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.9059561609562814,
+              "coverage": 0.9998967871330282,
+              "fullSection": true
+            },
+            {
+              "id": "section-066a870e0c0b59e912482d4b35dd1029",
+              "name": "Castlefields",
+              "ref": "B2110",
+              "lengthKm": 0.5752573482093782,
+              "rating": 2.929518993429902,
+              "quality": 2.929518993429902,
+              "winding": 2.3251468318109936,
+              "twisty": 2.6733614717480028,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.5751989729933135,
+              "coverage": 0.9998985233022288,
+              "fullSection": true
+            },
+            {
+              "id": "section-64a19c8727db12a01d6e9743bebfad53",
+              "name": "East Street",
+              "ref": "",
+              "lengthKm": 0.9779106497687,
+              "rating": 1.6839999801375376,
+              "quality": 1.6839999801375376,
+              "winding": 1.1399999668958958,
+              "twisty": 0.3684435326775442,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.9778536533197636,
+              "coverage": 0.999941716097529,
+              "fullSection": true
+            },
+            {
+              "id": "section-bb64b98ff8c1d1a92e627945cd2c38ef",
+              "name": "Mayfield Road",
+              "ref": "A267",
+              "lengthKm": 0.8879593165135475,
+              "rating": 1.6319153992495607,
+              "quality": 1.6319153992495607,
+              "winding": 1.6808521010247397,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.8879023453564936,
+              "coverage": 0.9999358403521486,
+              "fullSection": true
+            },
+            {
+              "id": "section-e9806e59b068d9df586fb79a6ac8d85b",
+              "name": "Withyham Road",
+              "ref": "B2110",
+              "lengthKm": 0.5281613766146449,
+              "rating": 2.6526695071365705,
+              "quality": 2.6526695071365705,
+              "winding": 2.2632140846467714,
+              "twisty": 1.535571622234919,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.5281153992146085,
+              "coverage": 0.9999129481971378,
+              "fullSection": true
+            },
+            {
+              "id": "section-a2b8e34636c8b3ca1694f3370c5cadc6",
+              "name": "Summer Hill",
+              "ref": "A272",
+              "lengthKm": 0.6045155799909121,
+              "rating": 1.783081775147481,
+              "quality": 1.547259678782116,
+              "winding": 1.3783981951762931,
+              "twisty": 0.6440057295761331,
+              "recommendationCount": 1,
+              "frequencyRating": 2.3333333333333335,
+              "ratingBasis": "geometry-and-guide-frequency",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [
+                {
+                  "publisher": "J&S Accessories",
+                  "url": "https://jsaccessories.co.uk/blog/advice/motorbike-routes-in-south-east-england"
+                }
+              ],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.6044699942680752,
+              "coverage": 0.9999245913184941,
+              "fullSection": true
+            },
+            {
+              "id": "section-c9e1179a98daa71a7d3f33c995c2df55",
+              "name": "The Street",
+              "ref": "",
+              "lengthKm": 0.5502245598718611,
+              "rating": 1.9251798336553607,
+              "quality": 1.9251798336553607,
+              "winding": 1.5419663894256006,
+              "twisty": 0.7066946469351517,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "unknown",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.5501659526099295,
+              "coverage": 0.9998934848310927,
+              "fullSection": true
+            },
+            {
+              "id": "section-e6e986a540fdd5258ceda796e4c6741f",
+              "name": "Pound Green",
+              "ref": "A272",
+              "lengthKm": 0.5092130459348978,
+              "rating": 1.991642761858503,
+              "quality": 1.8452039455121474,
+              "winding": 2.1183670677172253,
+              "twisty": 0,
+              "recommendationCount": 1,
+              "frequencyRating": 2.3333333333333335,
+              "ratingBasis": "geometry-and-guide-frequency",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [
+                {
+                  "publisher": "J&S Accessories",
+                  "url": "https://jsaccessories.co.uk/blog/advice/motorbike-routes-in-south-east-england"
+                }
+              ],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.5091677466730969,
+              "coverage": 0.999911040649562,
+              "fullSection": true
+            },
+            {
+              "id": "section-f9431c849aecc1d60030e8ee4aac3634",
+              "name": "Mayfield Road",
+              "ref": "A267",
+              "lengthKm": 0.7399457017394677,
+              "rating": 1.2855467965693588,
+              "quality": 1.2855467965693588,
+              "winding": 0.9703524032191976,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.739899659487545,
+              "coverage": 0.9999377761749079,
+              "fullSection": true
+            },
+            {
+              "id": "section-e48e85f9931e0c2973b2938c2752b319",
+              "name": "Wellbrook Hill",
+              "ref": "A267",
+              "lengthKm": 0.7023057685280272,
+              "rating": 1.3197331714529954,
+              "quality": 1.3197331714529954,
+              "winding": 1.040478300416401,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.7022575667839435,
+              "coverage": 0.9999313664414508,
+              "fullSection": true
+            },
+            {
+              "id": "section-6c665dd891294d80aded37c17651df3b",
+              "name": "Argos Hill",
+              "ref": "A267",
+              "lengthKm": 0.5236574012302845,
+              "rating": 1.1029241081458674,
+              "quality": 1.1029241081458674,
+              "winding": 0.5957417602992152,
+              "twisty": 0,
+              "recommendationCount": 0,
+              "frequencyRating": null,
+              "ratingBasis": "geometry",
+              "surfaceConfidence": "mapped-paved",
+              "sources": [],
+              "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+              "traversedKm": 0.5236220527387007,
+              "coverage": 0.9999324969121017,
+              "fullSection": true
+            }
+          ],
+          "ratingBasis": "geometry-and-independent-guide-frequency",
+          "area": {
+            "center": {
+              "latitude": 51.5074,
+              "longitude": -0.1278
+            },
+            "radiusKm": 100
+          }
+        },
+        "distanceKm": 57.644,
+        "maneuvers": 30
+      },
+      {
+        "check": "missing-token-rejected",
+        "status": 401
+      }
+    ]
+  },
+  "cacheAndConcurrency": {
+    "cold": [
+      {
+        "input": {
+          "center": {
+            "latitude": 51.487429,
+            "longitude": -0.020573
+          },
+          "targetKm": 41,
+          "direction": 180,
+          "profile": "winding",
+          "avoidMotorways": true
+        },
+        "seconds": 9.527,
+        "requestId": "41bb6d49-f58a-473e-b808-3df8b0a578ce",
+        "distanceKm": 42.325
+      },
+      {
+        "input": {
+          "center": {
+            "latitude": 51.2328,
+            "longitude": -0.3297
+          },
+          "targetKm": 41,
+          "direction": 90,
+          "profile": "winding",
+          "avoidMotorways": true
+        },
+        "seconds": 1.922,
+        "requestId": "36d8bd0c-22c3-4cce-9915-20c8e6024bd3",
+        "distanceKm": 39.996
+      }
+    ],
+    "warm": [
+      {
+        "input": {
+          "center": {
+            "latitude": 51.487429,
+            "longitude": -0.020573
+          },
+          "targetKm": 41,
+          "direction": 180,
+          "profile": "winding",
+          "avoidMotorways": true
+        },
+        "seconds": 0.051,
+        "requestId": "602d421f-2f0c-415f-a3a4-a4496e4b6baf",
+        "distanceKm": 42.325
+      },
+      {
+        "input": {
+          "center": {
+            "latitude": 51.2328,
+            "longitude": -0.3297
+          },
+          "targetKm": 41,
+          "direction": 90,
+          "profile": "winding",
+          "avoidMotorways": true
+        },
+        "seconds": 0.051,
+        "requestId": "54485314-d559-4d21-b3a1-0e781962209e",
+        "distanceKm": 39.996
+      }
+    ]
+  },
+  "sourceChecksums": {
+    "routing/catalogue/service/cache.mjs": "fe1041e638c0ac6888070ace92421f9665ad971f614454d34d698a9ed35edf60",
+    "routing/catalogue/service/catalogue.mjs": "9ab969af60e3b66ff07b7ef8a0a12f1ba43cefddc64395ed1d2ae78732457d69",
+    "routing/catalogue/service/logging.mjs": "3212bd5211e12186974105eacf0f19c85ea719a807da3be9025240456f18db17",
+    "routing/catalogue/service/server.mjs": "2d7c63a103eb9e25cf9a61b6a581c3bc63e158851b03f1f9d8f6fa91e2a3eea2",
+    "routing/catalogue/service/planner.mjs": "ffe92999600bf68039a7e951c3903b54ae485253fc8d6dfc3927f8f735289598",
+    "routing/catalogue/compose.yml": "418ded8309773cd06ad977f6784b178549918e8fda27abf9d69dc0ca3fcff1cd",
+    "routing/catalogue/cloudwatch.compose.yml": "da68bdbbe1f700135dd1d6f234cc5282d07b953897d6c5b219d3c5440bd3a37e",
+    "routing/catalogue/prepare.sh": "70cafd9ea8fb89f502c130ce85d0735f383df114503be9d84f8891da84124e9a"
+  },
+  "costMonthlyUSD": {
+    "compute730Hours": 34.456,
+    "disk64GiB": 5.9392,
+    "oldDisk16GiB": 1.4848,
+    "ipv4": 3.65,
+    "hostedZone": 0.5,
+    "fixedTotal": 46.03,
+    "saving": 34.456,
+    "excludes": "tax, transfer, DNS queries, domain renewal and CloudWatch usage"
+  },
+  "runtimeFinal": {
+    "status": "Success",
+    "stdout": "exited\nfe1041e638c0ac6888070ace92421f9665ad971f614454d34d698a9ed35edf60  /app/catalogue/service/cache.mjs\n9ab969af60e3b66ff07b7ef8a0a12f1ba43cefddc64395ed1d2ae78732457d69  /app/catalogue/service/catalogue.mjs\n3212bd5211e12186974105eacf0f19c85ea719a807da3be9025240456f18db17  /app/catalogue/service/logging.mjs\n2d7c63a103eb9e25cf9a61b6a581c3bc63e158851b03f1f9d8f6fa91e2a3eea2  /app/catalogue/service/server.mjs\nffe92999600bf68039a7e951c3903b54ae485253fc8d6dfc3927f8f735289598  /app/catalogue/service/planner.mjs\n"
+  },
+  "negativeLogEvents": [
+    {
+      "logStreamName": "bendbound-catalogue-api-1/cc9fb4e2a2b4",
+      "timestamp": 1791393371931,
+      "message": "{\"timestamp\":\"2026-10-07T17:16:11.931Z\",\"service\":\"bendbound-routing\",\"event\":\"request.started\",\"level\":\"info\",\"requestId\":\"628b3835-203c-4dfa-b825-88990ffd53c8\",\"method\":\"POST\",\"path\":\"/round-trip\"}",
+      "ingestionTime": 1791393376534,
+      "eventId": "39949407137769831018243952324094446085293725885405659137"
+    },
+    {
+      "logStreamName": "bendbound-catalogue-caddy-1/8498b4c689f4",
+      "timestamp": 1791393376364,
+      "message": "{\"level\":\"info\",\"ts\":1791393376.3644476,\"logger\":\"http.log.access.log0\",\"msg\":\"handled request\",\"request\":{\"proto\":\"HTTP/1.1\",\"method\":\"POST\",\"host\":\"api.bendboundapp.com\"},\"bytes_read\":131,\"user_id\":\"\",\"duration\":4.434607501,\"size\":13274,\"status\":422,\"requestId\":\"628b3835-203c-4dfa-b825-88990ffd53c8\"}",
+      "ingestionTime": 1791393376544,
+      "eventId": "39949407236629034483330204710534713220669224445508976641"
+    },
+    {
+      "logStreamName": "bendbound-catalogue-api-1/cc9fb4e2a2b4",
+      "timestamp": 1791393376366,
+      "message": "{\"timestamp\":\"2026-10-07T17:16:16.365Z\",\"service\":\"bendbound-routing\",\"event\":\"request.completed\",\"level\":\"warn\",\"requestId\":\"628b3835-203c-4dfa-b825-88990ffd53c8\",\"method\":\"POST\",\"path\":\"/round-trip\",\"status\":422,\"durationMs\":4434,\"input\":{\"targetKm\":40,\"direction\":90,\"profile\":\"winding\",\"avoidMotorways\":true,\"center\":{\"latitude\":51.095,\"longitude\":0.032}},\"code\":\"NO_MATCH\",\"errorType\":\"Error\",\"diagnostics\":{\"elapsedMs\":4420,\"attempts\":[{\"valid\":false,\"distanceKm\":44.669,\"distanceErrorKm\":4.668999999999997,\"overlapRatio\":0.18205559953433306,\"repeatedKm\":8.12357876577515,\"sharedAccessKm\":8.125903110465048,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-5d3885e613c0923a5a1738c34989b596\"},{\"valid\":false,\"distanceKm\":46.322,\"distanceErrorKm\":6.322000000000003,\"overlapRatio\":0.0913514507853041,\"repeatedKm\":4.226811358830694,\"sharedAccessKm\":4.22755197446656,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-5d3885e613c0923a5a1738c34989b596\"},{\"valid\":false,\"distanceKm\":26.445,\"distanceErrorKm\":13.555,\"reason\":\"POLICY\",\"sectionId\":\"section-5d3885e613c0923a5a1738c34989b596\"},{\"valid\":false,\"distanceKm\":48.967,\"distanceErrorKm\":8.966999999999999,\"overlapRatio\":0.019535522871410724,\"repeatedKm\":0.9555086183636822,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-5d3885e613c0923a5a1738c34989b596\"},{\"valid\":false,\"distanceKm\":20.717,\"distanceErrorKm\":19.283,\"reason\":\"POLICY\",\"sectionId\":\"section-7fcb37271e67fc21389dc610f203ce4b\"},{\"valid\":false,\"distanceKm\":57.284,\"distanceErrorKm\":17.284,\"overlapRatio\":0.1419442037012905,\"repeatedKm\":8.122288116180414,\"sharedAccessKm\":8.125903110465048,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-7fcb37271e67fc21389dc610f203ce4b\"},{\"valid\":false,\"distanceKm\":35.039,\"distanceErrorKm\":4.9609999999999985,\"overlapRatio\":0.027305134758818714,\"repeatedKm\":0.9555982569055075,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-7fcb37271e67fc21389dc610f203ce4b\"},{\"valid\":false,\"distanceKm\":50.258,\"distanceErrorKm\":10.258000000000003,\"overlapRatio\":0.019030377527999003,\"repeatedKm\":0.9553149161937031,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-7fcb37271e67fc21389dc610f203ce4b\"},{\"valid\":false,\"distanceKm\":27.002,\"distanceErrorKm\":12.998000000000001,\"reason\":\"POLICY\",\"sectionId\":\"section-db5318c8e303cbb5213508a90050753d\"},{\"valid\":false,\"distanceKm\":33.381,\"distanceErrorKm\":6.619,\"overlapRatio\":0.24369609202023462,\"repeatedKm\":8.124514199814833,\"sharedAccessKm\":8.125903110465048,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-db5318c8e303cbb5213508a90050753d\"},{\"valid\":false,\"distanceKm\":61.979,\"distanceErrorKm\":21.979,\"overlapRatio\":0.015430062843674664,\"repeatedKm\":0.955258644302166,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-db5318c8e303cbb5213508a90050753d\"},{\"valid\":false,\"distanceKm\":55.726,\"distanceErrorKm\":15.725999999999999,\"overlapRatio\":0.027348766112452884,\"repeatedKm\":1.5222688394517319,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0.010363033110620349,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-db5318c8e303cbb5213508a90050753d\"},{\"valid\":false,\"distanceKm\":38.56,\"distanceErrorKm\":1.4399999999999977,\"overlapRatio\":0.10165471298682989,\"repeatedKm\":3.9158965752075083,\"sharedAccessKm\":3.914749001301259,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-39b271f4350819ee6679eeb605695f9e\"},{\"valid\":false,\"distanceKm\":47.732,\"distanceErrorKm\":7.731999999999999,\"overlapRatio\":0.08269622724842939,\"repeatedKm\":3.9431360026800646,\"sharedAccessKm\":3.914749001301259,\"remainingRepeatedRatio\":0.000616545885438891,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-39b271f4350819ee6679eeb605695f9e\"},{\"valid\":false,\"distanceKm\":25.181,\"distanceErrorKm\":14.818999999999999,\"reason\":\"POLICY\",\"sectionId\":\"section-39b271f4350819ee6679eeb605695f9e\"},{\"valid\":false,\"distanceKm\":52.29,\"distanceErrorKm\":12.29,\"overlapRatio\":0.011603910872800698,\"repeatedKm\":0.6061493464399562,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-39b271f4350819ee6679eeb605695f9e\"},{\"valid\":false,\"distanceKm\":62.719,\"distanceErrorKm\":22.719,\"overlapRatio\":0.015250958108359693,\"repeatedKm\":0.9554216461683578,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-9a66bf43b017f42cc37d545bbd2f77bf\"},{\"valid\":false,\"distanceKm\":22.816,\"distanceErrorKm\":17.184,\"reason\":\"POLICY\",\"sectionId\":\"section-9a66bf43b017f42cc37d545bbd2f77bf\"},{\"valid\":false,\"distanceKm\":49.471,\"distanceErrorKm\":9.470999999999997,\"overlapRatio\":0.15368392295456665,\"repeatedKm\":7.5933642953769285,\"sharedAccessKm\":7.556008607493243,\"remainingRepeatedRatio\":0.0009734380601966073,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-9a66bf43b017f42cc37d545bbd2f77bf\"},{\"valid\":false,\"distanceKm\":16.405,\"distanceErrorKm\":23.595,\"reason\":\"POLICY\",\"sectionId\":\"section-9a66bf43b017f42cc37d545bbd2f77bf\"},{\"valid\":false,\"distanceKm\":38.804,\"distanceErrorKm\":1.195999999999998,\"overlapRatio\":0.10906232793607848,\"repeatedKm\":4.227155632149004,\"sharedAccessKm\":4.22755197446656,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-a0b1c76a1ab069740a24be73201f7180\"},{\"valid\":false,\"distanceKm\":38.804,\"distanceErrorKm\":1.195999999999998,\"overlapRatio\":0.10906232793607848,\"repeatedKm\":4.227155632149004,\"sharedAccessKm\":4.22755197446656,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-a0b1c76a1ab069740a24be73201f7180\"},{\"valid\":false,\"distanceKm\":25.635,\"distanceErrorKm\":14.364999999999998,\"reason\":\"POLICY\",\"sectionId\":\"section-a0b1c76a1ab069740a24be73201f7180\"},{\"valid\":false,\"distanceKm\":25.635,\"distanceErrorKm\":14.364999999999998,\"reason\":\"POLICY\",\"sectionId\":\"section-a0b1c76a1ab069740a24be73201f7180\"},{\"fallback\":true,\"code\":\"NO_MATCH\",\"diagnostics\":{\"elapsedMs\":1169,\"attempts\":[{\"valid\":false,\"distanceKm\":65.375,\"distanceErrorKm\":25.375,\"overlapRatio\":0.2643442085028505,\"repeatedKm\":17.259834357740647,\"sharedAccessKm\":4.22576742896259,\"remainingRepeatedRatio\":0.21343792157320016,\"closed\":true,\"nearStart\":true,\"attempt\":1,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":38.804,\"distanceErrorKm\":1.195999999999998,\"overlapRatio\":0.10906232793607848,\"repeatedKm\":4.227155632149004,\"sharedAccessKm\":4.22755197446656,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":2,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":37.358,\"distanceErrorKm\":2.642000000000003,\"overlapRatio\":0.02557267261844449,\"repeatedKm\":0.9541283719064199,\"sharedAccessKm\":0.9541593983248169,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":3,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":38.113,\"distanceErrorKm\":1.8870000000000005,\"overlapRatio\":0.17187630972423806,\"repeatedKm\":6.541761512496103,\"sharedAccessKm\":0.9541593983248169,\"remainingRepeatedRatio\":0.15058716567425962,\"closed\":true,\"nearStart\":true,\"attempt\":4,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":26.927,\"distanceErrorKm\":13.073,\"overlapRatio\":0.035543359955000575,\"repeatedKm\":0.9558037812989537,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":5,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":39.399,\"distanceErrorKm\":0.6009999999999991,\"overlapRatio\":0.15250250589007566,\"repeatedKm\":6.00139257966076,\"sharedAccessKm\":0.9541593983248169,\"remainingRepeatedRatio\":0.1314482646855672,\"closed\":true,\"nearStart\":true,\"attempt\":6,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":45.479,\"distanceErrorKm\":5.478999999999999,\"overlapRatio\":0.07402227366447522,\"repeatedKm\":3.362447484433389,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.061541736775235695,\"closed\":true,\"nearStart\":true,\"attempt\":7,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":39.96,\"distanceErrorKm\":0.03999999999999915,\"overlapRatio\":0.015180729769966358,\"repeatedKm\":0.6058965710618078,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":8,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":51.895,\"distanceErrorKm\":11.895000000000003,\"overlapRatio\":0.16896481308764488,\"repeatedKm\":8.759761196068423,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.15916734821397263,\"closed\":true,\"nearStart\":true,\"attempt\":9,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":42.194,\"distanceErrorKm\":2.1940000000000026,\"overlapRatio\":0.11342218984877206,\"repeatedKm\":4.779515561631966,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.10053335355991856,\"closed\":true,\"nearStart\":true,\"attempt\":10,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":33.155,\"distanceErrorKm\":6.844999999999999,\"overlapRatio\":0.01828841666437294,\"repeatedKm\":0.6056405681981012,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":11,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":39.156,\"distanceErrorKm\":0.8440000000000012,\"overlapRatio\":0.07027622854346628,\"repeatedKm\":2.748251516460904,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.05569545495848967,\"closed\":true,\"nearStart\":true,\"attempt\":12,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":34.656,\"distanceErrorKm\":5.344000000000001,\"overlapRatio\":0.27374730391139485,\"repeatedKm\":9.47820752261151,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.26085091248149656,\"closed\":true,\"nearStart\":true,\"attempt\":13,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":14.696,\"distanceErrorKm\":25.304000000000002,\"overlapRatio\":0.04126737365214313,\"repeatedKm\":0.6058639446859155,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":14,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":30.994,\"distanceErrorKm\":9.006,\"overlapRatio\":0.025234168356866794,\"repeatedKm\":0.7814382843716409,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.005839106249063314,\"closed\":true,\"nearStart\":true,\"attempt\":15,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":48.436,\"distanceErrorKm\":8.436,\"overlapRatio\":0.03014942008175109,\"repeatedKm\":1.4586393812752894,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.01789275337779248,\"closed\":true,\"nearStart\":true,\"attempt\":16,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":46.729,\"distanceErrorKm\":6.728999999999999,\"overlapRatio\":0.012974386805359348,\"repeatedKm\":0.6055704043402413,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":17,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":45.758,\"distanceErrorKm\":5.758000000000003,\"overlapRatio\":0.05976175185538188,\"repeatedKm\":2.7316615790350616,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.04717504011885605,\"closed\":true,\"nearStart\":true,\"attempt\":18,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":36.55,\"distanceErrorKm\":3.450000000000003,\"overlapRatio\":0.035190591452858896,\"repeatedKm\":1.2846563211650475,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.01895500416309414,\"closed\":true,\"nearStart\":true,\"attempt\":19,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":26.975,\"distanceErrorKm\":13.024999999999999,\"overlapRatio\":0.02248865580139702,\"repeatedKm\":0.6059386780249686,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":20,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":42.872,\"distanceErrorKm\":2.872,\"overlapRatio\":0.19949034506629032,\"repeatedKm\":8.542017134853753,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.1880326987334838,\"closed\":true,\"nearStart\":true,\"attempt\":21,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":34.887,\"distanceErrorKm\":5.1129999999999995,\"overlapRatio\":0.033017528754090454,\"repeatedKm\":1.1503890219952824,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.015959595173212385,\"closed\":true,\"nearStart\":true,\"attempt\":22,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":33.793,\"distanceErrorKm\":6.207000000000001,\"overlapRatio\":0.0179468883195366,\"repeatedKm\":0.6057567605520008,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":23,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":37.404,\"distanceErrorKm\":2.5959999999999965,\"overlapRatio\":0.10106616470918739,\"repeatedKm\":3.7763918330234154,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.08629696636738522,\"closed\":true,\"nearStart\":true,\"attempt\":24,\"excludedLocations\":0}]}}]},\"startRoads\":{\"status\":\"routed_starts\",\"attempts\":72,\"omittedStarts\":0,\"roads\":[{\"names\":[\"Freshfield Bank\"],\"osmWayId\":\"27863688\",\"engineEdgeId\":\"747767020162\",\"osmWayUrl\":\"https://www.openstreetmap.org/way/27863688\",\"snappedStart\":{\"latitude\":51.094981,\"longitude\":0.032419},\"requestedStart\":{\"latitude\":51.095,\"longitude\":0.032},\"snapDistanceMetres\":29.34,\"departureBearing\":184.04,\"attempts\":[1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,52,54,55,57,58,60,61,63,64,66,67,69,70,72],\"identityStatus\":\"edge_walk\",\"nameSource\":\"edge_walk\",\"roadClass\":\"residential\",\"use\":\"road\"},{\"names\":[\"Freshfield Bank\"],\"osmWayId\":\"27863688\",\"engineEdgeId\":\"747767020162\",\"osmWayUrl\":\"https://www.openstreetmap.org/way/27863688\",\"snappedStart\":{\"latitude\":51.094997,\"longitude\":0.032421},\"requestedStart\":{\"latitude\":51.094981,\"longitude\":0.032419},\"snapDistanceMetres\":29.4,\"departureBearing\":184.11,\"attempts\":[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,53,56,59,62,65,68,71],\"identityStatus\":\"edge_walk\",\"nameSource\":\"edge_walk\",\"roadClass\":\"residential\",\"use\":\"road\"}],\"unroutedAttempts\":[]},\"cache\":{\"status\":\"miss\"}}",
+      "ingestionTime": 1791393376534,
+      "eventId": "39949407236673635973727265956805356624489209164428804098"
+    }
+  ],
+  "priceList": [
+    {
+      "sku": "KFCSVCS6P27ZD4F6",
+      "attributes": {
+        "enhancedNetworkingSupported": "No",
+        "intelTurboAvailable": "Yes",
+        "memory": "4 GiB",
+        "dedicatedEbsThroughput": "Up to 2085 Mbps",
+        "vcpu": "2",
+        "classicnetworkingsupport": "false",
+        "capacitystatus": "Used",
+        "locationType": "AWS Region",
+        "storage": "EBS only",
+        "instanceFamily": "General purpose",
+        "operatingSystem": "Linux",
+        "intelAvx2Available": "Yes",
+        "instanceFamilyCategory": "General Purpose",
+        "regionCode": "eu-west-2",
+        "physicalProcessor": "Intel Skylake E5 2686 v5",
+        "clockSpeed": "3.1 GHz",
+        "ecu": "NA",
+        "networkPerformance": "Up to 5 Gigabit",
+        "servicename": "Amazon Elastic Compute Cloud",
+        "gpuMemory": "NA",
+        "dedicatedEbsThroughputDescription": "347 Mbps",
+        "vpcnetworkingsupport": "true",
+        "instanceType": "t3.medium",
+        "tenancy": "Shared",
+        "usagetype": "EUW2-BoxUsage:t3.medium",
+        "normalizationSizeFactor": "2",
+        "intelAvxAvailable": "Yes",
+        "processorFeatures": "AVX; AVX2; Intel AVX; Intel AVX2; Intel AVX512; Intel Turbo",
+        "servicecode": "AmazonEC2",
+        "licenseModel": "No License required",
+        "currentGeneration": "Yes",
+        "preInstalledSw": "NA",
+        "location": "EU (London)",
+        "processorArchitecture": "64-bit",
+        "marketoption": "OnDemand",
+        "operation": "RunInstances",
+        "availabilityzone": "NA"
+      },
+      "onDemand": {
+        "KFCSVCS6P27ZD4F6.JRTCKXETXF": {
+          "priceDimensions": {
+            "KFCSVCS6P27ZD4F6.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "Hrs",
+              "endRange": "Inf",
+              "description": "$0.0472 per On Demand Linux t3.medium Instance Hour",
+              "appliesTo": [],
+              "rateCode": "KFCSVCS6P27ZD4F6.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0472000000"
+              }
+            }
+          },
+          "sku": "KFCSVCS6P27ZD4F6",
+          "effectiveDate": "2026-10-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    }
+  ],
+  "negativeChecks": [
+    {
+      "status": 422,
+      "code": "NO_MATCH",
+      "requestId": "7361b400-08b2-4e87-a8d4-cd3e08403804",
+      "seconds": 4.869
+    },
+    {
+      "status": 422,
+      "code": "NO_MATCH",
+      "requestId": "628b3835-203c-4dfa-b825-88990ffd53c8",
+      "seconds": 4.49
+    }
+  ]
+}

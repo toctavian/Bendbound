@@ -1,0 +1,381 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Bendbound Lambda website, private Function URL origin, CloudFront HTTPS and apex DNS",
+  "Parameters": {
+    "ArtifactBucket": {
+      "Type": "String"
+    },
+    "ArtifactKey": {
+      "Type": "String"
+    },
+    "CertificateArn": {
+      "Type": "String"
+    },
+    "HostedZoneId": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "ExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "WebsiteLogs",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/bendbound-website:*"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "WebsiteLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/bendbound-website",
+        "RetentionInDays": 14
+      }
+    },
+    "WebsiteFunction": {
+      "Type": "AWS::Lambda::Function",
+      "DependsOn": [
+        "WebsiteLogGroup"
+      ],
+      "Properties": {
+        "FunctionName": "bendbound-website",
+        "Description": "Bendbound public one-page promotional website",
+        "Runtime": "python3.13",
+        "Architectures": [
+          "arm64"
+        ],
+        "Handler": "handler.handler",
+        "MemorySize": 128,
+        "Timeout": 5,
+        "Role": {
+          "Fn::GetAtt": [
+            "ExecutionRole",
+            "Arn"
+          ]
+        },
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ArtifactBucket"
+          },
+          "S3Key": {
+            "Ref": "ArtifactKey"
+          }
+        },
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "Bendbound website"
+          }
+        ]
+      }
+    },
+    "WebsiteUrl": {
+      "Type": "AWS::Lambda::Url",
+      "Properties": {
+        "TargetFunctionArn": {
+          "Fn::GetAtt": [
+            "WebsiteFunction",
+            "Arn"
+          ]
+        },
+        "AuthType": "AWS_IAM",
+        "InvokeMode": "BUFFERED"
+      }
+    },
+    "OriginAccess": {
+      "Type": "AWS::CloudFront::OriginAccessControl",
+      "Properties": {
+        "OriginAccessControlConfig": {
+          "Name": "bendbound-website-lambda",
+          "Description": "CloudFront signed access to the Bendbound website Lambda URL",
+          "OriginAccessControlOriginType": "lambda",
+          "SigningBehavior": "always",
+          "SigningProtocol": "sigv4"
+        }
+      }
+    },
+    "WebsiteCache": {
+      "Type": "AWS::CloudFront::CachePolicy",
+      "Properties": {
+        "CachePolicyConfig": {
+          "Name": "bendbound-website-cache",
+          "DefaultTTL": 300,
+          "MinTTL": 0,
+          "MaxTTL": 86400,
+          "ParametersInCacheKeyAndForwardedToOrigin": {
+            "EnableAcceptEncodingGzip": true,
+            "EnableAcceptEncodingBrotli": true,
+            "CookiesConfig": {
+              "CookieBehavior": "none"
+            },
+            "HeadersConfig": {
+              "HeaderBehavior": "none"
+            },
+            "QueryStringsConfig": {
+              "QueryStringBehavior": "none"
+            }
+          }
+        }
+      }
+    },
+    "CanonicalRedirect": {
+      "Type": "AWS::CloudFront::Function",
+      "Properties": {
+        "Name": "bendbound-website-canonical",
+        "AutoPublish": true,
+        "FunctionConfig": {
+          "Comment": "Redirect www to the canonical apex domain",
+          "Runtime": "cloudfront-js-2.0"
+        },
+        "FunctionCode": "function handler(event) { var request = event.request; if (request.headers.host.value === 'www.bendboundapp.com') { return {statusCode:308,statusDescription:'Permanent Redirect',headers:{location:{value:'https://bendboundapp.com' + request.uri}}}; } return request; }"
+      }
+    },
+    "WebsiteDistribution": {
+      "Type": "AWS::CloudFront::Distribution",
+      "Properties": {
+        "DistributionConfig": {
+          "Comment": "Bendbound promotional website served by Lambda",
+          "Enabled": true,
+          "Aliases": [
+            "bendboundapp.com",
+            "www.bendboundapp.com"
+          ],
+          "DefaultRootObject": "index.html",
+          "HttpVersion": "http2and3",
+          "IPV6Enabled": true,
+          "PriceClass": "PriceClass_100",
+          "ViewerCertificate": {
+            "AcmCertificateArn": {
+              "Ref": "CertificateArn"
+            },
+            "SslSupportMethod": "sni-only",
+            "MinimumProtocolVersion": "TLSv1.2_2021"
+          },
+          "Origins": [
+            {
+              "Id": "LambdaWebsite",
+              "DomainName": {
+                "Fn::Select": [
+                  2,
+                  {
+                    "Fn::Split": [
+                      "/",
+                      {
+                        "Fn::GetAtt": [
+                          "WebsiteUrl",
+                          "FunctionUrl"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "OriginAccessControlId": {
+                "Ref": "OriginAccess"
+              },
+              "CustomOriginConfig": {
+                "HTTPSPort": 443,
+                "OriginProtocolPolicy": "https-only",
+                "OriginSSLProtocols": [
+                  "TLSv1.2"
+                ]
+              }
+            }
+          ],
+          "DefaultCacheBehavior": {
+            "TargetOriginId": "LambdaWebsite",
+            "ViewerProtocolPolicy": "redirect-to-https",
+            "AllowedMethods": [
+              "GET",
+              "HEAD"
+            ],
+            "CachedMethods": [
+              "GET",
+              "HEAD"
+            ],
+            "Compress": true,
+            "CachePolicyId": {
+              "Ref": "WebsiteCache"
+            },
+            "FunctionAssociations": [
+              {
+                "EventType": "viewer-request",
+                "FunctionARN": {
+                  "Fn::GetAtt": [
+                    "CanonicalRedirect",
+                    "FunctionMetadata.FunctionARN"
+                  ]
+                }
+              }
+            ]
+          },
+          "CustomErrorResponses": [
+            {
+              "ErrorCode": 404,
+              "ErrorCachingMinTTL": 0
+            }
+          ]
+        },
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "Bendbound website"
+          }
+        ]
+      }
+    },
+    "AllowCloudFrontUrl": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunctionUrl",
+        "FunctionName": {
+          "Ref": "WebsiteFunction"
+        },
+        "Principal": "cloudfront.amazonaws.com",
+        "SourceArn": {
+          "Fn::Sub": "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${WebsiteDistribution}"
+        }
+      }
+    },
+    "AllowCloudFrontInvoke": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Ref": "WebsiteFunction"
+        },
+        "Principal": "cloudfront.amazonaws.com",
+        "InvokedViaFunctionUrl": true,
+        "SourceArn": {
+          "Fn::Sub": "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${WebsiteDistribution}"
+        }
+      }
+    },
+    "WebsiteDns": {
+      "Type": "AWS::Route53::RecordSetGroup",
+      "Properties": {
+        "HostedZoneId": {
+          "Ref": "HostedZoneId"
+        },
+        "Comment": "Bendbound website; existing API records retained",
+        "RecordSets": [
+          {
+            "Name": "bendboundapp.com.",
+            "Type": "A",
+            "AliasTarget": {
+              "DNSName": {
+                "Fn::GetAtt": [
+                  "WebsiteDistribution",
+                  "DomainName"
+                ]
+              },
+              "HostedZoneId": "Z2FDTNDATAQYW2",
+              "EvaluateTargetHealth": false
+            }
+          },
+          {
+            "Name": "bendboundapp.com.",
+            "Type": "AAAA",
+            "AliasTarget": {
+              "DNSName": {
+                "Fn::GetAtt": [
+                  "WebsiteDistribution",
+                  "DomainName"
+                ]
+              },
+              "HostedZoneId": "Z2FDTNDATAQYW2",
+              "EvaluateTargetHealth": false
+            }
+          },
+          {
+            "Name": "www.bendboundapp.com.",
+            "Type": "A",
+            "AliasTarget": {
+              "DNSName": {
+                "Fn::GetAtt": [
+                  "WebsiteDistribution",
+                  "DomainName"
+                ]
+              },
+              "HostedZoneId": "Z2FDTNDATAQYW2",
+              "EvaluateTargetHealth": false
+            }
+          },
+          {
+            "Name": "www.bendboundapp.com.",
+            "Type": "AAAA",
+            "AliasTarget": {
+              "DNSName": {
+                "Fn::GetAtt": [
+                  "WebsiteDistribution",
+                  "DomainName"
+                ]
+              },
+              "HostedZoneId": "Z2FDTNDATAQYW2",
+              "EvaluateTargetHealth": false
+            }
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "WebsiteUrl": {
+      "Value": "https://bendboundapp.com"
+    },
+    "DistributionId": {
+      "Value": {
+        "Ref": "WebsiteDistribution"
+      }
+    },
+    "DistributionDomain": {
+      "Value": {
+        "Fn::GetAtt": [
+          "WebsiteDistribution",
+          "DomainName"
+        ]
+      }
+    },
+    "FunctionUrl": {
+      "Value": {
+        "Fn::GetAtt": [
+          "WebsiteUrl",
+          "FunctionUrl"
+        ]
+      }
+    },
+    "FunctionName": {
+      "Value": {
+        "Ref": "WebsiteFunction"
+      }
+    }
+  }
+}

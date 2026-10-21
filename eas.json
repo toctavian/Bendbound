@@ -1,0 +1,25 @@
+{
+  "cli": {
+    "version": ">= 18.0.0",
+    "appVersionSource": "local"
+  },
+  "build": {
+    "group-pilot": {
+      "distribution": "internal",
+      "node": "22.22.0",
+      "env": {
+        "EXPO_PUBLIC_ACCOUNTS_PREVIEW": "true",
+        "EXPO_PUBLIC_AUTH_CLIENT_ID": "3emdhqk5q5s25n9viloftun564",
+        "EXPO_PUBLIC_AUTH_DOMAIN": "https://bendbound-group-pilot-843872332156.auth.eu-west-2.amazoncognito.com",
+        "EXPO_PUBLIC_AUTH_USER_POOL_ID": "eu-west-2_HL8JRR9Ha",
+        "EXPO_PUBLIC_GROUP_API_URL": "https://hrgf3wma55.execute-api.eu-west-2.amazonaws.com",
+        "EXPO_PUBLIC_NATIVE_APPLE_API_URL": "https://n7q0mby84l.execute-api.eu-west-2.amazonaws.com",
+        "EXPO_PUBLIC_ACCOUNT_API_URL": "https://gme2nuylh7.execute-api.eu-west-2.amazonaws.com",
+        "EXPO_PUBLIC_GROUP_ROOMS_API_URL": "https://9mwgvao1zk.execute-api.eu-west-2.amazonaws.com"
+      },
+      "ios": {
+        "simulator": false
+      }
+    }
+  }
+}

@@ -12,6 +12,11 @@ export type PointOfInterest = Coordinate & {
   name: string;
   category: PoiCategory;
   detail: string;
+  imageUrl?: string;
+  moreUrl?: string;
+  wikipedia?: string;
+  wikidata?: string;
+  fuelStationId?: string;
 };
 
 export type RoutePointOfInterest = PointOfInterest & {

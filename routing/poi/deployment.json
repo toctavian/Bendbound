@@ -1,0 +1,165 @@
+{
+  "release": "/opt/bendbound/releases/poi-ca6260226746",
+  "sha256": "ca62602267466aeb5268df5da3a08b4de1f542a39848611f391cbd2d1008280b",
+  "files": {
+    "routing/poi/service.py": "4b09d993022568c07ab997adbcfe1eb5e867a0dcff117ec2f83ee22118338a49",
+    "routing/poi/test_service.py": "dc61b92751def87ec2e658257be7034f1b19b29786b9bd2a469e4ec37faffe0c",
+    "routing/poi/bendbound-poi.service": "36b1c9009ef40faaa858a88f80e651d5ca6dd0dbec0447aa7f37f086458631ba",
+    "routing/poi/deploy.py": "76745145a1f30b5041fc87a11b3b6559a6e84b9079635815f9f47f9d0689e88e",
+    "routing/catalogue/Caddyfile": "82cd5fffbf9899711778f88e7919f93ac93a4035b57d0e04f54b7ef1b2a4669c"
+  },
+  "region": "eu-west-2",
+  "instanceId": "i-0c392dc16f7c9d857",
+  "service": "bendbound-poi.service",
+  "baseUrl": "https://api.bendboundapp.com",
+  "deploymentCommandId": "8d9a7913-95a2-4ffa-8da9-45f2364cf954",
+  "backup": "/opt/bendbound/backups/poi-20261012T121717Z",
+  "verifiedAt": "2026-10-12T12:17:51.275Z",
+  "liveChecks": {
+    "verifiedAt": "2026-10-12T12:17:51.275Z",
+    "base": "https://api.bendboundapp.com",
+    "health": {
+      "status": "ready",
+      "checkedAt": "2026-10-12T12:17:48.505972Z",
+      "stations": 8130,
+      "priceRecords": 8126,
+      "pollIntervalSeconds": 240,
+      "last24Hours": {
+        "attempts": 9,
+        "successes": 8,
+        "averageSuccessfulGapSeconds": 155.79713225364685,
+        "maximumSuccessfulGapSeconds": 240.00033974647522
+      }
+    },
+    "categories": {
+      "fuel": {
+        "count": 80,
+        "sample": [
+          {
+            "name": "MFG VAUXHALL BRIDGE",
+            "latitude": 51.49252,
+            "longitude": -0.137275
+          },
+          {
+            "name": "MFG PARK LANE",
+            "latitude": 51.508933,
+            "longitude": -0.154447
+          }
+        ]
+      },
+      "meet": {
+        "count": 1,
+        "sample": [
+          {
+            "name": "Ace Cafe London",
+            "latitude": 51.5406,
+            "longitude": -0.2786
+          }
+        ]
+      },
+      "sight": {
+        "count": 80,
+        "sample": [
+          {
+            "name": "Royal Marines",
+            "latitude": 51.5065383,
+            "longitude": -0.1295323
+          },
+          {
+            "name": "Captain James Cook",
+            "latitude": 51.5063418,
+            "longitude": -0.1292321
+          }
+        ]
+      },
+      "forest": {
+        "count": 0,
+        "sample": []
+      },
+      "pass": {
+        "count": 0,
+        "sample": []
+      }
+    },
+    "fuelSample": {
+      "name": "MFG VAUXHALL BRIDGE",
+      "checkedAt": "2026-10-12T12:17:48.505972Z",
+      "prices": [
+        {
+          "fuel": "E5",
+          "amount": 195.9,
+          "updatedAt": "2026-09-28T22:39:26.000Z",
+          "effectiveAt": "2026-09-28T22:39:26.000Z"
+        },
+        {
+          "fuel": "E10",
+          "amount": 179.9,
+          "updatedAt": "2026-09-27T22:54:35.000Z",
+          "effectiveAt": "2026-09-27T22:54:35.000Z"
+        },
+        {
+          "fuel": "B7_STANDARD",
+          "amount": 204.9,
+          "updatedAt": "2026-09-27T22:54:35.000Z",
+          "effectiveAt": "2026-09-27T22:54:35.000Z"
+        },
+        {
+          "fuel": "B7_PREMIUM",
+          "amount": 219.9,
+          "updatedAt": "2026-09-28T22:39:26.000Z",
+          "effectiveAt": "2026-09-28T22:39:26.000Z"
+        }
+      ]
+    },
+    "eppingForest": [
+      {
+        "id": "forest-road-epping-a104",
+        "name": "Epping Forest",
+        "category": "forest",
+        "latitude": 51.6680243,
+        "longitude": 0.0521253,
+        "detail": "Public road through forest · A104",
+        "moreUrl": "https://www.essexhighways.org/highway-schemes-and-developments/highway-schemes/epping-forest-schemes/epping-new-road",
+        "source": "Reviewed forest road with OpenStreetMap road geometry"
+      }
+    ],
+    "routePoiCount": 94,
+    "photo": {
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Memorial_to_The_Royal_Marines.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
+    },
+    "routingHealth": "ready",
+    "unauthenticatedStatus": 401
+  },
+  "checks": {
+    "appTests": 170,
+    "backendTests": 15,
+    "lint": "passed",
+    "typecheck": "passed",
+    "iosExport": "passed",
+    "privateCredentialsAbsentFromExport": true
+  },
+  "mobileBuildDistributed": false,
+  "remoteVerification": {
+    "checksums": {
+      "/opt/bendbound/poi/service.py": "4b09d993022568c07ab997adbcfe1eb5e867a0dcff117ec2f83ee22118338a49",
+      "/etc/systemd/system/bendbound-poi.service": "36b1c9009ef40faaa858a88f80e651d5ca6dd0dbec0447aa7f37f086458631ba",
+      "/opt/bendbound/routing/catalogue/Caddyfile": "82cd5fffbf9899711778f88e7919f93ac93a4035b57d0e04f54b7ef1b2a4669c"
+    },
+    "systemd": "MemoryCurrent=56668160\nMemoryMax=268435456\nUser=bendbound-poi\nActiveState=active",
+    "health": {
+      "status": "ready",
+      "checkedAt": "2026-10-12T12:17:48.505972Z",
+      "stations": 8130,
+      "priceRecords": 8126,
+      "pollIntervalSeconds": 240,
+      "last24Hours": {
+        "attempts": 9,
+        "successes": 8,
+        "averageSuccessfulGapSeconds": 155.79713225364685,
+        "maximumSuccessfulGapSeconds": 240.00033974647522
+      }
+    },
+    "commandId": "9c43d174-7626-4162-b534-fa7f63b81a1e",
+    "checksumsMatch": true
+  }
+}

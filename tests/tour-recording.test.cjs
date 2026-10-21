@@ -114,14 +114,14 @@ function toursHarness(tours) {
   const { default: Screen } = load('src/app/tours.tsx', {
     react: { useState: () => [state, (value) => { state = value; }] },
     'react/jsx-runtime': { jsx, jsxs: jsx },
-    'react-native': { StyleSheet: { create: (styles) => styles }, View: 'View', Text: 'Text', FlatList: 'FlatList', Pressable: 'Pressable' },
+    'react-native': { useWindowDimensions: () => ({ width: 390, height: 844, fontScale: 1 }), StyleSheet: { create: (styles) => styles }, View: 'View', Text: 'Text', FlatList: 'FlatList', Pressable: 'Pressable' },
     '@expo/vector-icons/Ionicons': { default: 'Icon' },
     'expo-router': { router: {} },
     'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0 }) },
     '@/components/RideMap': { RideMap: 'RideMap' },
     '@/components/ui': { ActionButton: 'ActionButton' },
     '@/state/AppProvider': { useApp: () => ({ ready: true, tours, settings: { routeColor: 'purple' } }) },
-    '@/theme': { colors: {}, spacing: {} },
+    '@/theme': load('src/theme.ts'),
     '@/utils/routes': routes,
     '@/utils/recording': recording,
   });

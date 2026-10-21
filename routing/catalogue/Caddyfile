@@ -1,0 +1,76 @@
+{
+    log default {
+        output stdout
+        format filter {
+            wrap json
+            fields {
+                request>headers delete
+                request>remote_ip delete
+                request>client_ip delete
+                request>remote_port delete
+                request>uri delete
+                request>tls delete
+                resp_headers delete
+            }
+        }
+    }
+}
+
+{$ROUTING_HOSTNAME} {
+    log {
+        output stdout
+        format filter {
+            wrap json
+            fields {
+                request>headers delete
+                request>remote_ip delete
+                request>client_ip delete
+                request>remote_port delete
+                request>uri delete
+                request>tls delete
+                resp_headers delete
+            }
+        }
+    }
+    # API references correlate authenticated requests with proxy status/latency.
+    log_append requestId {http.response.header.X-Request-Id}
+    @shares path /shared-routes /route-pois
+    request_body @shares {
+        max_size 2MB
+    }
+    @routingBody not path /shared-routes /route-pois
+    request_body @routingBody {
+        max_size 64KB
+    }
+    @publicShare {
+        method GET
+        path /shared/* /shared-routes/* /.well-known/apple-app-site-association
+    }
+    handle @publicShare {
+        reverse_proxy api:8080 {
+            header_up X-Routing-Client-IP {remote_host}
+            header_up -Authorization
+        }
+    }
+    @places {
+        header Authorization "Bearer {$ROUTING_API_TOKEN}"
+        path /pois /route-pois /poi-photo /fuel-prices /poi-health
+    }
+    handle @places {
+        reverse_proxy 172.18.0.1:8090 {
+            header_up X-Routing-Client-IP {remote_host}
+            header_up -Authorization
+        }
+    }
+    @pilot header Authorization "Bearer {$ROUTING_API_TOKEN}"
+    handle @pilot {
+        reverse_proxy api:8080 {
+            header_up X-Routing-Client-IP {remote_host}
+            header_up -Authorization
+        }
+    }
+    handle {
+        header Content-Type application/json
+        respond `{"code":"UNAUTHORIZED","message":"This test build does not have valid routing access."}` 401
+    }
+}

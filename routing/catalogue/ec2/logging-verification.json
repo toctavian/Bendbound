@@ -1,0 +1,383 @@
+{
+  "verifiedAt": "2026-10-07T16:53:59.229Z",
+  "region": "eu-west-2",
+  "logGroupName": "/bendbound/routing/london",
+  "retentionInDays": 14,
+  "instanceId": "i-0c392dc16f7c9d857",
+  "cloudFormation": {
+    "stack": "bendbound-routing-catalogue-london",
+    "changeSet": "routing-cloudwatch-logs",
+    "status": "UPDATE_COMPLETE",
+    "changedResources": [
+      "InstanceRole",
+      "RoutingLogGroup"
+    ],
+    "instanceReplaced": false
+  },
+  "ssmCommandIds": {
+    "deployment": "e947bd05-c2a0-44c3-aca7-57d5ef9f389a",
+    "proxyCorrelation": "1c5e181c-bd5b-40d8-af27-496ced2f05ec"
+  },
+  "savedQueries": [
+    {
+      "name": "Bendbound/Failed requests",
+      "queryDefinitionId": "fd48c8a7-0572-421e-97c3-f3303162ea22"
+    },
+    {
+      "name": "Bendbound/Find request reference",
+      "queryDefinitionId": "6a6c3aaa-8a2e-44d8-964d-b0e770d39ba3"
+    },
+    {
+      "name": "Bendbound/Route latency and failures",
+      "queryDefinitionId": "5cdb2394-81bb-4e7c-9b5c-4a11b52d4a81"
+    }
+  ],
+  "queryChecks": {
+    "Bendbound/Failed requests": {
+      "status": "Complete",
+      "rows": 2
+    },
+    "Bendbound/Find request reference": {
+      "status": "Complete",
+      "rows": 2
+    },
+    "Bendbound/Route latency and failures": {
+      "status": "Complete",
+      "rows": 2
+    }
+  },
+  "cloudwatchFailureEvents": [
+    {
+      "logStreamName": "bendbound-catalogue-api-1/76c7b6c7e388",
+      "timestamp": 1791391688671,
+      "message": "{\"timestamp\":\"2026-10-07T16:48:08.671Z\",\"service\":\"bendbound-routing\",\"event\":\"request.started\",\"level\":\"info\",\"requestId\":\"66f8895d-f102-424d-917e-b1604f325659\",\"method\":\"POST\",\"path\":\"/round-trip\"}",
+      "ingestionTime": 1791391692698,
+      "eventId": "39949369599817468139587241067048538041049888100210638849"
+    },
+    {
+      "logStreamName": "bendbound-catalogue-api-1/76c7b6c7e388",
+      "timestamp": 1791391694217,
+      "message": "{\"timestamp\":\"2026-10-07T16:48:14.216Z\",\"service\":\"bendbound-routing\",\"event\":\"request.completed\",\"level\":\"warn\",\"requestId\":\"66f8895d-f102-424d-917e-b1604f325659\",\"method\":\"POST\",\"path\":\"/round-trip\",\"status\":422,\"durationMs\":5544,\"input\":{\"targetKm\":40,\"direction\":90,\"profile\":\"winding\",\"avoidMotorways\":true,\"center\":{\"latitude\":51.095,\"longitude\":0.032}},\"code\":\"NO_MATCH\",\"errorType\":\"Error\",\"diagnostics\":{\"elapsedMs\":5539,\"attempts\":[{\"valid\":false,\"distanceKm\":44.669,\"distanceErrorKm\":4.668999999999997,\"overlapRatio\":0.18205559953433306,\"repeatedKm\":8.12357876577515,\"sharedAccessKm\":8.125903110465048,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-5d3885e613c0923a5a1738c34989b596\"},{\"valid\":false,\"distanceKm\":46.322,\"distanceErrorKm\":6.322000000000003,\"overlapRatio\":0.0913514507853041,\"repeatedKm\":4.226811358830694,\"sharedAccessKm\":4.22755197446656,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-5d3885e613c0923a5a1738c34989b596\"},{\"valid\":false,\"distanceKm\":26.445,\"distanceErrorKm\":13.555,\"overlapRatio\":0.036186835257556574,\"repeatedKm\":0.9557507275671423,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-5d3885e613c0923a5a1738c34989b596\"},{\"valid\":false,\"distanceKm\":48.967,\"distanceErrorKm\":8.966999999999999,\"overlapRatio\":0.019535522871410724,\"repeatedKm\":0.9555086183636822,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-5d3885e613c0923a5a1738c34989b596\"},{\"valid\":false,\"distanceKm\":20.717,\"distanceErrorKm\":19.283,\"overlapRatio\":0.4973323476691474,\"repeatedKm\":10.291998849322283,\"sharedAccessKm\":10.292002709710639,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-7fcb37271e67fc21389dc610f203ce4b\"},{\"valid\":false,\"distanceKm\":57.284,\"distanceErrorKm\":17.284,\"overlapRatio\":0.1419442037012905,\"repeatedKm\":8.122288116180414,\"sharedAccessKm\":8.125903110465048,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-7fcb37271e67fc21389dc610f203ce4b\"},{\"valid\":false,\"distanceKm\":35.039,\"distanceErrorKm\":4.9609999999999985,\"overlapRatio\":0.027305134758818714,\"repeatedKm\":0.9555982569055075,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-7fcb37271e67fc21389dc610f203ce4b\"},{\"valid\":false,\"distanceKm\":50.258,\"distanceErrorKm\":10.258000000000003,\"overlapRatio\":0.019030377527999003,\"repeatedKm\":0.9553149161937031,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-7fcb37271e67fc21389dc610f203ce4b\"},{\"valid\":false,\"distanceKm\":27.002,\"distanceErrorKm\":12.998000000000001,\"overlapRatio\":0.30126491360313296,\"repeatedKm\":8.125242053993567,\"sharedAccessKm\":8.125903110465048,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-db5318c8e303cbb5213508a90050753d\"},{\"valid\":false,\"distanceKm\":33.381,\"distanceErrorKm\":6.619,\"overlapRatio\":0.24369609202023462,\"repeatedKm\":8.124514199814833,\"sharedAccessKm\":8.125903110465048,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-db5318c8e303cbb5213508a90050753d\"},{\"valid\":false,\"distanceKm\":61.979,\"distanceErrorKm\":21.979,\"overlapRatio\":0.015430062843674664,\"repeatedKm\":0.955258644302166,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-db5318c8e303cbb5213508a90050753d\"},{\"valid\":false,\"distanceKm\":55.726,\"distanceErrorKm\":15.725999999999999,\"overlapRatio\":0.027348766112452884,\"repeatedKm\":1.5222688394517319,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0.010363033110620349,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-db5318c8e303cbb5213508a90050753d\"},{\"valid\":false,\"distanceKm\":38.56,\"distanceErrorKm\":1.4399999999999977,\"overlapRatio\":0.10165471298682989,\"repeatedKm\":3.9158965752075083,\"sharedAccessKm\":3.914749001301259,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-39b271f4350819ee6679eeb605695f9e\"},{\"valid\":false,\"distanceKm\":47.732,\"distanceErrorKm\":7.731999999999999,\"overlapRatio\":0.08269622724842939,\"repeatedKm\":3.9431360026800646,\"sharedAccessKm\":3.914749001301259,\"remainingRepeatedRatio\":0.000616545885438891,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-39b271f4350819ee6679eeb605695f9e\"},{\"valid\":false,\"distanceKm\":25.181,\"distanceErrorKm\":14.818999999999999,\"overlapRatio\":0.024086481083955044,\"repeatedKm\":0.6059486351634455,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-39b271f4350819ee6679eeb605695f9e\"},{\"valid\":false,\"distanceKm\":52.29,\"distanceErrorKm\":12.29,\"overlapRatio\":0.011603910872800698,\"repeatedKm\":0.6061493464399562,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-39b271f4350819ee6679eeb605695f9e\"},{\"valid\":false,\"distanceKm\":62.719,\"distanceErrorKm\":22.719,\"overlapRatio\":0.015250958108359693,\"repeatedKm\":0.9554216461683578,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-9a66bf43b017f42cc37d545bbd2f77bf\"},{\"valid\":false,\"distanceKm\":22.816,\"distanceErrorKm\":17.184,\"overlapRatio\":0.04195105009748231,\"repeatedKm\":0.9557492019684807,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-9a66bf43b017f42cc37d545bbd2f77bf\"},{\"valid\":false,\"distanceKm\":49.471,\"distanceErrorKm\":9.470999999999997,\"overlapRatio\":0.15368392295456665,\"repeatedKm\":7.5933642953769285,\"sharedAccessKm\":7.556008607493243,\"remainingRepeatedRatio\":0.0009734380601966073,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-9a66bf43b017f42cc37d545bbd2f77bf\"},{\"valid\":false,\"distanceKm\":16.405,\"distanceErrorKm\":23.595,\"overlapRatio\":0.494880254894567,\"repeatedKm\":8.104265492682426,\"sharedAccessKm\":8.104300802597384,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-9a66bf43b017f42cc37d545bbd2f77bf\"},{\"valid\":false,\"distanceKm\":38.804,\"distanceErrorKm\":1.195999999999998,\"overlapRatio\":0.10906232793607848,\"repeatedKm\":4.227155632149004,\"sharedAccessKm\":4.22755197446656,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-a0b1c76a1ab069740a24be73201f7180\"},{\"valid\":false,\"distanceKm\":38.804,\"distanceErrorKm\":1.195999999999998,\"overlapRatio\":0.10906232793607848,\"repeatedKm\":4.227155632149004,\"sharedAccessKm\":4.22755197446656,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-a0b1c76a1ab069740a24be73201f7180\"},{\"valid\":false,\"distanceKm\":25.635,\"distanceErrorKm\":14.364999999999998,\"overlapRatio\":0.4988825510834809,\"repeatedKm\":12.774182130529066,\"sharedAccessKm\":12.774192861351395,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-a0b1c76a1ab069740a24be73201f7180\"},{\"valid\":false,\"distanceKm\":25.635,\"distanceErrorKm\":14.364999999999998,\"overlapRatio\":0.4988825510834809,\"repeatedKm\":12.774182130529066,\"sharedAccessKm\":12.774192861351395,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"insideArea\":true,\"reason\":\"POLICY\",\"sectionId\":\"section-a0b1c76a1ab069740a24be73201f7180\"},{\"fallback\":true,\"code\":\"NO_MATCH\",\"diagnostics\":{\"elapsedMs\":1519,\"attempts\":[{\"valid\":false,\"distanceKm\":65.375,\"distanceErrorKm\":25.375,\"overlapRatio\":0.2643442085028505,\"repeatedKm\":17.259834357740647,\"sharedAccessKm\":4.22576742896259,\"remainingRepeatedRatio\":0.21343792157320016,\"closed\":true,\"nearStart\":true,\"attempt\":1,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":38.804,\"distanceErrorKm\":1.195999999999998,\"overlapRatio\":0.10906232793607848,\"repeatedKm\":4.227155632149004,\"sharedAccessKm\":4.22755197446656,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":2,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":37.358,\"distanceErrorKm\":2.642000000000003,\"overlapRatio\":0.02557267261844449,\"repeatedKm\":0.9541283719064199,\"sharedAccessKm\":0.9541593983248169,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":3,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":38.113,\"distanceErrorKm\":1.8870000000000005,\"overlapRatio\":0.17187630972423806,\"repeatedKm\":6.541761512496103,\"sharedAccessKm\":0.9541593983248169,\"remainingRepeatedRatio\":0.15058716567425962,\"closed\":true,\"nearStart\":true,\"attempt\":4,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":26.927,\"distanceErrorKm\":13.073,\"overlapRatio\":0.035543359955000575,\"repeatedKm\":0.9558037812989537,\"sharedAccessKm\":0.9559439438287867,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":5,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":39.399,\"distanceErrorKm\":0.6009999999999991,\"overlapRatio\":0.15250250589007566,\"repeatedKm\":6.00139257966076,\"sharedAccessKm\":0.9541593983248169,\"remainingRepeatedRatio\":0.1314482646855672,\"closed\":true,\"nearStart\":true,\"attempt\":6,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":45.479,\"distanceErrorKm\":5.478999999999999,\"overlapRatio\":0.07402227366447522,\"repeatedKm\":3.362447484433389,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.061541736775235695,\"closed\":true,\"nearStart\":true,\"attempt\":7,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":39.96,\"distanceErrorKm\":0.03999999999999915,\"overlapRatio\":0.015180729769966358,\"repeatedKm\":0.6058965710618078,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":8,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":51.895,\"distanceErrorKm\":11.895000000000003,\"overlapRatio\":0.16896481308764488,\"repeatedKm\":8.759761196068423,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.15916734821397263,\"closed\":true,\"nearStart\":true,\"attempt\":9,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":42.194,\"distanceErrorKm\":2.1940000000000026,\"overlapRatio\":0.11342218984877206,\"repeatedKm\":4.779515561631966,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.10053335355991856,\"closed\":true,\"nearStart\":true,\"attempt\":10,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":33.155,\"distanceErrorKm\":6.844999999999999,\"overlapRatio\":0.01828841666437294,\"repeatedKm\":0.6056405681981012,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":11,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":39.156,\"distanceErrorKm\":0.8440000000000012,\"overlapRatio\":0.07027622854346628,\"repeatedKm\":2.748251516460904,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.05569545495848967,\"closed\":true,\"nearStart\":true,\"attempt\":12,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":34.656,\"distanceErrorKm\":5.344000000000001,\"overlapRatio\":0.27374730391139485,\"repeatedKm\":9.47820752261151,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.26085091248149656,\"closed\":true,\"nearStart\":true,\"attempt\":13,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":14.696,\"distanceErrorKm\":25.304000000000002,\"overlapRatio\":0.04126737365214313,\"repeatedKm\":0.6058639446859155,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":14,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":30.994,\"distanceErrorKm\":9.006,\"overlapRatio\":0.025234168356866794,\"repeatedKm\":0.7814382843716409,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.005839106249063314,\"closed\":true,\"nearStart\":true,\"attempt\":15,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":48.436,\"distanceErrorKm\":8.436,\"overlapRatio\":0.03014942008175109,\"repeatedKm\":1.4586393812752894,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.01789275337779248,\"closed\":true,\"nearStart\":true,\"attempt\":16,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":46.729,\"distanceErrorKm\":6.728999999999999,\"overlapRatio\":0.012974386805359348,\"repeatedKm\":0.6055704043402413,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":17,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":45.758,\"distanceErrorKm\":5.758000000000003,\"overlapRatio\":0.05976175185538188,\"repeatedKm\":2.7316615790350616,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.04717504011885605,\"closed\":true,\"nearStart\":true,\"attempt\":18,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":36.55,\"distanceErrorKm\":3.450000000000003,\"overlapRatio\":0.035190591452858896,\"repeatedKm\":1.2846563211650475,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.01895500416309414,\"closed\":true,\"nearStart\":true,\"attempt\":19,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":26.975,\"distanceErrorKm\":13.024999999999999,\"overlapRatio\":0.02248865580139702,\"repeatedKm\":0.6059386780249686,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":20,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":42.872,\"distanceErrorKm\":2.872,\"overlapRatio\":0.19949034506629032,\"repeatedKm\":8.542017134853753,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.1880326987334838,\"closed\":true,\"nearStart\":true,\"attempt\":21,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":34.887,\"distanceErrorKm\":5.1129999999999995,\"overlapRatio\":0.033017528754090454,\"repeatedKm\":1.1503890219952824,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.015959595173212385,\"closed\":true,\"nearStart\":true,\"attempt\":22,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":33.793,\"distanceErrorKm\":6.207000000000001,\"overlapRatio\":0.0179468883195366,\"repeatedKm\":0.6057567605520008,\"sharedAccessKm\":0.6057575045082683,\"remainingRepeatedRatio\":0,\"closed\":true,\"nearStart\":true,\"attempt\":23,\"excludedLocations\":0},{\"valid\":false,\"distanceKm\":37.404,\"distanceErrorKm\":2.5959999999999965,\"overlapRatio\":0.10106616470918739,\"repeatedKm\":3.7763918330234154,\"sharedAccessKm\":0.6039729590042985,\"remainingRepeatedRatio\":0.08629696636738522,\"closed\":true,\"nearStart\":true,\"attempt\":24,\"excludedLocations\":0}]}}]}}",
+      "ingestionTime": 1791391697687,
+      "eventId": "39949369723497401010638077016036743438563760499315376128"
+    }
+  ],
+  "proxyCorrelation": [
+    {
+      "logStreamName": "bendbound-catalogue-api-1/76c7b6c7e388",
+      "timestamp": 1791391950942,
+      "message": "{\"timestamp\":\"2026-10-07T16:52:30.942Z\",\"service\":\"bendbound-routing\",\"event\":\"request.started\",\"level\":\"info\",\"requestId\":\"29c65b1b-41de-4fb0-b781-b60f0eb89f7e\",\"method\":\"GET\",\"path\":\"/health\"}",
+      "ingestionTime": 1791391952700,
+      "eventId": "39949375448656212103412303335085889678228313329941872640"
+    },
+    {
+      "logStreamName": "bendbound-catalogue-caddy-1/8498b4c689f4",
+      "timestamp": 1791391951209,
+      "message": "{\"level\":\"info\",\"ts\":1791391951.2092667,\"logger\":\"http.log.access.log0\",\"msg\":\"handled request\",\"request\":{\"proto\":\"HTTP/1.1\",\"method\":\"GET\",\"host\":\"api.bendboundapp.com\"},\"bytes_read\":0,\"user_id\":\"\",\"duration\":0.271879718,\"size\":401,\"status\":200,\"requestId\":\"29c65b1b-41de-4fb0-b781-b60f0eb89f7e\"}",
+      "ingestionTime": 1791391952930,
+      "eventId": "39949375454610511071419979714153864406948918485376958464"
+    },
+    {
+      "logStreamName": "bendbound-catalogue-api-1/76c7b6c7e388",
+      "timestamp": 1791391951210,
+      "message": "{\"timestamp\":\"2026-10-07T16:52:31.209Z\",\"service\":\"bendbound-routing\",\"event\":\"request.completed\",\"level\":\"info\",\"requestId\":\"29c65b1b-41de-4fb0-b781-b60f0eb89f7e\",\"method\":\"GET\",\"path\":\"/health\",\"status\":200,\"durationMs\":267}",
+      "ingestionTime": 1791391952700,
+      "eventId": "39949375454632811816618510337017462175298074213544624129"
+    }
+  ],
+  "redactionCanaryMatches": 0,
+  "checks": {
+    "catalogueAndLoggingTests": 16,
+    "legacyAndAppTests": 25,
+    "lint": "passed",
+    "typecheck": "passed",
+    "caddyValidation": "passed",
+    "composeValidation": "passed"
+  },
+  "httpsChecks": [
+    {
+      "name": "health",
+      "status": 200,
+      "seconds": 0.43,
+      "requestId": "0bded437-f98c-44fb-92da-a3ce2013556d",
+      "code": null,
+      "message": null,
+      "input": null,
+      "planner": null
+    },
+    {
+      "name": "proxy-unauthorized",
+      "status": 401,
+      "seconds": 0.049,
+      "requestId": null,
+      "code": "UNAUTHORIZED",
+      "message": "This test build does not have valid routing access.",
+      "input": null,
+      "planner": null
+    },
+    {
+      "name": "outside-area-reference",
+      "status": 422,
+      "seconds": 0.055,
+      "requestId": "0dbedd9e-f81b-405f-89cc-7264e2f21c25",
+      "code": "OUTSIDE_AREA",
+      "message": "Choose a start within 100 km of central London. Reference: 0dbedd9e-f81b-405f-89cc-7264e2f21c25.",
+      "input": {
+        "targetKm": 40,
+        "direction": 180,
+        "profile": "winding",
+        "avoidMotorways": true,
+        "center": {
+          "latitude": 52.7,
+          "longitude": 0
+        }
+      },
+      "planner": null
+    },
+    {
+      "name": "E14-south",
+      "status": 200,
+      "seconds": 9.84,
+      "requestId": "4f2612ff-f74e-4fca-8b20-0ef5a5cb3dbb",
+      "code": null,
+      "message": null,
+      "input": {
+        "targetKm": 40,
+        "direction": 180,
+        "profile": "winding",
+        "avoidMotorways": true,
+        "center": {
+          "latitude": 51.487429,
+          "longitude": -0.020573
+        }
+      },
+      "planner": {
+        "valid": true,
+        "distanceKm": 38.917,
+        "distanceErrorKm": 1.0829999999999984,
+        "overlapRatio": 0.006614666808519927,
+        "repeatedKm": 0.2571716152212986,
+        "sharedAccessKm": 0.2571330213050403,
+        "remainingRepeatedRatio": 0,
+        "closed": true,
+        "nearStart": true,
+        "engine": "valhalla",
+        "implementation": "road-catalogue-v1",
+        "attempts": 29,
+        "elapsedMs": 9688,
+        "score": 4.45997827900541,
+        "selectedRoadSectionId": null,
+        "recommendedKm": 0,
+        "evaluatedKm": 6.838450230218652,
+        "roads": [
+          {
+            "id": "section-b8116ee96e9c0479d81501b67b0005e7",
+            "name": "Rotherhithe Tunnel",
+            "ref": "A101",
+            "lengthKm": 1.480953934412327,
+            "rating": 1.5861780879510239,
+            "quality": 1.5861780879510239,
+            "winding": 1.5870319752841515,
+            "twisty": 0.724770130341991,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 1.4807387611093874,
+            "coverage": 0.9998547062822553,
+            "fullSection": true
+          },
+          {
+            "id": "section-e7dfac0e31cc19aa096bbfda2746441b",
+            "name": "Lee Road",
+            "ref": "B212",
+            "lengthKm": 0.8977689783583039,
+            "rating": 1.5357412801516857,
+            "quality": 1.5357412801516857,
+            "winding": 0.5549991735807132,
+            "twisty": 0.2675321332200315,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.8976510913356084,
+            "coverage": 0.9998686889104688,
+            "fullSection": true
+          },
+          {
+            "id": "section-cb4e10923ce7b517c145e065eab17257",
+            "name": "Perry Rise",
+            "ref": "B227",
+            "lengthKm": 0.6442055857390614,
+            "rating": 1.6299149954297112,
+            "quality": 1.6299149954297112,
+            "winding": 0.647300202662389,
+            "twisty": 0.5036100639451763,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.6441135002735913,
+            "coverage": 0.9998570557792286,
+            "fullSection": true
+          },
+          {
+            "id": "section-22c6df847b8b486f2a7a4984f327ba01",
+            "name": "Cranston Road",
+            "ref": "",
+            "lengthKm": 0.7179642482635845,
+            "rating": 1.4025482486693779,
+            "quality": 1.4025482486693779,
+            "winding": 0.2033976648925043,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.7178613443009078,
+            "coverage": 0.9998566725809458,
+            "fullSection": true
+          },
+          {
+            "id": "section-e8940668b9ff905f7d9c36fa8a980fdb",
+            "name": "Charlton Road",
+            "ref": "B210",
+            "lengthKm": 0.7700297501982881,
+            "rating": 1.202609597380655,
+            "quality": 1.202609597380655,
+            "winding": 0.11497718130467405,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.769932475255307,
+            "coverage": 0.9998736737860374,
+            "fullSection": true
+          },
+          {
+            "id": "section-1ecf88a5c668800b27ceee50e4c9f007",
+            "name": "Charlton Church Lane",
+            "ref": "",
+            "lengthKm": 0.6014188030418177,
+            "rating": 1.534287084043547,
+            "quality": 1.534287084043547,
+            "winding": 0.37904944539139535,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.6013431507301662,
+            "coverage": 0.9998742102653444,
+            "fullSection": true
+          },
+          {
+            "id": "section-38874bc1e1cc5d3a973bd512df544f69",
+            "name": "Brockley Rise",
+            "ref": "B218",
+            "lengthKm": 0.5976181734539673,
+            "rating": 1.193334284588545,
+            "quality": 1.193334284588545,
+            "winding": 0.10123597716821439,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.5975324425448965,
+            "coverage": 0.9998565456793668,
+            "fullSection": true
+          },
+          {
+            "id": "section-04c420d464462bc01151b5095918c731",
+            "name": "Prince of Wales Road",
+            "ref": "B212",
+            "lengthKm": 0.5840472918573163,
+            "rating": 1.2072443243227104,
+            "quality": 1.2072443243227104,
+            "winding": 0.12184344344105269,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "mapped-paved",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.583970962285616,
+            "coverage": 0.9998693092618278,
+            "fullSection": true
+          },
+          {
+            "id": "section-532cde2f2e039ff2d83a4b0d1752edf8",
+            "name": "Wickham Road",
+            "ref": "",
+            "lengthKm": 0.5453832508513815,
+            "rating": 1.2499999999999998,
+            "quality": 1.2499999999999998,
+            "winding": 0,
+            "twisty": 0,
+            "recommendationCount": 0,
+            "frequencyRating": null,
+            "ratingBasis": "geometry",
+            "surfaceConfidence": "unknown",
+            "sources": [],
+            "graphVersion": "dd0b4c10ca7cf88c39e837fe689fcc48bf3fdd5b74c7b60cc70a8563d58258bf",
+            "traversedKm": 0.5453065023831722,
+            "coverage": 0.9998592760813804,
+            "fullSection": true
+          }
+        ],
+        "ratingBasis": "geometry-and-independent-guide-frequency",
+        "area": {
+          "center": {
+            "latitude": 51.5074,
+            "longitude": -0.1278
+          },
+          "radiusKm": 100
+        }
+      }
+    },
+    {
+      "name": "shared-access-rejection",
+      "status": 422,
+      "seconds": 5.623,
+      "requestId": "66f8895d-f102-424d-917e-b1604f325659",
+      "code": "NO_MATCH",
+      "message": "No valid loop in the London 100 km area met the distance and shared-access requirements. Reference: 66f8895d-f102-424d-917e-b1604f325659.",
+      "input": {
+        "targetKm": 40,
+        "direction": 90,
+        "profile": "winding",
+        "avoidMotorways": true,
+        "center": {
+          "latitude": 51.095,
+          "longitude": 0.032
+        }
+      },
+      "planner": null
+    }
+  ],
+  "sourceChecksums": {
+    "routing/catalogue/service/server.mjs": "922763f9ac81d7632ac81d1131dc9f854c4976eb0c69324228f12d026039dc7c",
+    "routing/catalogue/service/logging.mjs": "5142df434284f17fab52e348d070babe055bc646c0110de7d57956be5d27b6d2",
+    "routing/catalogue/Caddyfile": "b9acb0f961bfa83073b6b4a9e8e5d9b8356d8c0fc01a83c53899cb9bfa4987fa",
+    "routing/catalogue/cloudwatch.compose.yml": "f81cfb33821be42b9f6222995ac8c5d9f751bc5b10599ba0bee8aacd78a8a889",
+    "routing/catalogue/compose-aws.sh": "87c8906c4d159d00479983739156b9a905a471a733c3034d0c39d46371e087af",
+    "routing/catalogue/prepare.sh": "b397a04dbaab35fa1659d9712bcf979f9b8af4ba5e08f3f41df9e3197969ff4b"
+  }
+}

@@ -1,0 +1,23 @@
+# EC2-only overlay; local development continues to use compose.yml alone.
+x-cloudwatch: &cloudwatch
+  driver: awslogs
+  options:
+    awslogs-region: ${AWS_REGION:-eu-west-2}
+    awslogs-group: ${CLOUDWATCH_LOG_GROUP:-/bendbound/routing/london}
+    awslogs-create-group: "false"
+    tag: "{{.Name}}/{{.ID}}"
+    mode: non-blocking
+    max-buffer-size: "4m"
+services:
+  neo4j:
+    profiles: [graph]
+  api:
+    environment:
+      GRAPH_MODE: ${GRAPH_MODE:-on-demand}
+    logging: *cloudwatch
+  valhalla:
+    logging: *cloudwatch
+  caddy:
+    logging: *cloudwatch
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro

@@ -1,0 +1,169 @@
+{
+  "checkedAt": "2026-10-07",
+  "method": "One recommendation per publisher and road reference, within a conservatively bounded region. Counts are guide recommendations, not rider votes. No reviews, photographs or GPX geometry are copied.",
+  "sources": [
+    {
+      "id": "devitt-south-east",
+      "publisher": "Devitt",
+      "url": "https://www.devittinsurance.com/guides/best-biking-routes/south-east/",
+      "refs": [
+        "A272",
+        "A275",
+        "A29",
+        "A25",
+        "A248",
+        "A286",
+        "B1012",
+        "B1010",
+        "B1021",
+        "B1018",
+        "B1026",
+        "A414"
+      ],
+      "bbox": [
+        -1.45,
+        50.8,
+        1.0,
+        52.0
+      ],
+      "scopes": {
+        "A272": [
+          -1.35,
+          50.85,
+          0.03,
+          51.1
+        ],
+        "A275": [
+          -0.12,
+          50.85,
+          0.1,
+          51.06
+        ],
+        "A29": [
+          -0.65,
+          50.84,
+          -0.28,
+          51.23
+        ],
+        "A25": [
+          -0.62,
+          51.18,
+          -0.3,
+          51.3
+        ],
+        "A248": [
+          -0.65,
+          51.13,
+          -0.4,
+          51.25
+        ],
+        "A286": [
+          -0.85,
+          50.82,
+          -0.5,
+          51.26
+        ],
+        "B1012": [
+          0.58,
+          51.58,
+          0.9,
+          51.75
+        ],
+        "B1010": [
+          0.58,
+          51.58,
+          0.9,
+          51.75
+        ],
+        "B1021": [
+          0.58,
+          51.58,
+          0.9,
+          51.75
+        ],
+        "B1018": [
+          0.58,
+          51.58,
+          0.9,
+          51.75
+        ],
+        "B1026": [
+          0.65,
+          51.7,
+          0.98,
+          51.91
+        ],
+        "A414": [
+          0.44,
+          51.69,
+          0.75,
+          51.79
+        ]
+      }
+    },
+    {
+      "id": "js-south-east",
+      "publisher": "J&S Accessories",
+      "url": "https://jsaccessories.co.uk/blog/advice/motorbike-routes-in-south-east-england",
+      "refs": [
+        "A272"
+      ],
+      "bbox": [
+        -1.35,
+        50.85,
+        0.3,
+        51.1
+      ]
+    },
+    {
+      "id": "wbab-south-east",
+      "publisher": "WeBuyAnyBike247",
+      "url": "https://webuyanybike247.com/blog/top-5-best-motorcycle-rides-in-the-south-east-of-england",
+      "refs": [
+        "A272",
+        "A24",
+        "A25",
+        "A32",
+        "B2026"
+      ],
+      "bbox": [
+        -1.35,
+        50.85,
+        0.3,
+        51.3
+      ],
+      "scopes": {
+        "A272": [
+          -1.35,
+          50.85,
+          0.03,
+          51.1
+        ],
+        "A24": [
+          -0.39,
+          51.15,
+          -0.25,
+          51.3
+        ],
+        "A25": [
+          -0.62,
+          51.18,
+          -0.3,
+          51.3
+        ],
+        "A32": [
+          -1.25,
+          50.84,
+          -0.95,
+          51.16
+        ],
+        "B2026": [
+          -0.04,
+          51.02,
+          0.13,
+          51.18
+        ]
+      }
+    }
+  ]
+}

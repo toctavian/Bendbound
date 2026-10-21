@@ -1,0 +1,32 @@
+[Unit]
+Description=Bendbound place discovery and Fuel Finder synchronization
+Wants=network-online.target docker.service
+After=network-online.target docker.service
+
+[Service]
+Type=simple
+User=bendbound-poi
+Group=bendbound-poi
+WorkingDirectory=/opt/bendbound/poi
+Environment=AWS_REGION=eu-west-2
+Environment=FUEL_FINDER_SECRET_ID=arn:aws:secretsmanager:eu-west-2:843872332156:secret:bendbound/fuel-finder/oauth-IDM7OW
+Environment=FUEL_DB=/var/lib/bendbound-poi/fuel.sqlite
+Environment=POI_BIND=172.18.0.1
+Environment=POI_PORT=8090
+ExecStart=/usr/bin/python3 /opt/bendbound/poi/service.py
+Restart=on-failure
+RestartSec=10
+StateDirectory=bendbound-poi
+StateDirectoryMode=0700
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+MemoryMax=256M
+TasksMax=48
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

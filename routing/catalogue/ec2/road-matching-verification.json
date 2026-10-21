@@ -1,0 +1,42 @@
+{
+  "verifiedAt": "2026-10-08T14:04:23.146Z",
+  "status": 200,
+  "requestId": "93cb7fb8-5195-484a-87a3-0ff9912f99ea",
+  "inputPoints": 60,
+  "roadVertices": 119,
+  "durationMs": 143,
+  "routingUrl": "https://api.bendboundapp.com",
+  "instanceId": "i-0c392dc16f7c9d857",
+  "cloudWatchCompletion": {
+    "timestamp": "2026-10-08T14:04:23.182Z",
+    "service": "bendbound-routing",
+    "event": "request.completed",
+    "level": "info",
+    "requestId": "93cb7fb8-5195-484a-87a3-0ff9912f99ea",
+    "method": "POST",
+    "path": "/match",
+    "status": 200,
+    "durationMs": 49,
+    "input": {
+      "locationCount": 60
+    }
+  },
+  "checks": {
+    "appTests": 138,
+    "catalogueAndOriginalServerTests": 59,
+    "lint": "passed",
+    "typecheck": "passed",
+    "iosBundleExport": "passed",
+    "health": 200,
+    "coneRouteKm": 39.996
+  },
+  "sourceChecksums": {
+    "routing/catalogue/service/matching.mjs": "fa1cc0066d2a24210a8eec56a3f1deb5c6ab137f3ce291b30ccd6f4d29c5a128",
+    "routing/catalogue/service/server.mjs": "bd4a580800746c48c231f35a841c93e3bf42a46bd853b12e7972f02cd0860d20",
+    "routing/catalogue/service/logging.mjs": "c82af1a2b54aefc0d08848526afe3b5d72ea80e9983e3d5337e6c59ad79fd593"
+  },
+  "rollbackArchive": "/opt/bendbound/road-matching-backup-20261008.tgz",
+  "appRelease": "New app build needed; none submitted",
+  "runtimeSourceHashesVerified": true,
+  "runtimeLoggingDriver": "awslogs"
+}

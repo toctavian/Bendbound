@@ -1,0 +1,1157 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Isolated native Apple pilot bridge. Operator-owned mappings/admission required; no rider locations.",
+  "Parameters": {
+    "ArtifactBucket": {
+      "Type": "String"
+    },
+    "ArtifactKey": {
+      "Type": "String"
+    },
+    "ArtifactVersion": {
+      "Type": "String"
+    },
+    "CognitoUserPoolId": {
+      "Type": "String"
+    },
+    "CognitoClientId": {
+      "Type": "String"
+    },
+    "SessionTableName": {
+      "Type": "String"
+    },
+    "AppleSigningSecretArn": {
+      "Type": "String"
+    },
+    "ResourcePrefix": {
+      "Type": "String",
+      "Default": "bendbound-group-pilot",
+      "AllowedPattern": "[a-z][a-z0-9-]{2,39}"
+    }
+  },
+  "Resources": {
+    "AuthTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Retain",
+      "Properties": {
+        "TableName": {
+          "Fn::Sub": "${ResourcePrefix}-native-auth"
+        },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH"
+          }
+        ],
+        "SSESpecification": {
+          "SSEEnabled": true
+        },
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true
+        }
+      }
+    },
+    "BudgetTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Retain",
+      "Properties": {
+        "TableName": {
+          "Fn::Sub": "${ResourcePrefix}-native-auth-budget"
+        },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH"
+          }
+        ],
+        "SSESpecification": {
+          "SSEEnabled": true
+        },
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true
+        }
+      }
+    },
+    "VaultKey": {
+      "Type": "AWS::KMS::Key",
+      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Retain",
+      "Properties": {
+        "Description": "Envelope encryption for native Apple provider grants; no rider locations",
+        "EnableKeyRotation": true,
+        "KeyPolicy": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "EnableAccountIAM",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Sub": "arn:${AWS::Partition}:iam::${AWS::AccountId}:root"
+                }
+              },
+              "Action": "kms:*",
+              "Resource": "*"
+            }
+          ]
+        }
+      }
+    },
+    "BridgeLogs": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Sub": "/aws/lambda/${ResourcePrefix}-native-apple"
+        },
+        "RetentionInDays": 7
+      }
+    },
+    "TriggerLogs": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Sub": "/aws/lambda/${ResourcePrefix}-native-apple-triggers"
+        },
+        "RetentionInDays": 7
+      }
+    },
+    "BridgeRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "native-apple-least-privilege",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "AuthTable",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "NATIVEAPPLE#*",
+                        "NATIVEUSER#*",
+                        "ENROLL#*",
+                        "ENROLLIDENTITY#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:PutItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "AuthTable",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "CHALLENGE#*",
+                        "PROOF#*",
+                        "ENROLL#*",
+                        "ENROLLIDENTITY#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:DeleteItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "AuthTable",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "CHALLENGE#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SessionTableName}"
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "USER#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:UpdateItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "BudgetTable",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "LOGOUT_RATE#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "kms:GenerateDataKey"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "VaultKey",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "StringEquals": {
+                      "kms:EncryptionContext:purpose": "bendbound-native-apple"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "secretsmanager:GetSecretValue"
+                  ],
+                  "Resource": {
+                    "Ref": "AppleSigningSecretArn"
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "cognito-idp:AdminInitiateAuth",
+                    "cognito-idp:AdminRespondToAuthChallenge"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}"
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "BridgeLogs",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:ConditionCheckItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "AuthTable",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "NATIVEAPPLE#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:PutItem",
+                    "dynamodb:UpdateItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "AppleGrantTable",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "APPLE#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:ConditionCheckItem"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SessionTableName}"
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "USER#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "TriggerRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "native-apple-least-privilege",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "AuthTable",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "NATIVEAPPLE#*",
+                        "NATIVEUSER#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:DeleteItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "AuthTable",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "PROOF#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SessionTableName}"
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "USER#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "TriggerLogs",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "AuthApi": {
+      "Type": "AWS::ApiGatewayV2::Api",
+      "Properties": {
+        "Name": {
+          "Fn::Sub": "${ResourcePrefix}-native-apple"
+        },
+        "ProtocolType": "HTTP",
+        "DisableExecuteApiEndpoint": false
+      }
+    },
+    "BridgeFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": {
+          "Fn::Sub": "${ResourcePrefix}-native-apple"
+        },
+        "Runtime": "nodejs22.x",
+        "Handler": "src/nativeAppleLambda.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "BridgeRole",
+            "Arn"
+          ]
+        },
+        "Timeout": 25,
+        "MemorySize": 256,
+        "ReservedConcurrentExecutions": 2,
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ArtifactBucket"
+          },
+          "S3Key": {
+            "Ref": "ArtifactKey"
+          },
+          "S3ObjectVersion": {
+            "Ref": "ArtifactVersion"
+          }
+        },
+        "Environment": {
+          "Variables": {
+            "COGNITO_USER_POOL_ID": {
+              "Ref": "CognitoUserPoolId"
+            },
+            "COGNITO_CLIENT_ID": {
+              "Ref": "CognitoClientId"
+            },
+            "SESSION_TABLE_NAME": {
+              "Ref": "SessionTableName"
+            },
+            "NATIVE_AUTH_TABLE_NAME": {
+              "Ref": "AuthTable"
+            },
+            "APPLE_BUNDLE_ID": "com.octavian.bendbound",
+            "NATIVE_AUTH_API_ID": {
+              "Ref": "AuthApi"
+            },
+            "NATIVE_AUTH_BUDGET_TABLE_NAME": {
+              "Ref": "BudgetTable"
+            },
+            "APPLE_VAULT_KEY_ARN": {
+              "Fn::GetAtt": [
+                "VaultKey",
+                "Arn"
+              ]
+            },
+            "APPLE_SIGNING_SECRET_ARN": {
+              "Ref": "AppleSigningSecretArn"
+            },
+            "APPLE_TEAM_ID": "U5CJCX8BV2",
+            "APPLE_KEY_ID": "VQSL8P2SUR",
+            "APPLE_GRANT_TABLE_NAME": {
+              "Ref": "AppleGrantTable"
+            }
+          }
+        }
+      }
+    },
+    "TriggerFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": {
+          "Fn::Sub": "${ResourcePrefix}-native-apple-triggers"
+        },
+        "Runtime": "nodejs22.x",
+        "Handler": "src/nativeAppleTriggerLambda.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "TriggerRole",
+            "Arn"
+          ]
+        },
+        "Timeout": 5,
+        "MemorySize": 256,
+        "ReservedConcurrentExecutions": 2,
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ArtifactBucket"
+          },
+          "S3Key": {
+            "Ref": "ArtifactKey"
+          },
+          "S3ObjectVersion": {
+            "Ref": "ArtifactVersion"
+          }
+        },
+        "Environment": {
+          "Variables": {
+            "COGNITO_USER_POOL_ID": {
+              "Ref": "CognitoUserPoolId"
+            },
+            "COGNITO_CLIENT_ID": {
+              "Ref": "CognitoClientId"
+            },
+            "SESSION_TABLE_NAME": {
+              "Ref": "SessionTableName"
+            },
+            "NATIVE_AUTH_TABLE_NAME": {
+              "Ref": "AuthTable"
+            },
+            "APPLE_BUNDLE_ID": "com.octavian.bendbound"
+          }
+        }
+      }
+    },
+    "Integration": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "AuthApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "BridgeFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 29000
+      }
+    },
+    "ChallengeRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "AuthApi"
+        },
+        "RouteKey": "POST /v1/auth/apple/challenge",
+        "AuthorizationType": "NONE",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "Integration"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "ExchangeRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "AuthApi"
+        },
+        "RouteKey": "POST /v1/auth/apple/exchange",
+        "AuthorizationType": "NONE",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "Integration"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "Stage": {
+      "Type": "AWS::ApiGatewayV2::Stage",
+      "DependsOn": [
+        "ChallengeRoute",
+        "ExchangeRoute"
+      ],
+      "Properties": {
+        "ApiId": {
+          "Ref": "AuthApi"
+        },
+        "StageName": "$default",
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "ThrottlingBurstLimit": 5,
+          "ThrottlingRateLimit": 1
+        }
+      }
+    },
+    "ApiPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "BridgeFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
+        },
+        "SourceArn": {
+          "Fn::Sub": "arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${AuthApi}/*/POST/v1/auth/apple/*"
+        }
+      }
+    },
+    "TriggerPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "TriggerFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "cognito-idp.amazonaws.com",
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
+        },
+        "SourceArn": {
+          "Fn::Sub": "arn:${AWS::Partition}:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}"
+        }
+      }
+    },
+    "OperatorLogs": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Sub": "/aws/lambda/${ResourcePrefix}-native-apple-enrollment"
+        },
+        "RetentionInDays": 7
+      }
+    },
+    "OperatorRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "pilot-enrollment-operator",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:PutItem",
+                    "dynamodb:UpdateItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "AuthTable",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "ENROLL#*",
+                        "ENROLLIDENTITY#*",
+                        "NATIVEAPPLE#*",
+                        "NATIVEUSER#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:PutItem"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SessionTableName}"
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "USER#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "cognito-idp:AdminGetUser",
+                    "cognito-idp:AdminCreateUser",
+                    "cognito-idp:AdminSetUserPassword"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}"
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "OperatorLogs",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "OperatorFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": {
+          "Fn::Sub": "${ResourcePrefix}-native-apple-enrollment"
+        },
+        "Runtime": "python3.13",
+        "Handler": "src.nativeEnrollmentLambda.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "OperatorRole",
+            "Arn"
+          ]
+        },
+        "Timeout": 30,
+        "MemorySize": 256,
+        "ReservedConcurrentExecutions": 1,
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ArtifactBucket"
+          },
+          "S3Key": {
+            "Ref": "ArtifactKey"
+          },
+          "S3ObjectVersion": {
+            "Ref": "ArtifactVersion"
+          }
+        },
+        "Environment": {
+          "Variables": {
+            "NATIVE_AUTH_TABLE_NAME": {
+              "Ref": "AuthTable"
+            },
+            "SESSION_TABLE_NAME": {
+              "Ref": "SessionTableName"
+            },
+            "COGNITO_USER_POOL_ID": {
+              "Ref": "CognitoUserPoolId"
+            }
+          }
+        }
+      }
+    },
+    "AppleGrantTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Retain",
+      "Properties": {
+        "TableName": {
+          "Fn::Sub": "${ResourcePrefix}-apple-grants"
+        },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "sk",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "sk",
+            "KeyType": "RANGE"
+          }
+        ],
+        "SSESpecification": {
+          "SSEEnabled": true
+        },
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true
+        }
+      }
+    },
+    "ProviderCleanupLogs": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Sub": "/aws/lambda/${ResourcePrefix}-apple-provider-cleanup"
+        },
+        "RetentionInDays": 7
+      }
+    },
+    "ProviderCleanupRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "hold-gated-provider-revocation",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:Query",
+                    "dynamodb:DeleteItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "AppleGrantTable",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "APPLE#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:ConditionCheckItem"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SessionTableName}"
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "USER#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "kms:Decrypt"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "VaultKey",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "StringEquals": {
+                      "kms:EncryptionContext:purpose": "bendbound-native-apple"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "secretsmanager:GetSecretValue"
+                  ],
+                  "Resource": {
+                    "Ref": "AppleSigningSecretArn"
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "ProviderCleanupLogs",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "ProviderCleanupFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": {
+          "Fn::Sub": "${ResourcePrefix}-apple-provider-cleanup"
+        },
+        "Runtime": "nodejs22.x",
+        "Handler": "src/appleProviderCleanupLambda.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "ProviderCleanupRole",
+            "Arn"
+          ]
+        },
+        "Timeout": 60,
+        "MemorySize": 256,
+        "ReservedConcurrentExecutions": 1,
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ArtifactBucket"
+          },
+          "S3Key": {
+            "Ref": "ArtifactKey"
+          },
+          "S3ObjectVersion": {
+            "Ref": "ArtifactVersion"
+          }
+        },
+        "Environment": {
+          "Variables": {
+            "SESSION_TABLE_NAME": {
+              "Ref": "SessionTableName"
+            },
+            "APPLE_GRANT_TABLE_NAME": {
+              "Ref": "AppleGrantTable"
+            },
+            "APPLE_VAULT_KEY_ARN": {
+              "Fn::GetAtt": [
+                "VaultKey",
+                "Arn"
+              ]
+            },
+            "APPLE_SIGNING_SECRET_ARN": {
+              "Ref": "AppleSigningSecretArn"
+            },
+            "APPLE_BUNDLE_ID": "com.octavian.bendbound",
+            "APPLE_TEAM_ID": "U5CJCX8BV2",
+            "APPLE_KEY_ID": "VQSL8P2SUR"
+          }
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ApiUrl": {
+      "Value": {
+        "Fn::GetAtt": [
+          "AuthApi",
+          "ApiEndpoint"
+        ]
+      }
+    },
+    "TriggerArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "TriggerFunction",
+          "Arn"
+        ]
+      }
+    },
+    "AuthTableName": {
+      "Value": {
+        "Ref": "AuthTable"
+      }
+    },
+    "VaultKeyArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "VaultKey",
+          "Arn"
+        ]
+      }
+    },
+    "BridgeRoleArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "BridgeRole",
+          "Arn"
+        ]
+      }
+    },
+    "TriggerRoleArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "TriggerRole",
+          "Arn"
+        ]
+      }
+    },
+    "EnrollmentOperatorFunctionName": {
+      "Value": {
+        "Ref": "OperatorFunction"
+      }
+    },
+    "AppleGrantTableName": {
+      "Value": {
+        "Ref": "AppleGrantTable"
+      }
+    },
+    "ProviderCleanupFunctionName": {
+      "Value": {
+        "Ref": "ProviderCleanupFunction"
+      }
+    },
+    "ProviderCleanupRoleArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "ProviderCleanupRole",
+          "Arn"
+        ]
+      }
+    }
+  }
+}

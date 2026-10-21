@@ -1,0 +1,481 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Bendbound private session bootstrap/status/revocation API. Existing Cognito/Apple federation required; no live rider locations.",
+  "Parameters": {
+    "ResourcePrefix": {
+      "Type": "String",
+      "Default": "bendbound-group-pilot",
+      "AllowedPattern": "[a-z][a-z0-9-]{2,39}"
+    },
+    "CognitoUserPoolId": {
+      "Type": "String",
+      "AllowedPattern": "eu-west-2_[A-Za-z0-9]+"
+    },
+    "CognitoClientId": {
+      "Type": "String",
+      "AllowedPattern": "[A-Za-z0-9]+"
+    },
+    "ArtifactBucket": {
+      "Type": "String"
+    },
+    "ArtifactKey": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "SessionTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Retain",
+      "Properties": {
+        "TableName": {
+          "Fn::Sub": "${ResourcePrefix}-sessions"
+        },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH"
+          }
+        ],
+        "SSESpecification": {
+          "SSEEnabled": true
+        },
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true
+        }
+      }
+    },
+    "FunctionLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Sub": "/aws/lambda/${ResourcePrefix}-sessions"
+        },
+        "RetentionInDays": 7
+      }
+    },
+    "SessionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "session-storage-and-runtime-logs",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:ConditionCheckItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "SessionTable",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:PutItem",
+                    "dynamodb:UpdateItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "SessionTable",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "SESSION#*",
+                        "LOGOUT#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "FunctionLogGroup",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:UpdateItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "LogoutBudgetTable",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "LOGOUT_RATE#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:UpdateItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "AccountBudgetTable",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "ACCOUNT_RATE#bootstrap#*",
+                        "ACCOUNT_RATE#logout#*",
+                        "ACCOUNT_RATE#status#*"
+                      ]
+                    },
+                    "Null": {
+                      "dynamodb:LeadingKeys": "false"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "SessionFunction": {
+      "Type": "AWS::Lambda::Function",
+      "DependsOn": "FunctionLogGroup",
+      "Properties": {
+        "FunctionName": {
+          "Fn::Sub": "${ResourcePrefix}-sessions"
+        },
+        "Runtime": "nodejs22.x",
+        "Handler": "src/sessionLambda.handler",
+        "Architectures": [
+          "arm64"
+        ],
+        "MemorySize": 256,
+        "Timeout": 20,
+        "ReservedConcurrentExecutions": 5,
+        "Role": {
+          "Fn::GetAtt": [
+            "SessionRole",
+            "Arn"
+          ]
+        },
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ArtifactBucket"
+          },
+          "S3Key": {
+            "Ref": "ArtifactKey"
+          }
+        },
+        "Environment": {
+          "Variables": {
+            "SESSION_TABLE_NAME": {
+              "Ref": "SessionTable"
+            },
+            "COGNITO_USER_POOL_ID": {
+              "Ref": "CognitoUserPoolId"
+            },
+            "COGNITO_CLIENT_ID": {
+              "Ref": "CognitoClientId"
+            },
+            "LOGOUT_BUDGET_TABLE_NAME": {
+              "Ref": "LogoutBudgetTable"
+            },
+            "ACCOUNT_BUDGET_TABLE_NAME": {
+              "Ref": "AccountBudgetTable"
+            }
+          }
+        }
+      }
+    },
+    "SessionApi": {
+      "Type": "AWS::ApiGatewayV2::Api",
+      "Properties": {
+        "Name": {
+          "Fn::Sub": "${ResourcePrefix}-sessions"
+        },
+        "ProtocolType": "HTTP",
+        "DisableExecuteApiEndpoint": false
+      }
+    },
+    "SessionIntegration": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "SessionApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "SessionFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 20000
+      }
+    },
+    "BootstrapRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "SessionApi"
+        },
+        "RouteKey": "POST /v1/session",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "SessionIntegration"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "StatusRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "SessionApi"
+        },
+        "RouteKey": "GET /v1/session",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "SessionIntegration"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "RevokeRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "SessionApi"
+        },
+        "RouteKey": "DELETE /v1/session",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "SessionIntegration"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "SessionStage": {
+      "Type": "AWS::ApiGatewayV2::Stage",
+      "Properties": {
+        "ApiId": {
+          "Ref": "SessionApi"
+        },
+        "StageName": "$default",
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "ThrottlingBurstLimit": 10,
+          "ThrottlingRateLimit": 5
+        },
+        "RouteSettings": {
+          "POST /v1/session/logout": {
+            "ThrottlingBurstLimit": 2,
+            "ThrottlingRateLimit": 1
+          }
+        }
+      },
+      "DependsOn": [
+        "SessionLogoutRoute"
+      ]
+    },
+    "InvokePermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SessionFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Sub": "arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${SessionApi}/*/*/v1/session"
+        }
+      }
+    },
+    "SessionLogoutRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "SessionApi"
+        },
+        "RouteKey": "POST /v1/session/logout",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "SessionIntegration"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "LogoutInvokePermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SessionFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Sub": "arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${SessionApi}/*/POST/v1/session/logout"
+        }
+      }
+    },
+    "LogoutBudgetTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Delete",
+      "UpdateReplacePolicy": "Delete",
+      "Properties": {
+        "TableName": {
+          "Fn::Sub": "${ResourcePrefix}-logout-budget"
+        },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH"
+          }
+        ],
+        "SSESpecification": {
+          "SSEEnabled": true
+        },
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true
+        },
+        "PointInTimeRecoverySpecification": {
+          "PointInTimeRecoveryEnabled": false
+        }
+      }
+    },
+    "AccountBudgetTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Delete",
+      "UpdateReplacePolicy": "Delete",
+      "Properties": {
+        "TableName": {
+          "Fn::Sub": "${ResourcePrefix}-account-budget"
+        },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH"
+          }
+        ],
+        "SSESpecification": {
+          "SSEEnabled": true
+        },
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true
+        },
+        "PointInTimeRecoverySpecification": {
+          "PointInTimeRecoveryEnabled": false
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "SessionApiBaseUrl": {
+      "Value": {
+        "Fn::GetAtt": [
+          "SessionApi",
+          "ApiEndpoint"
+        ]
+      }
+    },
+    "SessionTableName": {
+      "Value": {
+        "Ref": "SessionTable"
+      }
+    },
+    "SessionFunctionName": {
+      "Value": {
+        "Ref": "SessionFunction"
+      }
+    }
+  }
+}

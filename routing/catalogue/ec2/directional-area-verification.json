@@ -1,0 +1,203 @@
+{
+  "verifiedAt": "2026-10-08T08:57:04.732Z",
+  "checks": [
+    {
+      "name": "E14-south",
+      "status": 200,
+      "requestId": "ed82c0ae-dd42-4c91-ab8d-f46f1f5fa14e",
+      "durationMs": 10353,
+      "distanceKm": 38.917,
+      "repeatedRatio": 0.006613726780937392,
+      "maxTraversals": 2,
+      "radiusKm": 25,
+      "insideCone": true
+    },
+    {
+      "name": "E14-north",
+      "status": 200,
+      "requestId": "598c551a-e102-493a-97a1-dbea991bd3d2",
+      "durationMs": 8084,
+      "distanceKm": 40.35,
+      "repeatedRatio": 0.006379346290494981,
+      "maxTraversals": 2,
+      "radiusKm": 20,
+      "insideCone": true
+    },
+    {
+      "name": "Dorking-east",
+      "status": 200,
+      "requestId": "39c333c0-57dd-421b-9bf2-e3002744f074",
+      "durationMs": 1011,
+      "distanceKm": 39.996,
+      "repeatedRatio": 0,
+      "maxTraversals": 1,
+      "radiusKm": 20,
+      "insideCone": true
+    },
+    {
+      "name": "Dorking-west",
+      "status": 200,
+      "requestId": "35f992ec-d261-4f37-a50a-0ebb230da0c7",
+      "durationMs": 3591,
+      "distanceKm": 40.066,
+      "repeatedRatio": 0,
+      "maxTraversals": 1,
+      "radiusKm": 20,
+      "insideCone": true
+    },
+    {
+      "name": "Dorking-east-larger-area",
+      "status": 200,
+      "requestId": "8df24e08-ad83-4b47-81f7-50d1519d1a90",
+      "durationMs": 978,
+      "distanceKm": 39.996,
+      "repeatedRatio": 0,
+      "maxTraversals": 1,
+      "radiusKm": 30,
+      "insideCone": true
+    },
+    {
+      "name": "invalid-radius",
+      "status": 400
+    },
+    {
+      "name": "legacy-client",
+      "status": 200
+    }
+  ],
+  "routingUrl": "https://api.bendboundapp.com",
+  "instanceId": "i-0c392dc16f7c9d857",
+  "localValidation": {
+    "appTestsPassed": 131,
+    "catalogueTestsPassed": 44,
+    "originalRoutingTestsPassed": 11,
+    "lint": "passed",
+    "typecheck": "passed",
+    "geometryDriftCheck": "passed",
+    "iosBundleExport": "passed"
+  },
+  "sourceChecksums": {
+    "routing/catalogue/service/catalogue.mjs": "89e463cfed5381c4289d2518913fdb8e24e992066082756f5762b2e0f2faf842",
+    "routing/catalogue/service/planner.mjs": "fa8f18060f9d805d3c6eee4c566e68bb0a8b8ba55d6c61339a0a3237526cb624",
+    "routing/catalogue/service/server.mjs": "7c8a5cdff754fb82ab8482703c19b3fa97f0aa05e2d81c5d68dfe2989f802f2f",
+    "routing/service/planner.mjs": "cf42926b1c42de5e98aa589e372f0ce2fcfd2fd5544a2e72725ac9cb0bda4e98",
+    "routing/service/server.mjs": "75858b5c2f815b1fea52e3a565006e9ab51394fd4117fb88a0c569004f3d8f1e",
+    "routing/catalogue/service/logging.mjs": "394053a5641442903bd4d2264a49b03218a0b9c5f4720ede4af7a812b17a1921",
+    "routing/catalogue/service/ordinary-planner.mjs": "a45820a774c58a59b233d43ae0f3be7eb6f153a61183945b7efab5698377a3b4",
+    "routing/service/cone.mjs": "916318b95eae7fa0972053c904e4ba4fcf332f444705b38f58a2769e98d46eaf",
+    "routing/catalogue/service/input.mjs": "e7e5e8f160ea9f85b72ee69d9c9bf5c970b6e59e3a3cf9ed1ce45ce12f392535"
+  },
+  "limitation": {
+    "publicPostcodeFixture": "E14 3TA, 40 km Winding south",
+    "radius20Km": "NO_MATCH; tested routes extend outside the buffered area",
+    "radius25Km": "38.917 km accepted inside cone",
+    "firstFailureReference": "fccad421-a749-4206-b6c0-bee5989db8e3"
+  },
+  "cloudWatchCompletion": {
+    "timestamp": "2026-10-08T08:56:40.703Z",
+    "service": "bendbound-routing",
+    "event": "request.completed",
+    "level": "info",
+    "requestId": "ed82c0ae-dd42-4c91-ab8d-f46f1f5fa14e",
+    "method": "POST",
+    "path": "/round-trip",
+    "status": 200,
+    "durationMs": 10156,
+    "input": {
+      "targetKm": 40,
+      "direction": 180,
+      "radiusKm": 25,
+      "profile": "winding",
+      "avoidMotorways": true
+    },
+    "planner": {
+      "valid": true,
+      "distanceKm": 38.917,
+      "distanceErrorKm": 1.0829999999999984,
+      "overlapRatio": 0.006614666808519927,
+      "repeatedKm": 0.25713506789113805,
+      "sharedAccessKm": 0.2571330213050403,
+      "remainingRepeatedRatio": 0,
+      "closed": true,
+      "nearStart": true,
+      "attempts": 36,
+      "elapsedMs": 10134,
+      "score": 3.798605600911671,
+      "evaluatedKm": 6.838450230218652,
+      "recommendedKm": 0,
+      "repeatedRatio": 0.006613726780937392,
+      "maxTraversals": 2,
+      "verifiedKm": 36.45749360239889,
+      "verifiedRatio": 0.9377169118998615,
+      "endpointGapMetres": 0,
+      "geometrySharedAccessKm": 0.2571330213050403,
+      "insideCone": true,
+      "coneRadiusKm": 25,
+      "coneBufferKm": 3.75,
+      "implementation": "road-catalogue-v1",
+      "roadUsePolicy": "physical-segments-twice-10-percent",
+      "identityVerification": "strict-geometry-subset"
+    },
+    "cache": {
+      "status": "miss"
+    }
+  },
+  "runtimeLoggingDriver": "awslogs",
+  "runtimeSourceHashesVerified": true,
+  "legacyPilotVerifiedAt": "2026-10-08T08:58:01.990865+00:00",
+  "legacyPilotChecks": [
+    {
+      "check": "health",
+      "seconds": 0.312
+    },
+    {
+      "check": "full-road-area-search",
+      "seconds": 0.437
+    },
+    {
+      "check": "outside-area-rejected",
+      "status": 422
+    },
+    {
+      "check": "standard-route",
+      "seconds": 0.099,
+      "distanceKm": 8.234
+    },
+    {
+      "check": "E14-40-south",
+      "seconds": 0.068,
+      "distanceKm": 38.917
+    },
+    {
+      "check": "E14-40-west",
+      "seconds": 7.869,
+      "distanceKm": 44.289
+    },
+    {
+      "check": "Greenwich-20",
+      "seconds": 7.775,
+      "distanceKm": 24.648
+    },
+    {
+      "check": "Dorking-40",
+      "seconds": 1.041,
+      "distanceKm": 39.996
+    },
+    {
+      "check": "Ashdown-60",
+      "seconds": 7.318,
+      "distanceKm": 57.644
+    },
+    {
+      "check": "missing-token-rejected",
+      "status": 401
+    }
+  ],
+  "appParserLiveCheck": {
+    "fixture": "E14 3TA south, 40 km, radius 25 km",
+    "accepted": true,
+    "displayDistanceKm": 39,
+    "routeVertices": 2266,
+    "navigationManeuvers": 64
+  }
+}

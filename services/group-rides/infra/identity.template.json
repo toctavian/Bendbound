@@ -1,0 +1,244 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Bendbound private group identity foundation. Apple provider registration remains a separate gated step; no pilot users or location endpoints.",
+  "Parameters": {
+    "ResourcePrefix": {
+      "Type": "String",
+      "Default": "bendbound-group-pilot",
+      "AllowedPattern": "[a-z][a-z0-9-]{2,39}"
+    },
+    "AppleServicesId": {
+      "Type": "String",
+      "Default": "com.octavian.bendbound.signin",
+      "AllowedPattern": "[A-Za-z0-9.-]+"
+    },
+    "AppleTeamId": {
+      "Type": "String",
+      "Default": "U5CJCX8BV2",
+      "AllowedPattern": "[A-Z0-9]{10}"
+    },
+    "AppleKeyId": {
+      "Type": "String",
+      "Default": "VQSL8P2SUR",
+      "AllowedPattern": "[A-Z0-9]{10}"
+    },
+    "ApplePrivateKeySecretArn": {
+      "Type": "String",
+      "Description": "Secrets Manager ARN whose JSON private_key field contains the Apple signing key. Never supply key contents as a parameter.",
+      "AllowedPattern": "arn:aws:secretsmanager:eu-west-2:[0-9]{12}:secret:.+"
+    },
+    "NativeAppleTriggerArn": {
+      "Type": "String",
+      "Default": "",
+      "AllowedPattern": "^$|arn:aws:lambda:eu-west-2:[0-9]{12}:function:[A-Za-z0-9_-]+",
+      "Description": "Verified native bridge trigger ARN. Empty retains the existing hosted foundation."
+    }
+  },
+  "Resources": {
+    "UserPool": {
+      "Type": "AWS::Cognito::UserPool",
+      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Retain",
+      "Properties": {
+        "UserPoolName": {
+          "Fn::Sub": "${ResourcePrefix}-identity"
+        },
+        "UserPoolTier": "ESSENTIALS",
+        "DeletionProtection": "ACTIVE",
+        "AdminCreateUserConfig": {
+          "AllowAdminCreateUserOnly": true
+        },
+        "UserPoolTags": {
+          "Project": "Bendbound",
+          "Environment": "private-pilot",
+          "Purpose": "group-rides"
+        },
+        "LambdaConfig": {
+          "Fn::If": [
+            "NativeAppleEnabled",
+            {
+              "DefineAuthChallenge": {
+                "Ref": "NativeAppleTriggerArn"
+              },
+              "CreateAuthChallenge": {
+                "Ref": "NativeAppleTriggerArn"
+              },
+              "VerifyAuthChallengeResponse": {
+                "Ref": "NativeAppleTriggerArn"
+              },
+              "PreTokenGenerationConfig": {
+                "LambdaArn": {
+                  "Ref": "NativeAppleTriggerArn"
+                },
+                "LambdaVersion": "V2_0"
+              }
+            },
+            {
+              "Ref": "AWS::NoValue"
+            }
+          ]
+        }
+      }
+    },
+    "GroupResourceServer": {
+      "Type": "AWS::Cognito::UserPoolResourceServer",
+      "Properties": {
+        "UserPoolId": {
+          "Ref": "UserPool"
+        },
+        "Identifier": "bendbound",
+        "Name": "Bendbound private groups",
+        "Scopes": [
+          {
+            "ScopeName": "groups",
+            "ScopeDescription": "Participate in explicitly approved private group rides"
+          }
+        ]
+      }
+    },
+    "PublicClient": {
+      "Type": "AWS::Cognito::UserPoolClient",
+      "DependsOn": [
+        "GroupResourceServer",
+        "AppleProvider"
+      ],
+      "Properties": {
+        "UserPoolId": {
+          "Ref": "UserPool"
+        },
+        "ClientName": {
+          "Fn::Sub": "${ResourcePrefix}-ios"
+        },
+        "GenerateSecret": false,
+        "AllowedOAuthFlowsUserPoolClient": true,
+        "AllowedOAuthFlows": [
+          "code"
+        ],
+        "AllowedOAuthScopes": [
+          "openid",
+          "profile",
+          "email",
+          "aws.cognito.signin.user.admin",
+          "bendbound/groups"
+        ],
+        "CallbackURLs": [
+          "bendbound://auth/callback"
+        ],
+        "DefaultRedirectURI": "bendbound://auth/callback",
+        "SupportedIdentityProviders": [
+          "SignInWithApple"
+        ],
+        "ExplicitAuthFlows": {
+          "Fn::If": [
+            "NativeAppleEnabled",
+            [
+              "ALLOW_CUSTOM_AUTH"
+            ],
+            [
+              "ALLOW_USER_SRP_AUTH"
+            ]
+          ]
+        },
+        "EnableTokenRevocation": true,
+        "PreventUserExistenceErrors": "ENABLED",
+        "AccessTokenValidity": 5,
+        "IdTokenValidity": 5,
+        "RefreshTokenValidity": 30,
+        "TokenValidityUnits": {
+          "AccessToken": "minutes",
+          "IdToken": "minutes",
+          "RefreshToken": "days"
+        },
+        "AuthSessionValidity": 3,
+        "RefreshTokenRotation": {
+          "Feature": "ENABLED",
+          "RetryGracePeriodSeconds": 5
+        }
+      }
+    },
+    "HostedDomain": {
+      "Type": "AWS::Cognito::UserPoolDomain",
+      "Properties": {
+        "UserPoolId": {
+          "Ref": "UserPool"
+        },
+        "Domain": {
+          "Fn::Sub": "${ResourcePrefix}-${AWS::AccountId}"
+        },
+        "ManagedLoginVersion": 1
+      }
+    },
+    "AppleProvider": {
+      "Type": "AWS::Cognito::UserPoolIdentityProvider",
+      "Properties": {
+        "UserPoolId": {
+          "Ref": "UserPool"
+        },
+        "ProviderName": "SignInWithApple",
+        "ProviderType": "SignInWithApple",
+        "ProviderDetails": {
+          "client_id": {
+            "Ref": "AppleServicesId"
+          },
+          "team_id": {
+            "Ref": "AppleTeamId"
+          },
+          "key_id": {
+            "Ref": "AppleKeyId"
+          },
+          "private_key": {
+            "Fn::Sub": "{{resolve:secretsmanager:${ApplePrivateKeySecretArn}:SecretString:private_key}}"
+          },
+          "authorize_scopes": "email name"
+        },
+        "AttributeMapping": {
+          "email": "email"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "UserPoolId": {
+      "Value": {
+        "Ref": "UserPool"
+      }
+    },
+    "PublicClientId": {
+      "Value": {
+        "Ref": "PublicClient"
+      }
+    },
+    "AuthDomain": {
+      "Value": {
+        "Fn::Sub": "https://${HostedDomain}.auth.${AWS::Region}.amazoncognito.com"
+      }
+    },
+    "AppleReturnUrl": {
+      "Value": {
+        "Fn::Sub": "https://${HostedDomain}.auth.${AWS::Region}.amazoncognito.com/oauth2/idpresponse"
+      }
+    },
+    "Issuer": {
+      "Value": {
+        "Fn::Sub": "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}"
+      }
+    },
+    "AppCallbackUrl": {
+      "Value": "bendbound://auth/callback"
+    }
+  },
+  "Conditions": {
+    "NativeAppleEnabled": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "NativeAppleTriggerArn"
+            },
+            ""
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,89 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# signing, build exports, and local ride data
+*.cer
+*.pfx
+*.keystore
+*.ipa
+*.aab
+*.apk
+*.xcarchive/
+*.dSYM/
+*.dSYM.zip
+*.gpx
+*.sqlite*
+*.db
+*.db-shm
+*.db-wal
+
+# typescript
+*.tsbuildinfo
+
+# generated native folders
+/ios
+/android
+
+# Local routing graphs, engine binaries and benchmark runs
+/routing/.data/
+/routing/.tools/
+/routing/results/
+/automation/.state/
+__pycache__/
+
+# Server API credentials (not loaded into the Expo app)
+/.secrets.env
+
+# Local group-service deployment bundles
+/services/group-rides/.artifacts/
+
+/services/group-rides/**/__pycache__/
+
+/scripts/__pycache__/
+
+# Mobile build includes app sources only; server/credential artifacts stay local.
+/routing/
+/services/
+/scripts/
+/docs/
+/output/
+/tests/
+/AGENTS.md
+/.secrets.env*
+/.env*
+/dynamodb-local-metadata.json

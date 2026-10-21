@@ -11,12 +11,17 @@ const bikeModule = { exports: {} };
 new Function('exports', ts.transpileModule(readFileSync(path.join(__dirname, '../src/data/motorcycles.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText)(bikeModule.exports);
 const routeModule = { exports: {} };
 new Function('exports', ts.transpileModule(readFileSync(path.join(__dirname, '../src/utils/routes.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText)(routeModule.exports);
+const motionModule = {};
+new Function('exports', 'require', ts.transpileModule(readFileSync(path.join(__dirname, '../src/utils/riderMotion.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText)(motionModule, () => routeModule.exports);
 
 const arrowModule = { exports: {} };
 new Function('exports', ts.transpileModule(readFileSync(path.join(__dirname, '../src/utils/routeArrows.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText)(arrowModule.exports);
 
 const routeColorData = {};
 new Function('exports', ts.transpileModule(readFileSync(path.join(__dirname, '../src/data/routeColors.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText)(routeColorData);
+
+const coneModule = {};
+new Function('exports', ts.transpileModule(readFileSync(path.join(__dirname, '../src/utils/roundTripArea.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText)(coneModule);
 
 function mapHarness() {
   const slots = [];
@@ -65,6 +70,10 @@ function mapHarness() {
     '@/components/MotorcycleGlyph': { MotorcycleGlyph: 'MotorcycleGlyph' },
     '@/data/motorcycles': bikeModule.exports,
     '@/utils/routes': routeModule.exports,
+    '@/utils/roundTripArea': coneModule,
+    '@/utils/riderMotion': motionModule,
+    '@/hooks/useRoadMatchedTrack': { useRoadMatchedTrack: segments => ({ lines: segments ?? [], road: [] }) },
+    '@/hooks/useRiderMotion': { useRiderMotion: (point, heading) => ({ point, heading }) },
   };
   const source = readFileSync(path.join(__dirname, '../src/components/RideMap.tsx'), 'utf8');
   const { outputText } = ts.transpileModule(source, {
@@ -350,4 +359,44 @@ test('one route colour updates the line and both arrow outlines without changing
     assert.equal(layers['route-outline']['line-color'], '#ffffff');
   }
   h.unmount();
+});
+
+test('planning cone and margin update live with radius, heading and custom start', () => {
+  const h = mapHarness();
+  h.render({ navigationMode: false, planningArea: { center: start, direction: 180, radiusKm: 10 } });
+  h.ready();
+  const cone = () => nodes(h.map.children, 'GeoJSONSource').find(n => n.props.id === 'planning-cone');
+  const first = cone().props.data.geometry.coordinates;
+  assert.ok(first[0].some(p => p[1] < start.latitude));
+  const firstBounds = h.calls.fit.at(-1).bounds;
+  h.render({ planningArea: { center: next, direction: 0, radiusKm: 20 } });
+  assert.notDeepEqual(cone().props.data.geometry.coordinates, first);
+  assert.notDeepEqual(h.calls.fit.at(-1).bounds, firstBounds);
+  assert.ok(nodes(h.map.children, 'GeoJSONSource').some(n => n.props.id === 'planning-margin'));
+  assert.deepEqual(nodes(h.map.children, 'Marker').find(n => n.props.id === 'planning-start').props.lngLat, [next.longitude, next.latitude]);
+  h.render({ planningArea: undefined });
+  assert.equal(cone(), undefined);
+  h.unmount();
+});
+test('live recording line and motorcycle share the same displayed endpoint', () => {
+  const h = mapHarness();
+  h.ready();
+  const corner = { latitude:51.501, longitude:-0.12 };
+  const end = { latitude:51.501, longitude:-0.118 };
+  h.render({ navigationMode:true, trackSegments:[[start,corner,end]], followLocation:{latitude:51.50102,longitude:-0.119} });
+  const trail = nodes(h.map.children, 'GeoJSONSource').find(n=>n.props.id==='track').props.data.geometry.coordinates;
+  const bike = nodes(h.map.children, 'Marker').find(n=>n.props.id==='rider');
+  assert.deepEqual(trail.at(-1).at(-1),bike.props.lngLat);
+  assert.equal(bike.props.lngLat[1],corner.latitude);
+  h.unmount();
+});
+
+test('every nearby place category opens the shared selection action', () => {
+  const h = mapHarness();
+  let selected;
+  const places = ['fuel', 'meet', 'sight', 'forest', 'pass'].map((category) => ({ ...start, id: category, name: category, category, detail: category }));
+  h.render({ navigationMode: false, followLocation: undefined, pois: places, onPoiSelect: (point) => { selected = point; } });
+  const markers = nodes(h.map.children, 'Marker').filter((node) => node.props.id.startsWith('poi-'));
+  assert.equal(markers.length, places.length);
+  markers.forEach((marker, index) => { marker.props.onPress(); assert.equal(selected, places[index]); });
 });

@@ -1,3 +1,5 @@
+import { useAccountSignOutRecovery } from '@/hooks/useAccountSignOutRecovery';
+import { useActiveRideKeepAwake } from '@/hooks/useActiveRideKeepAwake';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -5,6 +7,8 @@ import { AppProvider } from '@/state/AppProvider';
 import { colors, tabBarStyle } from '@/theme';
 
 export default function RootLayout() {
+  useActiveRideKeepAwake();
+  useAccountSignOutRecovery();
   return (
     <AppProvider>
       <StatusBar style="light" />
@@ -13,8 +17,8 @@ export default function RootLayout() {
           headerShown: false,
           sceneStyle: { backgroundColor: colors.canvas },
           tabBarActiveTintColor: colors.route,
-          tabBarInactiveTintColor: '#85888e',
-          tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
+          tabBarInactiveTintColor: colors.muted,
+          tabBarLabelStyle: { fontSize: 12, fontWeight: '600' },
           tabBarStyle,
         }}
       >
@@ -32,7 +36,10 @@ export default function RootLayout() {
         />
         <Tabs.Screen name="tour/[id]" options={{ href: null }} />
         <Tabs.Screen name="index" options={{ href: null }} />
+        <Tabs.Screen name="auth/callback" options={{ href: null }} />
         <Tabs.Screen name="bike" options={{ href: null }} />
+        <Tabs.Screen name="group/[id]" options={{ href: null }} />
+        <Tabs.Screen name="shared/[id]" options={{ href: null }} />
       </Tabs>
     </AppProvider>
   );

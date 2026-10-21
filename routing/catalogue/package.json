@@ -1,0 +1,12 @@
+{
+  "name": "bendbound-road-catalogue",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "pg": "8.23.1",
+    "protobufjs": "7.6.6"
+  }
+}

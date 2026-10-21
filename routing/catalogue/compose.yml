@@ -1,0 +1,83 @@
+name: bendbound-catalogue
+services:
+  postgres:
+    image: postgis/postgis:16-3.5@sha256:94146ac37bc61e2322f88016056c5920729cb8c64c8542ed590af8fc2abdac07
+    environment:
+      POSTGRES_DB: roads
+      POSTGRES_USER: bendbound
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Required}
+    command: ["postgres", "-c", "shared_buffers=128MB", "-c", "work_mem=8MB"]
+    volumes: ["../.data/postgres:/var/lib/postgresql/data"]
+    ports: ["127.0.0.1:5432:5432"]
+    mem_limit: 1g
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bendbound -d roads"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+  neo4j:
+    image: neo4j:5.26-community@sha256:c7d25c0eeebfe125718d58b72ed5d663c85d0479047733845eb2237c67ce8069
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:?Required}
+      NEO4J_server_memory_heap_initial__size: 256m
+      NEO4J_server_memory_heap_max__size: 512m
+      NEO4J_server_memory_pagecache_size: 256m
+    volumes: ["../.data/neo4j:/data"]
+    ports: ["127.0.0.1:7474:7474", "127.0.0.1:7687:7687"]
+    mem_limit: 1400m
+    restart: unless-stopped
+  valhalla:
+    image: ghcr.io/valhalla/valhalla:3.9.0@sha256:511c095b8caf393dccceb8b519ec96b6f85a0166b2288ba014a8a748acc5a63c
+    entrypoint: ["/bin/bash", "/bootstrap.sh"]
+    volumes:
+      - ../.data/map:/input:ro
+      - ../.data/valhalla:/data
+      - ../valhalla/bootstrap.sh:/bootstrap.sh:ro
+    ports: ["127.0.0.1:8002:8002"]
+    mem_limit: 4g
+    memswap_limit: 6g
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/status', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 45m
+  api:
+    build:
+      context: ..
+      dockerfile: catalogue/Dockerfile
+    environment:
+      VALHALLA_URL: http://valhalla:8002
+      PGHOST: postgres
+      PGDATABASE: roads
+      PGUSER: bendbound
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      NEO4J_URL: http://neo4j:7474
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD}
+      GRAPH_MODE: ${GRAPH_MODE:-required}
+      PORT: "8080"
+      ROUTE_SHARES_DIR: /shares
+    volumes: ["../.data/route-shares:/shares"]
+    ports: ["127.0.0.1:8088:8080"]
+    mem_limit: 512m
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valhalla:
+        condition: service_healthy
+  caddy:
+    image: caddy:2.10.2-alpine@sha256:4c6e91c6ed0e2fa03efd5b44747b625fec79bc9cd06ac5235a779726618e530d
+    environment:
+      ROUTING_HOSTNAME: ${ROUTING_HOSTNAME:?Required}
+      ROUTING_API_TOKEN: ${ROUTING_API_TOKEN:?Required}
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ../Caddyfile:/etc/caddy/Caddyfile:ro
+      - ../.data/caddy/data:/data
+      - ../.data/caddy/config:/config
+    mem_limit: 128m
+    restart: unless-stopped
+    depends_on: [api]

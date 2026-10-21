@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { ComponentProps, ReactNode } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View, type ViewProps } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Switch, Text, View, type ViewProps } from 'react-native';
 import { colors, radii, spacing } from '@/theme';
 
 export type IconName = ComponentProps<typeof Ionicons>['name'];
@@ -24,10 +24,13 @@ export function ActionButton({
   compact,
   variant = 'secondary',
 }: ButtonProps) {
-  const strong = variant === 'primary' || variant === 'danger' || variant === 'success';
+  // Dark ink keeps the existing accent fills readable at body size.
+  const foreground = variant === 'primary' || variant === 'success' || variant === 'danger' ? colors.canvas : colors.ink;
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled: !!(disabled || loading), busy: !!loading }}
       disabled={disabled || loading}
       onPress={onPress}
       style={({ pressed }) => [
@@ -41,16 +44,9 @@ export function ActionButton({
         pressed && styles.pressed,
       ]}
     >
-      {loading ? (
-        <ActivityIndicator color={strong ? colors.white : colors.ink} size="small" />
-      ) : (
-        <>
-          {icon ? <Ionicons color={strong ? colors.white : colors.ink} name={icon} size={18} /> : null}
-          <Text style={[styles.buttonText, strong && styles.buttonTextStrong]} numberOfLines={1}>
-            {label}
-          </Text>
-        </>
-      )}
+      {loading ? <ActivityIndicator color={foreground} size="small" /> :
+        icon ? <Ionicons color={foreground} name={icon} size={18} /> : null}
+      <Text style={[styles.buttonText, { color: foreground }]}>{label}</Text>
     </Pressable>
   );
 }
@@ -112,7 +108,7 @@ export function ToggleRow({
   onPress: () => void;
 }) {
   return (
-    <Pressable onPress={onPress} style={styles.toggleRow}>
+    <Pressable accessibilityRole="switch" accessibilityLabel={label} accessibilityHint={detail} accessibilityState={{ checked: value }} onPress={onPress} style={({ pressed }) => [styles.toggleRow, pressed && styles.rowPressed]}>
       <View style={styles.rowIcon}>
         <Ionicons color={colors.muted} name={icon} size={21} />
       </View>
@@ -120,8 +116,8 @@ export function ToggleRow({
         <Text style={styles.toggleLabel}>{label}</Text>
         {detail ? <Text style={styles.toggleDetail}>{detail}</Text> : null}
       </View>
-      <View style={[styles.switchTrack, value && styles.switchTrackActive]}>
-        <View style={[styles.switchThumb, value && styles.switchThumbActive]} />
+      <View pointerEvents="none" importantForAccessibility="no-hide-descendants">
+        <Switch accessible={false} value={value} onValueChange={onPress} trackColor={{ false: colors.line, true: colors.actionGreen }} thumbColor={colors.white} ios_backgroundColor={colors.line} />
       </View>
     </Pressable>
   );
@@ -135,19 +131,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     justifyContent: 'center',
-    minHeight: 48,
+    minHeight: 50,
+    paddingVertical: 12,
     paddingHorizontal: spacing.md,
   },
-  buttonCompact: { minHeight: 38, paddingHorizontal: 12 },
-  buttonText: { color: colors.ink, fontSize: 15, fontWeight: '800' },
-  buttonTextStrong: { color: colors.white },
+  buttonCompact: { minHeight: 44, paddingHorizontal: 12, paddingVertical: 10 },
+  buttonText: { color: colors.ink, fontSize: 16, fontWeight: '600', flexShrink: 1, textAlign: 'center' },
   danger: { backgroundColor: colors.route },
   disabled: { opacity: 0.45 },
   ghost: { backgroundColor: 'transparent' },
   handle: { alignSelf: 'center', backgroundColor: '#666a70', borderRadius: 2, height: 4, marginBottom: 14, width: 54 },
   iconButton: {
     alignItems: 'center',
-    backgroundColor: 'rgba(24,25,28,0.94)',
+    backgroundColor: colors.charcoal,
     borderRadius: 22,
     height: 44,
     justifyContent: 'center',
@@ -160,26 +156,23 @@ const styles = StyleSheet.create({
   rowIcon: { alignItems: 'center', width: 30 },
   sheet: {
     backgroundColor: colors.charcoal,
-    borderTopLeftRadius: 14,
-    borderTopRightRadius: 14,
+    borderTopLeftRadius: radii.lg,
+    borderTopRightRadius: radii.lg,
     bottom: 0,
     left: 0,
-    padding: spacing.md,
+    padding: spacing.lg,
     position: 'absolute',
     right: 0,
   },
   stat: { alignItems: 'center', flex: 1 },
-  statLabel: { color: colors.muted, fontSize: 10, fontWeight: '800', marginTop: 3, textTransform: 'uppercase' },
+  statLabel: { color: colors.muted, fontSize: 13, fontWeight: '500', marginTop: 4 },
   statLabelLight: { color: '#60646a' },
-  statValue: { color: colors.white, fontSize: 17, fontWeight: '900' },
+  statValue: { color: colors.white, fontSize: 22, fontWeight: '600', fontVariant: ['tabular-nums'], letterSpacing: -0.4 },
   statValueLight: { color: colors.charcoal },
   success: { backgroundColor: colors.actionGreen },
-  switchThumb: { backgroundColor: colors.white, borderRadius: 10, height: 20, left: 3, position: 'absolute', top: 3, width: 20 },
-  switchThumbActive: { left: 23 },
-  switchTrack: { backgroundColor: '#51545a', borderRadius: 13, height: 26, width: 46 },
-  switchTrackActive: { backgroundColor: colors.actionGreen },
-  toggleCopy: { flex: 1 },
-  toggleDetail: { color: colors.muted, fontSize: 12, marginTop: 3 },
-  toggleLabel: { color: colors.ink, fontSize: 16, fontWeight: '700' },
-  toggleRow: { alignItems: 'center', borderBottomColor: colors.line, borderBottomWidth: StyleSheet.hairlineWidth, flexDirection: 'row', gap: 10, minHeight: 62 },
+  toggleCopy: { flex: 1, minWidth: 0 },
+  toggleDetail: { color: colors.muted, fontSize: 13, lineHeight: 18, marginTop: 4 },
+  toggleLabel: { color: colors.ink, fontSize: 16, fontWeight: '500' },
+  toggleRow: { alignItems: 'center', borderBottomColor: colors.line, borderBottomWidth: StyleSheet.hairlineWidth, flexDirection: 'row', gap: 10, minHeight: 64, paddingVertical: 12 },
+  rowPressed: { opacity: 0.72 },
 });

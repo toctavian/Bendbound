@@ -50,3 +50,13 @@ export function acknowledgeRecordedTours(tours: Tour[]) {
     updateRideState((current) => ({ ...current, pending: current.pending.filter((tour) => !ids.has(tour.id)) }));
   }
 }
+
+export function recordTrackingDiagnostic(event: string, details: Record<string, number | boolean | string> = {}) {
+  try {
+    const key = 'bendbound-recording-diagnostics-v1';
+    const history = JSON.parse(Storage.getItemSync(key) ?? '[]');
+    // Operational counters and lifecycle only; no coordinates or route geometry.
+    const entries = Array.isArray(history) ? history : [];
+    Storage.setItemSync(key, JSON.stringify([...entries.slice(-63), { at: Date.now(), event, ...details }]));
+  } catch { /* Diagnostics must not interrupt recording. */ }
+}

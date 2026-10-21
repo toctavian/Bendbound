@@ -108,7 +108,7 @@ type OsrmResponse = {
 };
 
 type ValhallaResponse = {
-  planner?: { valid?: boolean };
+  planner?: { valid?: boolean; insideCone?: boolean };
   trip?: {
     status: number;
     legs?: {
@@ -128,6 +128,8 @@ type ValhallaResponse = {
 };
 
 type RoadRoutingOptions = {
+  radiusKm?: number;
+  coneAngleDegrees?: number;
   stopAtWaypoints?: boolean;
   avoidMotorways?: boolean;
   heading?: number;
@@ -485,17 +487,19 @@ export async function calculateRoundTrip(
   if (!Number.isFinite(targetKm) || targetKm <= 0) throw new Error('Choose a positive round-trip distance.');
   if (selfHostedRoutingUrl()) {
     const payload = await requestSelfHosted('round-trip', {
-      center, targetKm, direction, profile, avoidMotorways: options.avoidMotorways !== false,
+      center: { latitude: center.latitude, longitude: center.longitude }, targetKm, direction, profile, avoidMotorways: options.avoidMotorways !== false,
+      ...(options.coneAngleDegrees !== undefined ? { coneAngleDegrees: options.coneAngleDegrees } : options.radiusKm !== undefined ? { radiusKm: options.radiusKm } : {}),
     }, 35000);
     // The server owns distance, overlap, closure and start-snapping policy.
     // Require its acceptance and usable navigation data, without reapplying rules.
     const routed = parseValhallaRoute(payload);
-    if (payload?.planner?.valid !== true || !routed) {
+    if (payload?.planner?.valid !== true || ((options.radiusKm !== undefined || options.coneAngleDegrees !== undefined) && payload?.planner?.insideCone !== true) || !routed) {
       throw new Error('The routing service returned an invalid round-trip response. Please try again.');
     }
     return { ...routed, profile, curves: Math.round(routed.distanceKm * (profile === 'twisty' ? 1.05 : profile === 'winding' ? 0.75 : 0.35)),
       roundTrip: true, title: `${routed.distanceKm} km round trip` };
   }
+  if (options.radiusKm !== undefined || options.coneAngleDegrees !== undefined) throw new Error('Directional area planning requires the Bendbound routing server.');
   // Broaden and rotate the loop; omit scenic stops on later attempts because a
   // scenic stop on a dead-end road would force an out-and-back section.
   const attempts = [

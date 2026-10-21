@@ -1,7 +1,11 @@
+import { useRoadMatchedTrack } from '@/hooks/useRoadMatchedTrack';
+import { useRiderMotion } from '@/hooks/useRiderMotion';
+import { projectToRoad, trailToRider } from '@/utils/riderMotion';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, GestureResponderEvent, StyleSheet, Text, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Camera, CameraRef, GeoJSONSource, Layer, LngLat, LngLatBounds, Map, Marker, UserLocation, ViewStateChangeEvent } from '@maplibre/maplibre-react-native';
+import { conePolygon, RoundTripArea } from '@/utils/roundTripArea';
 import { prepareArrowRoute, routeArrowFeatures } from '@/utils/routeArrows';
 import { routeColors, routeColorOrDefault } from '@/data/routeColors';
 import { rideMapStyle } from '@/utils/mapStyle';
@@ -25,7 +29,9 @@ type RideMapProps = {
   showUser?: boolean;
   compact?: boolean;
   pois?: PointOfInterest[];
+  onPoiSelect?: (point: PointOfInterest) => void;
   roundTripPreview?: boolean;
+  planningArea?: RoundTripArea;
   routePois?: RoutePointOfInterest[];
   selectedRoutePoiId?: string;
   onRoutePoiSelect?: (point: RoutePointOfInterest) => void;
@@ -34,6 +40,8 @@ type RideMapProps = {
   recenterTarget?: Coordinate;
   followHeading?: number;
   followSpeedKph?: number;
+  gpsAccuracy?: number | null;
+  motionPaused?: boolean;
   navigationMode?: boolean;
   motorcycleType?: MotorcycleType;
   following?: boolean;
@@ -58,7 +66,9 @@ export function RideMap({
   showUser = true,
   compact,
   pois = [],
+  onPoiSelect,
   roundTripPreview = false,
+  planningArea,
   routePois = [],
   selectedRoutePoiId,
   onRoutePoiSelect,
@@ -66,6 +76,8 @@ export function RideMap({
   recenterTarget,
   followHeading = 0,
   followSpeedKph = 0,
+  gpsAccuracy,
+  motionPaused = false,
   navigationMode = false,
   motorcycleType = 'adventure',
   following = true,
@@ -84,14 +96,32 @@ export function RideMap({
   const handledRecenter = useRef<Coordinate | undefined>(undefined);
   const cameraRevision = useRef(0);
   const lastLocation = useRef(followLocation);
-  const recordedCoordinates = useMemo(() => trackSegments?.flat() ?? trace, [trace, trackSegments]);
-  const coordinates = route.length > 1 ? route : recordedCoordinates;
+  const matchedTrack = useRoadMatchedTrack(trackSegments, navigationMode);
+  const road = route.length > 1 ? route : matchedTrack.road;
+  const snapped = useMemo(() => followLocation ? projectToRoad(road, followLocation, route.length > 1 ? routeIndex : -1,
+    followSpeedKph > 7 ? followHeading : undefined) : undefined, [road, route.length, followLocation, routeIndex, followHeading, followSpeedKph]);
+  const limitKm = Math.min(50, Math.max(20, (gpsAccuracy ?? 20) * 1.5)) / 1000;
+  const liveTrack = navigationMode && !!trackSegments;
+  const matchedEndpoint = matchedTrack.road[matchedTrack.road.length - 1];
+  const target = liveTrack && matchedEndpoint ? matchedEndpoint : snapped && snapped.distanceKm <= limitKm ? snapped.point : followLocation;
+  const motion = useRiderMotion(target, followHeading, road, navigationMode && !motionPaused);
+  const liveTrail = useMemo(() => liveTrack ? trailToRider(matchedTrack.lines, motion.point) : undefined, [liveTrack, matchedTrack.lines, motion.point]);
+  const riderLocation = liveTrail?.point ?? motion.point;
+  const displaySegments = trackSegments ? liveTrail?.lines ?? matchedTrack.lines : undefined;
+  const riderHeading = motion.heading;
+  const recordedCoordinates = useMemo(() => displaySegments?.flat() ?? trace, [trace, displaySegments]);
+  const recordedBounds = useMemo(() => trackSegments?.flat() ?? trace, [trackSegments, trace]);
+  const coordinates = route.length > 1 ? route : recordedBounds;
   const routeTint = routeColors[routeColorOrDefault(routeColor)].value;
   const bikeType = motorcycleTypeOrDefault(motorcycleType);
+  const cone = useMemo(() => planningArea ? conePolygon(planningArea) : [], [planningArea]);
+  const bufferedCone = useMemo(() => planningArea ? conePolygon(planningArea, true) : [], [planningArea]);
+  const polygonData = (points: Coordinate[]) => ({ type: 'Feature' as const, properties: {},
+    geometry: { type: 'Polygon' as const, coordinates: [points.map(lngLat)] } });
   const routeData = useMemo(() => ({ type: 'Feature' as const, properties: {},
     geometry: { type: 'LineString' as const, coordinates: route.map(lngLat) } }), [route]);
   const trackData = useMemo(() => ({ type: 'Feature' as const, properties: {},
-    geometry: { type: 'MultiLineString' as const, coordinates: (trackSegments ?? [trace]).filter((segment) => segment.length > 1).map((segment) => segment.map(lngLat)) } }), [trace, trackSegments]);
+    geometry: { type: 'MultiLineString' as const, coordinates: (displaySegments ?? [trace]).filter((segment) => segment.length > 1).map((segment) => segment.map(lngLat)) } }), [trace, displaySegments]);
   const arrowRoute = useMemo(() => prepareArrowRoute(route, maneuvers), [route, maneuvers]);
   const arrowData = useMemo(() => routeArrowFeatures(arrowRoute, mapZoom, navigationMode ? routeIndex : 0), [arrowRoute, mapZoom, navigationMode, routeIndex]);
   const showMotorcycle = navigationMode && showUser && !compact && !!followLocation;
@@ -146,6 +176,16 @@ export function RideMap({
   }, [bottomInset, compact, coordinates, mapReady, navigationMode]);
 
   useEffect(() => {
+    if (!mapReady || !bufferedCone.length || navigationMode) return;
+    const bounds = bufferedCone.reduce<LngLatBounds>((box, p) => [
+      Math.min(box[0], p.longitude), Math.min(box[1], p.latitude),
+      Math.max(box[2], p.longitude), Math.max(box[3], p.latitude),
+    ], [Infinity, Infinity, -Infinity, -Infinity]);
+    ref.current?.fitBounds(bounds, { duration: 180, bearing: 0, pitch: 0,
+      padding: { top: 110, left: 35, right: 35, bottom: bottomInset + 30 } });
+  }, [bufferedCone, bottomInset, mapReady, navigationMode]);
+
+  useEffect(() => {
     if (!recenterTarget || handledRecenter.current === recenterTarget) return;
     if (navigationMode || compact) {
       handledRecenter.current = recenterTarget;
@@ -166,18 +206,18 @@ export function RideMap({
   }, [bottomInset, compact, mapReady, navigationMode, recenterTarget]);
 
   useEffect(() => {
-    if (!mapReady || !navigationMode || !following || suspended.current || !followLocation) return;
+    if (!mapReady || !navigationMode || !following || suspended.current || !riderLocation) return;
     // Tilt the flat map toward travel while keeping the rider centered above the footer.
     // Repeat after the ride layout settles so the camera uses the current map padding.
     ref.current?.easeTo({
-      center: lngLat(followLocation),
-      bearing: followHeading,
+      center: lngLat(riderLocation),
+      bearing: riderHeading,
       pitch: 45,
       zoom: Math.max(16.4, 17.4 - followSpeedKph / 120),
       padding: { top: 0, right: 0, bottom: bottomInset, left: 0 },
-      duration: 600,
+      duration: 100,
     });
-  }, [bottomInset, followHeading, followLocation, followSpeedKph, following, mapHeight, mapReady, navigationMode]);
+  }, [bottomInset, riderHeading, riderLocation, followSpeedKph, following, mapHeight, mapReady, navigationMode]);
 
   const suspendFollow = () => {
     if (!navigationMode || !interactive || compact || suspended.current) return;
@@ -228,6 +268,19 @@ export function RideMap({
       >
         <Camera ref={ref} minZoom={2} maxZoom={19} initialViewState={{ center: lngLat(defaultCenter), zoom: 9, bearing: 0, pitch: 0 }} />
         {showUser && !compact && !showMotorcycle ? <UserLocation /> : null}
+        {planningArea ? <>
+          <GeoJSONSource id="planning-margin" data={polygonData(bufferedCone)}>
+            <Layer id="planning-margin-fill" type="fill" paint={{ 'fill-color': '#38bdf8', 'fill-opacity': 0.08 }} />
+            <Layer id="planning-margin-line" type="line" paint={{ 'line-color': '#38bdf8', 'line-width': 1, 'line-dasharray': [3, 3] }} />
+          </GeoJSONSource>
+          <GeoJSONSource id="planning-cone" data={polygonData(cone)}>
+            <Layer id="planning-cone-fill" type="fill" paint={{ 'fill-color': '#38bdf8', 'fill-opacity': 0.17 }} />
+            <Layer id="planning-cone-line" type="line" paint={{ 'line-color': '#38bdf8', 'line-width': 2 }} />
+          </GeoJSONSource>
+          <Marker id="planning-start" lngLat={lngLat(planningArea.center)}>
+            <View accessibilityLabel="Selected round trip start" style={styles.markerStart}><Ionicons name="flag" color={colors.white} size={14} /></View>
+          </Marker>
+        </> : null}
         {route.length > 1 ? <GeoJSONSource id="route" data={routeData} tolerance={0}>
           <Layer id="route-outline" type="line" layout={{ 'line-cap': 'round', 'line-join': 'round' }} paint={{ 'line-color': '#ffffff', 'line-width': 9 }} />
           <Layer id="route-line" type="line" afterId="route-outline" layout={{ 'line-cap': 'round', 'line-join': 'round' }} paint={{ 'line-color': routeTint, 'line-width': 6 }} />
@@ -241,10 +294,10 @@ export function RideMap({
           <Layer id="turn-shaft" type="line" afterId="turn-head-outline" filter={['==', 'part', 'shaft']} layout={{ 'line-cap': 'round', 'line-join': 'round' }} paint={{ 'line-color': '#ffffff', 'line-width': 7.2 }} />
           <Layer id="turn-head" type="fill" afterId="turn-shaft" filter={['==', 'part', 'head']} paint={{ 'fill-color': '#ffffff' }} />
         </GeoJSONSource> : null}
-        {showMotorcycle && followLocation ? (
-          <Marker id="rider" lngLat={lngLat(followLocation)} anchor="center">
+        {showMotorcycle && riderLocation ? (
+          <Marker id="rider" lngLat={lngLat(riderLocation)} anchor="center">
             <View collapsable={false} accessibilityLabel={`Your location, ${motorcycles[bikeType].label} motorcycle`} style={styles.riderMarker}>
-              <View style={[styles.riderGlyph, { transform: [{ rotate: `${((followHeading - mapHeading) % 360 + 360) % 360}deg` }] }]}>
+              <View style={[styles.riderGlyph, { transform: [{ rotate: `${((riderHeading - mapHeading) % 360 + 360) % 360}deg` }] }]}>
                 <MotorcycleGlyph type={bikeType} size={63} />
               </View>
             </View>
@@ -253,21 +306,21 @@ export function RideMap({
         {route.length > 1 ? (
           <>
             {!overlapsRider(route[0]) ? <Marker id="route-start" lngLat={lngLat(route[0])}>
-              <View accessibilityLabel={roundTripPreview ? 'Round trip start and finish' : 'Route start'} style={styles.markerStart}>{roundTripPreview || tripStops.length ? <Ionicons name="flag" color={colors.white} size={14} /> : <Text style={styles.markerText}>1</Text>}</View>
+              <View accessibilityLabel={roundTripPreview ? 'Round trip start and finish' : 'Route start'} style={styles.markerStart}>{roundTripPreview || tripStops.length ? <Ionicons name="flag" color={colors.white} size={14} /> : <Text maxFontSizeMultiplier={1.2} style={styles.markerText}>1</Text>}</View>
             </Marker> : null}
             {!roundTripPreview && !tripStops.length && !overlapsRider(route[route.length - 1]) ? <Marker id="route-end" lngLat={lngLat(route[route.length - 1])}>
-              <View style={[styles.markerEnd, { backgroundColor: routeTint }]}><Text style={styles.markerText}>2</Text></View>
+              <View style={[styles.markerEnd, { backgroundColor: routeTint }]}><Text maxFontSizeMultiplier={1.2} style={styles.markerText}>2</Text></View>
             </Marker> : null}
           </>
         ) : null}
         {!navigationMode && trackSegments && recordedCoordinates.length > 0 ? (
           <>
-            <Marker id="track-start" lngLat={lngLat(recordedCoordinates[0])}><View accessibilityLabel="Ride start" style={styles.markerStart}><Text style={styles.markerText}>1</Text></View></Marker>
-            <Marker id="track-end" lngLat={lngLat(recordedCoordinates[recordedCoordinates.length - 1])}><View accessibilityLabel="Ride finish" style={[styles.markerEnd, { backgroundColor: routeTint }]}><Text style={styles.markerText}>2</Text></View></Marker>
+            <Marker id="track-start" lngLat={lngLat(recordedCoordinates[0])}><View accessibilityLabel="Ride start" style={styles.markerStart}><Text maxFontSizeMultiplier={1.2} style={styles.markerText}>1</Text></View></Marker>
+            <Marker id="track-end" lngLat={lngLat(recordedCoordinates[recordedCoordinates.length - 1])}><View accessibilityLabel="Ride finish" style={[styles.markerEnd, { backgroundColor: routeTint }]}><Text maxFontSizeMultiplier={1.2} style={styles.markerText}>2</Text></View></Marker>
           </>
         ) : null}
         {pois.map((poi) => (
-          <Marker key={poi.id} id={`poi-${poi.id}`} lngLat={lngLat(poi)} onPress={() => Alert.alert(poi.name, poi.detail.replaceAll('_', ' '))}>
+          <Marker key={poi.id} id={`poi-${poi.id}`} lngLat={lngLat(poi)} onPress={() => onPoiSelect?.(poi)}>
             <View style={styles.poiMarker}>
               <Ionicons color={colors.white} name={poiIcons[poi.category]} size={16} />
             </View>
@@ -277,7 +330,7 @@ export function RideMap({
           <Marker key={`${stop.id}-${index}`} id={`trip-stop-${index}`} lngLat={lngLat(stop)}
             onPress={() => Alert.alert(`${tripStopLabel(index)}. ${stop.name}`, stop.address ?? (index === tripStops.length - 1 ? 'Destination' : 'Planned stop'))}>
             <View collapsable={false} accessibilityLabel={`${index === tripStops.length - 1 ? 'Destination' : 'Stop'} ${tripStopLabel(index)}: ${stop.name}`}
-              style={[styles.routePoiMarker, { backgroundColor: routeTint }]}><Text adjustsFontSizeToFit numberOfLines={1} style={styles.routePoiNumber}>{tripStopLabel(index)}</Text></View>
+              style={[styles.routePoiMarker, { backgroundColor: routeTint }]}><Text maxFontSizeMultiplier={1.2} adjustsFontSizeToFit numberOfLines={1} style={styles.routePoiNumber}>{tripStopLabel(index)}</Text></View>
           </Marker>
         ) : null) : null}
         {roundTripPreview && !navigationMode ? routePois.map((poi) => (
@@ -285,7 +338,7 @@ export function RideMap({
             <View collapsable={false} accessibilityRole="button" accessibilityLabel={`Point ${poi.number}: ${poi.name}`}
               accessibilityState={{ selected: selectedRoutePoiId === poi.id }}
               style={[styles.routePoiMarker, { backgroundColor: routeTint }, selectedRoutePoiId === poi.id && styles.selectedRoutePoi]}>
-              <Text style={styles.routePoiNumber}>{poi.number}</Text>
+              <Text maxFontSizeMultiplier={1.2} style={styles.routePoiNumber}>{poi.number}</Text>
             </View>
           </Marker>
         )) : null}

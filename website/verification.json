@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "website": "https://bendboundapp.com",
+  "checks": [
+    {
+      "path": "/",
+      "status": 200,
+      "bytes": 6060
+    },
+    {
+      "path": "/styles.css",
+      "status": 200,
+      "bytes": 7023
+    },
+    {
+      "path": "/site.js",
+      "status": 200,
+      "bytes": 2523
+    },
+    {
+      "path": "/assets/map.webp",
+      "status": 200,
+      "bytes": 159670
+    },
+    {
+      "path": "/robots.txt",
+      "status": 200,
+      "bytes": 69
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": 200,
+      "bytes": 156
+    }
+  ],
+  "httpsRedirect": true,
+  "wwwRedirect": true,
+  "notFound": 404,
+  "unsignedOrigin": 403,
+  "securityHeaders": true,
+  "dnsResolver": "1.1.1.1"
+}

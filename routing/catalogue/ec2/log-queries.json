@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Bendbound/Failed requests",
+    "queryString": "fields @timestamp, requestId, path, status, code, durationMs, input, startRoads, diagnostics\n| filter event = \"request.completed\" and status >= 400\n| sort @timestamp desc\n| limit 100"
+  },
+  {
+    "name": "Bendbound/Find request reference",
+    "queryString": "fields @timestamp, @logStream, @message\n| filter requestId = \"PASTE_REFERENCE_HERE\"\n| sort @timestamp asc\n| limit 100"
+  },
+  {
+    "name": "Bendbound/Route latency and failures",
+    "queryString": "filter event = \"request.completed\" and path = \"/round-trip\"\n| stats count(*) as requests, avg(durationMs) as averageMs, pct(durationMs, 95) as p95Ms by bin(5m), status"
+  }
+]

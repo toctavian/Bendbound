@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://bendboundapp.com/sitemap.xml

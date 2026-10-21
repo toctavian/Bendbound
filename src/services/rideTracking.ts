@@ -2,12 +2,13 @@ import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import type { DraftRoute } from '@/types';
 import { appendRecordingFix, pauseRecording, resumeRecording, startRecording, tourFromRecording } from '@/utils/recording';
-import { ActiveRide, readRideState, updateRideState } from './rideStore';
+import { ActiveRide, readRideState, updateRideState, recordTrackingDiagnostic } from './rideStore';
 
 export const RIDE_LOCATION_TASK = 'bendbound-active-ride-location-v1';
 const listeners = new Set<(ride: ActiveRide | null) => void>();
 let operations: Promise<unknown> = Promise.resolve();
 let hasRecoveredInThisProcess = false;
+const diagnosticAt = { foreground: 0, background: 0 };
 
 function serial<T>(operation: () => Promise<T>): Promise<T> {
   const result = operations.then(operation, operation);
@@ -65,6 +66,7 @@ export async function ensureBackgroundLocation(explainPermission: () => Promise<
 }
 
 async function startNativeTracking() {
+  recordTrackingDiagnostic('native.start');
   await Location.startLocationUpdatesAsync(RIDE_LOCATION_TASK, {
     accuracy: Location.Accuracy.BestForNavigation,
     distanceInterval: 3,
@@ -144,6 +146,13 @@ export function recoverRide() {
     }
     const running = await Location.hasStartedLocationUpdatesAsync(RIDE_LOCATION_TASK);
     const permitted = (await Location.getBackgroundPermissionsAsync()).granted;
+    recordTrackingDiagnostic('recover', { firstRecovery, running, permitted, deliveryAgeMs: Date.now() - ride.updatedAt });
+    if (!firstRecovery && permitted && !running) {
+      // A return from feedback is not a new ride. Restart a lost registration
+      // while preserving the saved session; gaps remain separate segments.
+      try { await startNativeTracking(); return publish(ride); }
+      catch { recordTrackingDiagnostic('native.restart_failed'); }
+    }
     // A persisted native registration alone is not proof that a force-quit ride
     // kept running. On a cold launch, recover a stale session as paused.
     if (!running || !permitted || (firstRecovery && Date.now() - ride.updatedAt > 30000)) {
@@ -172,43 +181,57 @@ export function endRide(discard: boolean) {
   });
 }
 
-// Loaded by entry.js before Expo Router: this also runs in a headless background launch.
-TaskManager.defineTask<{ locations?: Location.LocationObject[] }>(RIDE_LOCATION_TASK, async ({ data, error }) => serial(async () => {
+async function ingestLocations(locations: Location.LocationObject[], source: 'foreground' | 'background', error?: { message: string } | null) {
   let ride: ActiveRide | null = null;
   try {
     ride = readRideState().active;
     if (!ride || ride.session.activeSince === null) {
-      await stopNativeTracking();
+      if (source === 'background') await stopNativeTracking();
       return;
     }
     if (error) {
+      recordTrackingDiagnostic('background.error');
       storeActive({ ...ride, session: pauseRecording(ride.session, ride.updatedAt), error: error.message });
       await stopNativeTracking();
       return;
     }
     const now = Date.now();
-    let session = ride.session;
-    let lastFix = ride.lastFix;
-    for (const fix of [...(data?.locations ?? [])].sort((a, b) => a.timestamp - b.timestamp)) {
-      // Native background deliveries can contain old but valid batched samples.
-      // Keep the chronological, accuracy, active-session and jump checks.
+    let session = ride.session, lastFix = ride.lastFix;
+    const diagnosticDue = now - diagnosticAt[source] >= 30000;
+    const before = diagnosticDue ? session.segments.reduce((sum, segment) => sum + segment.length, 0) : 0;
+    for (const fix of [...locations].sort((a, b) => a.timestamp - b.timestamp)) {
       session = appendRecordingFix(session, { latitude: fix.coords.latitude, longitude: fix.coords.longitude,
-        timestamp: fix.timestamp, accuracy: fix.coords.accuracy ?? -1 }, now, Infinity);
+        timestamp: fix.timestamp, accuracy: fix.coords.accuracy ?? -1 }, now, source === 'background' ? Infinity : 15000);
       if (fix.timestamp >= session.activeSince! && fix.timestamp <= now + 1000
+        && (source === 'background' || now - fix.timestamp <= 15000)
         && Number.isFinite(fix.coords.latitude) && Math.abs(fix.coords.latitude) <= 90
         && Number.isFinite(fix.coords.longitude) && Math.abs(fix.coords.longitude) <= 180
         && (fix.coords.accuracy ?? -1) >= 0 && (fix.coords.accuracy ?? Infinity) <= 50
         && (!lastFix || fix.timestamp > lastFix.timestamp)) lastFix = fix;
     }
+    if (diagnosticDue) {
+      diagnosticAt[source] = now;
+      recordTrackingDiagnostic('locations.' + source, { delivered: locations.length,
+        accepted: session.segments.reduce((sum, segment) => sum + segment.length, 0) - before,
+        latestFixAgeMs: lastFix ? now - lastFix.timestamp : -1 });
+    }
     storeActive({ ...ride, session, lastFix, updatedAt: now });
   } catch (failure) {
-    // A full disk must not leave the UI claiming it is safely recording.
     await stopNativeTracking();
+    recordTrackingDiagnostic('storage_or_tracking.error');
     const message = failure instanceof Error ? failure.message : 'Recording could not be saved.';
-    console.warn('Background recording stopped:', message);
+    console.warn('Recording stopped:', message);
     if (ride) {
       const paused = { ...ride, session: pauseRecording(ride.session, ride.updatedAt), error: `Recording stopped: ${message}` };
       try { storeActive(paused); } catch { publish(paused); }
     }
   }
-}));
+}
+
+export function recordForegroundFix(fix: Location.LocationObject) {
+  return serial(() => ingestLocations([fix], 'foreground'));
+}
+
+// Loaded by entry.js before Expo Router, including headless background launches.
+TaskManager.defineTask<{ locations?: Location.LocationObject[] }>(RIDE_LOCATION_TASK, async ({ data, error }) =>
+  serial(() => ingestLocations(data?.locations ?? [], 'background', error)));

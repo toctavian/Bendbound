@@ -1,0 +1,97 @@
+{
+  "type": "object",
+  "properties": {
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "publisher": {
+            "type": "string"
+          },
+          "syndicationKey": {
+            "type": "string"
+          },
+          "checkedAt": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "roads": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sectionId": {
+                  "type": "string"
+                },
+                "roadRef": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "fullSectionScope": {
+                  "type": "boolean"
+                },
+                "scopeBbox": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 4,
+                  "maxItems": 4
+                }
+              },
+              "required": [
+                "sectionId",
+                "roadRef",
+                "reason",
+                "fullSectionScope",
+                "scopeBbox"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "contentHash": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "retrievalMethod": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "title",
+          "publisher",
+          "syndicationKey",
+          "checkedAt",
+          "notes",
+          "roads",
+          "contentHash",
+          "retrievalMethod"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 20
+    },
+    "summary": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "pages",
+    "summary"
+  ],
+  "additionalProperties": false
+}

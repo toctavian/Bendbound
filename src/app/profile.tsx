@@ -1,21 +1,21 @@
+import { useAccount } from '@/hooks/useAccount';
+import { AccountPanel } from '@/components/AccountPanel';
 import { RouteColorPicker } from '@/components/RouteColorPicker';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { router } from 'expo-router';
-import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ActionButton, IconName, ToggleRow } from '@/components/ui';
 import { useApp } from '@/state/AppProvider';
-import { colors, spacing } from '@/theme';
+import { colors, radii, spacing, typography } from '@/theme';
 import { fromGpx, routeDistance, tourFromDraft } from '@/utils/routes';
 import { motorcycles, motorcycleTypeOrDefault } from '@/data/motorcycles';
 
-const chart = [30, 52, 44, 82, 68, 101, 73, 118, 95, 62, 88, 47, 71, 39, 56];
-
 function MenuRow({ icon, label, detail, onPress }: { icon: IconName; label: string; detail?: string; onPress: () => void }) {
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} style={styles.menuRow}>
+    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} style={({ pressed }) => [styles.menuRow, pressed && styles.pressed]}>
       <Ionicons color={colors.muted} name={icon} size={22} />
       <View style={styles.menuCopy}>
         <Text style={styles.menuLabel}>{label}</Text>
@@ -28,6 +28,9 @@ function MenuRow({ icon, label, detail, onPress }: { icon: IconName; label: stri
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
+  const { fontScale } = useWindowDimensions();
+  const { account } = useAccount();
+  const displayName = account?.displayName === 'Rider' ? 'Your profile' : account?.displayName ?? 'Your profile';
   const { tours, settings, updateSettings, saveTour } = useApp();
   const completed = tours.filter((tour) => tour.completed && tour.recording);
   const totalKm = completed.reduce((total, tour) => total + tour.distanceKm, 0);
@@ -59,31 +62,30 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={styles.screen}>
+    <View key={fontScale} style={styles.screen}>
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 12 }]} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <View style={styles.avatar}><Text style={styles.avatarText}>O</Text></View>
+          <View style={styles.avatar}><Text style={styles.avatarText}>{displayName.charAt(0).toUpperCase()}</Text></View>
           <View style={styles.headerCopy}>
-            <Text style={styles.name}>Octavian</Text>
-            <Text style={styles.handle}>@octavian / Bendbound member</Text>
+            <Text accessibilityRole="header" style={styles.name}>{displayName}</Text>
+            <Text style={styles.handle}>{account ? 'Bendbound member' : 'Local rider'}</Text>
           </View>
           <Pressable accessibilityRole="button" accessibilityLabel="Routes and bike settings" onPress={openBikeSettings} style={styles.settingsButton}><Ionicons color={colors.ink} name="settings-outline" size={22} /></Pressable>
         </View>
 
+        <Text accessibilityRole="header" style={styles.sectionTitle}>Your riding</Text>
         <View style={styles.statsPanel}>
           <View style={styles.summaryRow}>
-            <View><Text style={styles.summaryValue}>{totalKm.toLocaleString()} km</Text><Text style={styles.summaryLabel}>TOTAL DISTANCE</Text></View>
-            <View><Text style={styles.summaryValue}>{Math.round(totalMinutes / 60)} h</Text><Text style={styles.summaryLabel}>RIDING TIME</Text></View>
-            <View><Text style={styles.summaryValue}>{completed.length}</Text><Text style={styles.summaryLabel}>TOURS</Text></View>
+            <View><Text style={styles.summaryValue}>{totalKm.toLocaleString()} km</Text><Text style={styles.summaryLabel}>Distance</Text></View>
+            <View><Text style={styles.summaryValue}>{Math.round(totalMinutes / 60)} h</Text><Text style={styles.summaryLabel}>Riding time</Text></View>
+            <View><Text style={styles.summaryValue}>{completed.length}</Text><Text style={styles.summaryLabel}>Tours</Text></View>
           </View>
-          <Text style={styles.chartTitle}>Your riding activity</Text>
-          <View style={styles.chart}>
-            {chart.map((height, index) => <View key={index} style={[styles.bar, { height }]} />)}
-          </View>
-          <View style={styles.chartAxis}><Text style={styles.axisText}>JAN</Text><Text style={styles.axisText}>NOW</Text></View>
+          <Text style={styles.ridingNote}>{completed.length ? 'From your recorded rides on this device.' : 'Record your first ride to start your riding history.'}</Text>
         </View>
 
-        <Text style={styles.sectionTitle}>Navigation</Text>
+        <AccountPanel />
+
+        <Text accessibilityRole="header" style={styles.sectionTitle}>Navigation</Text>
         <View style={styles.group}>
           <View style={styles.unitRow}>
             <View style={styles.unitLabel}>
@@ -92,7 +94,7 @@ export default function ProfileScreen() {
             </View>
             <View accessibilityRole="radiogroup" accessibilityLabel="Speed units" style={styles.unitOptions}>
               {(['km/h', 'mph'] as const).map((speedUnit) => <Pressable key={speedUnit} accessibilityRole="radio" accessibilityLabel={speedUnit} accessibilityState={{ checked: settings.speedUnit === speedUnit }} onPress={() => updateSettings({ speedUnit })} style={[styles.unitOption, settings.speedUnit === speedUnit && styles.unitActive]}>
-                <Text style={styles.unitText}>{speedUnit}</Text>
+                <Text style={[styles.unitText, settings.speedUnit === speedUnit && styles.unitTextActive]}>{speedUnit}</Text>
               </Pressable>)}
             </View>
           </View>
@@ -104,22 +106,17 @@ export default function ProfileScreen() {
           <ToggleRow icon="speedometer-outline" label="Speed limits" value={settings.speedLimits} onPress={() => updateSettings({ speedLimits: !settings.speedLimits })} />
         </View>
 
-        <Text style={styles.sectionTitle}>Routes & bike</Text>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>Routes & bike</Text>
         <View style={styles.group}>
           <MenuRow icon="speedometer-outline" label="My motorcycle" detail={settings.motorcycleName?.trim() || motorcycles[bikeType].label} onPress={openBikeSettings} />
           <MenuRow icon="trail-sign-outline" label="Route preferences" detail={settings.routingProfile ?? 'winding'} onPress={openBikeSettings} />
           <MenuRow icon="bookmark-outline" label="My tours & saved routes" onPress={() => router.navigate('/tours')} />
           <MenuRow icon="download-outline" label="Offline map regions" detail="Not available" onPress={offlineUnavailable} />
-          <MenuRow icon="people-outline" label="Group rides" detail="Live sharing not available" onPress={() => Alert.alert('Live group rides unavailable', 'Live group location sharing is not connected in this build.', [
-            { text: 'Close', style: 'cancel' },
-            { text: 'Open tours', onPress: () => router.navigate('/tours') },
-          ])} />
           <ToggleRow icon="lock-closed-outline" label="Private profile" value={settings.privateProfile} onPress={() => updateSettings({ privateProfile: !settings.privateProfile })} />
         </View>
 
-        <Text style={styles.sectionTitle}>GPX exchange</Text>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>GPX exchange</Text>
         <View style={styles.importPanel}>
-          <View style={styles.importIcon}><Ionicons color={colors.action} name="document-text-outline" size={28} /></View>
           <View style={styles.importCopy}><Text style={styles.importTitle}>Bring your routes to Bendbound</Text><Text style={styles.importMeta}>Import GPX tracks from another planner or navigation device.</Text></View>
           <ActionButton compact icon="add" label="Import" onPress={importGpx} variant="primary" />
         </View>
@@ -134,42 +131,39 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  brandFooter: { alignItems: 'center', backgroundColor: '#000000', marginTop: 30, marginHorizontal: -spacing.md, paddingVertical: 20 },
+  brandFooter: { alignItems: 'center', backgroundColor: '#000000', marginTop: 30, marginHorizontal: -spacing.lg, paddingVertical: 20 },
   brandLogo: { width: 160, height: 160 },
   unitRow: { minHeight: 64, paddingVertical: 10, gap: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.line },
   unitLabel: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  unitOptions: { flexDirection: 'row', backgroundColor: colors.panelAlt, borderRadius: 6, padding: 3 },
+  unitOptions: { flexDirection: 'row', backgroundColor: colors.canvas, borderRadius: 6, padding: 3 },
   unitOption: { flex: 1, minHeight: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 4 },
-  unitActive: { backgroundColor: colors.route },
-  unitText: { color: colors.white, fontSize: 14, fontWeight: '700' },
-  avatar: { alignItems: 'center', backgroundColor: colors.route, borderRadius: 29, height: 58, justifyContent: 'center', width: 58 },
-  avatarText: { color: colors.white, fontSize: 23, fontWeight: '900' },
-  axisText: { color: colors.muted, fontSize: 10, fontWeight: '800' },
-  bar: { backgroundColor: '#62666d', borderTopLeftRadius: 2, borderTopRightRadius: 2, flex: 1 },
-  chart: { alignItems: 'flex-end', borderBottomColor: colors.line, borderBottomWidth: 1, flexDirection: 'row', gap: 4, height: 125, marginTop: 14 },
-  chartAxis: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 },
-  chartTitle: { color: colors.ink, fontSize: 14, fontWeight: '800', marginTop: 22 },
-  content: { padding: spacing.md, paddingBottom: 110 },
-  group: { backgroundColor: colors.panel, borderRadius: 7, paddingHorizontal: spacing.md },
+  unitActive: { backgroundColor: colors.panelAlt },
+  unitText: { color: colors.muted, fontSize: 15, fontWeight: '500' },
+  unitTextActive: { color: colors.ink },
+  avatar: { alignItems: 'center', backgroundColor: colors.panelAlt, borderRadius: 29, height: 58, justifyContent: 'center', width: 58 },
+  avatarText: { color: colors.white, fontSize: 23, fontWeight: '600' },
+  content: { padding: spacing.lg, paddingBottom: 32 },
+  group: { backgroundColor: colors.panel, borderRadius: radii.md, paddingHorizontal: spacing.lg },
   header: { alignItems: 'center', flexDirection: 'row' },
-  headerCopy: { flex: 1, marginLeft: 12 },
-  importCopy: { flex: 1 },
-  importIcon: { alignItems: 'center', backgroundColor: colors.panelAlt, borderRadius: 25, height: 50, justifyContent: 'center', width: 50 },
-  importMeta: { color: colors.muted, fontSize: 12, lineHeight: 16, marginTop: 3 },
-  importPanel: { alignItems: 'center', backgroundColor: colors.panel, borderRadius: 7, flexDirection: 'row', gap: 12, padding: spacing.md },
-  importTitle: { color: colors.ink, fontSize: 15, fontWeight: '800' },
+  headerCopy: { flex: 1, minWidth: 0, marginLeft: 14 },
+  importCopy: { flex: 1, minWidth: 180 },
+  importMeta: { color: colors.muted, fontSize: 14, lineHeight: 20, marginTop: 5 },
+  importPanel: { alignItems: 'center', backgroundColor: colors.panel, borderRadius: radii.md, flexDirection: 'row', flexWrap: 'wrap', gap: 16, padding: spacing.lg },
+  importTitle: { color: colors.ink, fontSize: 16, fontWeight: '600' },
   menuCopy: { flex: 1 },
-  menuDetail: { color: colors.muted, fontSize: 12, marginTop: 3 },
-  menuLabel: { color: colors.ink, fontSize: 16, fontWeight: '700' },
-  menuRow: { alignItems: 'center', borderBottomColor: colors.line, borderBottomWidth: StyleSheet.hairlineWidth, flexDirection: 'row', gap: 12, minHeight: 64 },
-  name: { color: colors.ink, fontSize: 24, fontWeight: '900' },
-  handle: { color: colors.muted, fontSize: 12, marginTop: 3 },
+  menuDetail: { color: colors.muted, fontSize: 13, lineHeight: 18, marginTop: 4 },
+  menuLabel: { color: colors.ink, fontSize: 16, fontWeight: '500' },
+  menuRow: { alignItems: 'center', borderBottomColor: colors.line, borderBottomWidth: StyleSheet.hairlineWidth, flexDirection: 'row', gap: 12, minHeight: 64, paddingVertical: 12 },
+  name: { color: colors.ink, ...typography.title },
+  handle: { color: colors.muted, fontSize: 13, lineHeight: 18, marginTop: 4 },
   screen: { backgroundColor: colors.canvas, flex: 1 },
-  sectionTitle: { color: colors.ink, fontSize: 20, fontWeight: '900', marginBottom: 9, marginTop: 24 },
-  settingsButton: { alignItems: 'center', backgroundColor: colors.panelAlt, borderRadius: 21, height: 42, justifyContent: 'center', width: 42 },
-  statsPanel: { backgroundColor: colors.panel, borderRadius: 7, marginTop: spacing.md, padding: spacing.md },
-  summaryLabel: { color: colors.muted, fontSize: 9, fontWeight: '800', marginTop: 3 },
-  summaryRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  summaryValue: { color: colors.ink, fontSize: 18, fontWeight: '900' },
-  version: { color: '#64676c', fontSize: 11, marginTop: 8, textAlign: 'center' },
+  sectionTitle: { color: colors.ink, ...typography.heading, marginBottom: 12, marginTop: 28 },
+  settingsButton: { alignItems: 'center', backgroundColor: colors.panelAlt, borderRadius: 21, height: 44, justifyContent: 'center', width: 44 },
+  statsPanel: { backgroundColor: colors.panel, borderRadius: radii.md, padding: spacing.lg },
+  summaryLabel: { color: colors.muted, fontSize: 13, fontWeight: '400', marginTop: 6 },
+  summaryRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 20 },
+  summaryValue: { color: colors.ink, fontSize: 23, fontWeight: '600', fontVariant: ['tabular-nums'], letterSpacing: -0.5 },
+  ridingNote: { color: colors.muted, ...typography.caption, marginTop: 20 },
+  pressed: { opacity: 0.72 },
+  version: { color: colors.muted, fontSize: 12, marginTop: 8, textAlign: 'center' },
 });

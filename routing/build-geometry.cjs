@@ -17,3 +17,12 @@ fs.mkdirSync(path.dirname(target), { recursive: true });
 if (process.argv.includes('--check')) {
   if (fs.readFileSync(target, 'utf8') !== output) throw new Error('Run node routing/build-geometry.cjs to refresh server geometry.');
 } else fs.writeFileSync(target, output);
+
+const coneSource = fs.readFileSync(path.join(__dirname, '../src/utils/roundTripArea.ts'), 'utf8').replace(/^import type.*$/m, '');
+const coneOutput = '// Generated from src/utils/roundTripArea.ts by routing/build-geometry.cjs.\n' + ts.transpileModule(coneSource, {
+  compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 },
+}).outputText;
+const coneTarget = path.join(__dirname, 'service/cone.mjs');
+if (process.argv.includes('--check')) {
+  if (fs.readFileSync(coneTarget, 'utf8') !== coneOutput) throw new Error('Refresh server cone geometry.');
+} else fs.writeFileSync(coneTarget, coneOutput);

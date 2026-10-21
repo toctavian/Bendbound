@@ -74,3 +74,19 @@ test('server approval cannot bypass basic response and navigation integrity chec
   await assert.rejects(api.calculateRoundTrip(center,40,90,'winding'),/invalid round-trip response/);
  }
 });
+
+test('custom start and cone radius are sent and require explicit area acceptance', async () => {
+ const origin={latitude:51.2,longitude:0.1};
+ let sent;
+ const accepted={...payload(40),planner:{valid:true,insideCone:true}};
+ const api=load(async(_url,options)=>{sent=JSON.parse(options.body);return {ok:true,json:async()=>accepted};});
+ await api.calculateRoundTrip(origin,40,180,'winding',[],{radiusKm:15,avoidMotorways:true});
+ assert.deepEqual(sent.center,origin);assert.equal(sent.radiusKm,15);assert.equal(sent.direction,180);
+ const old=load(async()=>({ok:true,json:async()=>payload(40)}));
+ await assert.rejects(old.calculateRoundTrip(origin,40,180,'winding',[],{radiusKm:15}),/invalid round-trip/);
+});
+test('angle requests use the new cone field without sending a separately selected radius',async()=>{
+ let sent;const api=load(async(_url,options)=>{sent=JSON.parse(options.body);return{ok:true,json:async()=>({...payload(40),planner:{valid:true,insideCone:true}})};});
+ await api.calculateRoundTrip(center,40,0,'winding',[],{coneAngleDegrees:60});
+ assert.equal(sent.coneAngleDegrees,60);assert.equal(sent.radiusKm,undefined);
+});

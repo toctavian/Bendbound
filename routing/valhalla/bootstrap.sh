@@ -13,6 +13,8 @@ import json
 p='/data/valhalla.json'
 with open(p) as f: config=json.load(f)
 config['service_limits']['allow_hard_exclusions']=True
+# Bounded motorcycle rating discounts; keep the A* heuristic admissible.
+config['thor']['min_linear_cost_factor']=0.75
 config['service_limits']['max_exclude_locations']=100
 config['service_limits']['motorcycle']['max_locations']=50
 config['service_limits']['motorcycle']['max_distance']=1000000

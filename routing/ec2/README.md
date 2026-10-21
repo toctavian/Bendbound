@@ -1,6 +1,15 @@
 # EC2 routing pilot
 
+**Legacy deployment:** HTTPS traffic moved to the separate [London 100 km catalogue](../catalogue/README.md)
+on 2026-10-07. This instance is stopped and its root disk is retained for rollback; the
+active host is `i-0c392dc16f7c9d857`. The records below describe the original pilot.
+
 Deployed and verified through AWS MCP on **2026-10-06** in **eu-west-2 (London)**.
+The API service was updated on **2026-10-07** with the shared start/finish access
+policy. HTTPS 40 km Winding loops north/east/south passed with 257 m shared access;
+west returns `NO_MATCH`. Health, standard routing and the 20 km loop also passed.
+[Update checksums, verification and rollback backup](shared-access-deployment.json).
+
 Stack: `bendbound-routing-london`; instance: `i-0bd903e525ebce321`.
 [Open the instance](https://eu-west-2.console.aws.amazon.com/ec2/home?region=eu-west-2#InstanceDetails:instanceId=i-0bd903e525ebce321).
 The instance is left running. See [deployment.json](deployment.json) for resource

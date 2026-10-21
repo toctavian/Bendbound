@@ -1,0 +1,243 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Bendbound London 100 km road catalogue: Valhalla, PostGIS and Neo4j; separate from the legacy pilot.",
+  "Parameters": {
+    "UbuntuAmi": {
+      "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+      "Default": "/aws/service/canonical/ubuntu/server/24.04/stable/current/amd64/hvm/ebs-gp3/ami-id"
+    },
+    "VpcId": {
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "SubnetId": {
+      "Type": "AWS::EC2::Subnet::Id"
+    },
+    "InstanceType": {
+      "Type": "String",
+      "Default": "t3.medium",
+      "AllowedValues": [
+        "t3.medium",
+        "t3.large",
+        "t3.xlarge"
+      ]
+    },
+    "VolumeSize": {
+      "Type": "Number",
+      "Default": 64,
+      "MinValue": 16
+    }
+  },
+  "Resources": {
+    "InstanceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+        ],
+        "Policies": [
+          {
+            "PolicyName": "RoutingCloudWatchLogs",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "RoutingLogGroup",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "InstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "InstanceRole"
+          }
+        ]
+      }
+    },
+    "SecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "HTTPS routing; databases and engine private; SSM administration",
+        "VpcId": {
+          "Ref": "VpcId"
+        },
+        "SecurityGroupEgress": [
+          {
+            "IpProtocol": "-1",
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "bendbound-routing-catalogue"
+          }
+        ]
+      }
+    },
+    "Instance": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": "ami-03270eef67f7f60a3",
+        "InstanceType": {
+          "Ref": "InstanceType"
+        },
+        "IamInstanceProfile": {
+          "Ref": "InstanceProfile"
+        },
+        "CreditSpecification": {
+          "CPUCredits": "standard"
+        },
+        "MetadataOptions": {
+          "HttpTokens": "required",
+          "HttpPutResponseHopLimit": 1
+        },
+        "NetworkInterfaces": [
+          {
+            "DeviceIndex": "0",
+            "AssociatePublicIpAddress": true,
+            "SubnetId": {
+              "Ref": "SubnetId"
+            },
+            "GroupSet": [
+              {
+                "Ref": "SecurityGroup"
+              }
+            ]
+          }
+        ],
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/sda1",
+            "Ebs": {
+              "VolumeSize": {
+                "Ref": "VolumeSize"
+              },
+              "VolumeType": "gp3",
+              "Encrypted": true,
+              "DeleteOnTermination": true
+            }
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": "#!/usr/bin/env bash\nset -euo pipefail\nexport DEBIAN_FRONTEND=noninteractive\napt-get update\napt-get install -y docker.io docker-compose-v2\nmkdir -p /etc/docker /opt/bendbound/routing\ncat > /etc/docker/daemon.json <<'JSON'\n{\"log-driver\":\"local\",\"log-opts\":{\"max-size\":\"10m\",\"max-file\":\"3\"}}\nJSON\nsystemctl enable --now docker\nsystemctl restart docker\nif ! test -f /swapfile; then\n  fallocate -l 2G /swapfile\n  chmod 600 /swapfile\n  mkswap /swapfile\n  swapon /swapfile\n  echo '/swapfile none swap sw 0 0' >> /etc/fstab\nfi\necho 'vm.swappiness=10' > /etc/sysctl.d/90-routing.conf\nsysctl --system\nif ! snap list amazon-ssm-agent >/dev/null 2>&1; then\n  snap install amazon-ssm-agent --classic\nfi\nsnap start amazon-ssm-agent\ntouch /opt/bendbound/host-ready\n"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "bendbound-routing-catalogue-london"
+          },
+          {
+            "Key": "Project",
+            "Value": "bendbound-routing"
+          },
+          {
+            "Key": "Environment",
+            "Value": "pilot"
+          }
+        ]
+      }
+    },
+    "HttpIngress": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "SecurityGroup"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": 80,
+        "ToPort": 80,
+        "CidrIp": "0.0.0.0/0",
+        "Description": "ACME certificate validation and HTTPS redirect"
+      }
+    },
+    "HttpsIngress": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "SecurityGroup"
+        },
+        "IpProtocol": "tcp",
+        "FromPort": 443,
+        "ToPort": 443,
+        "CidrIp": "0.0.0.0/0",
+        "Description": "Caddy HTTPS; bearer token required for routing requests"
+      }
+    },
+    "RoutingLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Retain",
+      "Properties": {
+        "LogGroupName": "/bendbound/routing/london",
+        "RetentionInDays": 14,
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "bendbound-routing"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "InstanceId": {
+      "Value": {
+        "Ref": "Instance"
+      }
+    },
+    "SecurityGroupId": {
+      "Value": {
+        "Ref": "SecurityGroup"
+      }
+    },
+    "PrivateIp": {
+      "Value": {
+        "Fn::GetAtt": [
+          "Instance",
+          "PrivateIp"
+        ]
+      }
+    },
+    "PublicIp": {
+      "Value": {
+        "Fn::GetAtt": [
+          "Instance",
+          "PublicIp"
+        ]
+      }
+    },
+    "LogGroupName": {
+      "Value": {
+        "Ref": "RoutingLogGroup"
+      }
+    }
+  }
+}

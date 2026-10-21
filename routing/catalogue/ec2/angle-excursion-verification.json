@@ -1,0 +1,161 @@
+{
+  "verifiedAt": "2026-10-08T16:15:10.078Z",
+  "originalRequest": {
+    "reference": "39d0ae11-d2d9-4927-8938-8bb57738a861",
+    "createdAt": "2026-10-08T15:15:07.616Z",
+    "confirmedByUser": true,
+    "targetKm": 40,
+    "profile": "winding",
+    "direction": 0,
+    "legacyRadiusKm": 20,
+    "distanceKm": 47.267,
+    "repeatedKm": 2.6721791857071606,
+    "repeatedRatio": 0.056590547309507314,
+    "selectedRoad": "Rick Roberts Way",
+    "selectedSectionLengthKm": 0.5281013162929834,
+    "guideRecommendations": 0
+  },
+  "clientRecreations": [
+    {
+      "requestId": "e3fafc76-f06e-45d4-8f00-dcab6479de80",
+      "status": 200,
+      "clientProtocol": "legacy-radius",
+      "distanceKm": 38.92,
+      "repeatedKm": 0.34218102853826743,
+      "repeatedRatio": 0.008801094630411658,
+      "internalRepeatedRatio": 0,
+      "maxTraversals": 2,
+      "internalExcursionKm": 0,
+      "elapsedMs": 16387
+    },
+    {
+      "requestId": "7e1f4ced-b488-40f6-a0cd-1dff5b261f8c",
+      "status": 200,
+      "clientProtocol": "angle",
+      "distanceKm": 39.258,
+      "repeatedKm": 0.34218102853826743,
+      "repeatedRatio": 0.008726727164455888,
+      "internalRepeatedRatio": 0,
+      "maxTraversals": 2,
+      "internalExcursionKm": 0,
+      "elapsedMs": 16221
+    }
+  ],
+  "angleChecks": [
+    {
+      "name": "Dorking-east-150",
+      "status": 200,
+      "requestId": "d78f2d3e-ada8-4183-b1ef-3aecfca4ca27",
+      "distanceKm": 39.996,
+      "repeatedRatio": 0,
+      "internalRepeatedRatio": 0,
+      "internalExcursionKm": 0,
+      "angle": 150,
+      "radiusKm": 20,
+      "durationMs": 2471
+    },
+    {
+      "name": "Dorking-east-120",
+      "status": 200,
+      "requestId": "8038a659-b146-406a-ac95-00a6b001de85",
+      "distanceKm": 39.996,
+      "repeatedRatio": 0,
+      "internalRepeatedRatio": 0,
+      "internalExcursionKm": 0,
+      "angle": 120,
+      "radiusKm": 20,
+      "durationMs": 1844
+    },
+    {
+      "name": "Dorking-east-180",
+      "status": 200,
+      "requestId": "5faeaf23-c28f-4e54-834b-3379ae7fa80b",
+      "distanceKm": 39.996,
+      "repeatedRatio": 0,
+      "internalRepeatedRatio": 0,
+      "internalExcursionKm": 0,
+      "angle": 180,
+      "radiusKm": 20,
+      "durationMs": 1844
+    }
+  ],
+  "legacyPilotChecks": [
+    {
+      "check": "health",
+      "seconds": 0.519
+    },
+    {
+      "check": "full-road-area-search",
+      "seconds": 0.332
+    },
+    {
+      "check": "outside-area-rejected",
+      "status": 422
+    },
+    {
+      "check": "standard-route",
+      "seconds": 0.104,
+      "distanceKm": 8.234
+    },
+    {
+      "check": "E14-40-south",
+      "seconds": 10.394,
+      "distanceKm": 38.917
+    },
+    {
+      "check": "E14-40-west",
+      "seconds": 13.619,
+      "distanceKm": 44.289
+    },
+    {
+      "check": "Greenwich-20",
+      "seconds": 10.241,
+      "distanceKm": 19.071
+    },
+    {
+      "check": "Dorking-40",
+      "seconds": 1.224,
+      "distanceKm": 39.996
+    },
+    {
+      "check": "Ashdown-60",
+      "seconds": 8.497,
+      "distanceKm": 57.644
+    },
+    {
+      "check": "missing-token-rejected",
+      "status": 401
+    }
+  ],
+  "localValidation": {
+    "appTestsPassed": 142,
+    "catalogueAndOriginalRoutingTestsPassed": 67,
+    "lint": "passed",
+    "typecheck": "passed",
+    "iosBundleExport": "passed",
+    "generatedGeometryCheck": "passed"
+  },
+  "sourceChecksums": {
+    "routing/service/cone.mjs": "f24a7349a11d9a41496f0ae9b05dfc15213d1ca0e54732ef526fc2693f2a06ad",
+    "routing/catalogue/service/planner.mjs": "37e2307c6c81279f3dabd4228aabd49d4315bfcc4d324e83f65dc9f99b6ee053",
+    "routing/catalogue/service/ordinary-planner.mjs": "6a1fac681cd9256f905b67c9b4f78577c93f4c62d77caf6f011cd1e29cf0eef9",
+    "routing/catalogue/service/excursions.mjs": "c9302a0854e2c4a29cc80d161e4717b41c33c188cebefb4adad03638db6c5b52",
+    "routing/catalogue/service/input.mjs": "159587cb274e175ca3b601dc17abc0043ad6ced2fb779f1c30e75a88a936ce3f",
+    "routing/catalogue/service/policy.mjs": "6a2d42edb273b884916a7a181977e68008babe00262423600cd86708dbe43d83",
+    "routing/catalogue/service/logging.mjs": "54010c60eaabf1d0390d14fee59535280aadd07b85d6ef79525911c6f5c9e3e8"
+  },
+  "runtimeSourceHashesVerified": true,
+  "loggingDriver": "awslogs",
+  "rollbackArchive": "/opt/bendbound/angle-excursion-backup-20261008.tgz",
+  "phoneStartCoordinatesStored": false,
+  "areaProtocol": {
+    "coneAngleDegrees": [
+      10,
+      180
+    ],
+    "reach": "half targetKm, capped at 100 km for current pilot",
+    "legacyRadiusRequests": "supported"
+  },
+  "policy": "Clean valid loops take priority over road scores. Two passes and 10% repeated distance remain a fallback allowance.",
+  "appRelease": "Angle slider needs app rebuild; none submitted"
+}

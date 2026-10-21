@@ -1,0 +1,148 @@
+{
+  "deployedAt": "2026-10-07T09:53:53.278Z",
+  "region": "eu-west-2",
+  "instanceId": "i-0bd903e525ebce321",
+  "commandId": "3101396f-ef78-43ea-b98b-cc173a3e7a8a",
+  "archiveSha256": "1a89289f849f441a38a1d1362a296049dc2862024143dbf175e90a342eb0c396",
+  "serviceSha256": {
+    "engine.mjs": "d6c2650b7717f46745fc8940ec9c3ca4a1a24c2c3e92b408c7230fa925a28aee",
+    "geometry.mjs": "83be2f72f7cca15ea6250f6cd54e93051dd17948249598fd81b16cad51aa82ba",
+    "planner.mjs": "cf42926b1c42de5e98aa589e372f0ce2fcfd2fd5544a2e72725ac9cb0bda4e98",
+    "rate-limit.mjs": "9de8afabe90a1cc4255e4e99c8023902c19874af7ba8a0697b07514d6e14d79c",
+    "server.mjs": "75858b5c2f815b1fea52e3a565006e9ab51394fd4117fb88a0c569004f3d8f1e"
+  },
+  "backupPath": "/opt/bendbound/backups/service-20261007-1a89289f849f",
+  "localChecks": {
+    "routingTests": 11,
+    "appIntegrationAndSharedAccessTests": 14,
+    "lint": "passed",
+    "typecheck": "passed"
+  },
+  "ssmOutput": "/opt/bendbound/releases/20261007-1a89289f849f/service.tar.gz: OK\nengine.mjs: OK\ngeometry.mjs: OK\nplanner.mjs: OK\nrate-limit.mjs: OK\nserver.mjs: OK\n{\"check\": \"health\", \"seconds\": 0.041, \"response\": {\"status\": \"ready\", \"engine\": \"valhalla\", \"version\": \"3.9.0\"}}\n{\"check\": \"route\", \"seconds\": 0.06, \"summary\": {\"has_time_restrictions\": false, \"has_toll\": false, \"has_highway\": false, \"has_ferry\": false, \"min_lat\": 51.474211, \"min_lon\": -0.086409, \"max_lat\": 51.505154, \"max_lon\": -0.008918, \"time\": 744.545, \"length\": 8.234, \"cost\": 1154.666}, \"legs\": 1, \"maneuvers\": 9, \"planner\": null}\n{\"check\": \"round-trip\", \"seconds\": 1.089, \"summary\": {\"has_time_restrictions\": true, \"has_toll\": true, \"has_highway\": false, \"has_ferry\": false, \"min_lat\": 51.480714, \"min_lon\": -0.055678, \"max_lat\": 51.51566, \"max_lon\": 0.018303, \"time\": 1900.922, \"length\": 19.071, \"cost\": 4261.533}, \"legs\": 1, \"maneuvers\": 51, \"planner\": {\"engine\": \"valhalla\", \"valid\": true, \"distanceKm\": 19.071, \"distanceErrorKm\": 0.9289999999999985, \"overlapRatio\": 0, \"repeatedKm\": 0, \"sharedAccessKm\": 0, \"remainingRepeatedRatio\": 0, \"closed\": true, \"nearStart\": true, \"attempts\": 11, \"elapsedMs\": 1084}}\nd6c2650b7717f46745fc8940ec9c3ca4a1a24c2c3e92b408c7230fa925a28aee  routing/service/engine.mjs\n83be2f72f7cca15ea6250f6cd54e93051dd17948249598fd81b16cad51aa82ba  routing/service/geometry.mjs\ncf42926b1c42de5e98aa589e372f0ce2fcfd2fd5544a2e72725ac9cb0bda4e98  routing/service/planner.mjs\n9de8afabe90a1cc4255e4e99c8023902c19874af7ba8a0697b07514d6e14d79c  routing/service/rate-limit.mjs\n75858b5c2f815b1fea52e3a565006e9ab51394fd4117fb88a0c569004f3d8f1e  routing/service/server.mjs\nNAME                           IMAGE                                                                                                     COMMAND                  SERVICE    CREATED          STATUS                  PORTS\nbendbound-routing-api-1        node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402                    \"docker-entrypoint.s\u2026\"   api        12 seconds ago   Up 1 second             127.0.0.1:8088->8080/tcp\nbendbound-routing-caddy-1      caddy:2.10.2-alpine@sha256:4c6e91c6ed0e2fa03efd5b44747b625fec79bc9cd06ac5235a779726618e530d               \"caddy run --config \u2026\"   caddy      24 hours ago     Up 24 hours             0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp, 443/udp, 2019/tcp\nbendbound-routing-valhalla-1   ghcr.io/valhalla/valhalla:3.9.0@sha256:511c095b8caf393dccceb8b519ec96b6f85a0166b2288ba014a8a748acc5a63c   \"/bin/bash /bootstra\u2026\"   valhalla   25 hours ago     Up 25 hours (healthy)   127.0.0.1:8002->8002/tcp\nBACKUP=/opt/bendbound/backups/service-20261007-1a89289f849f\n",
+  "httpsVerification": {
+    "verifiedAt": "2026-10-07T09:54:30.533957+00:00",
+    "routingUrl": "https://api.bendboundapp.com",
+    "checks": [
+      {
+        "check": "health",
+        "status": 200,
+        "response": {
+          "status": "ready",
+          "engine": "valhalla",
+          "version": "3.9.0"
+        },
+        "seconds": 0.061
+      },
+      {
+        "check": "unauthenticated",
+        "status": 401
+      },
+      {
+        "check": "shared-access-round-trip",
+        "input": {
+          "center": {
+            "latitude": 51.487429,
+            "longitude": -0.020573
+          },
+          "targetKm": 40,
+          "direction": 0,
+          "profile": "winding",
+          "avoidMotorways": true
+        },
+        "status": 200,
+        "seconds": 0.71,
+        "planner": {
+          "engine": "valhalla",
+          "valid": true,
+          "distanceKm": 37.361,
+          "distanceErrorKm": 2.639000000000003,
+          "overlapRatio": 0.006886522807090628,
+          "repeatedKm": 0.25698938960343565,
+          "sharedAccessKm": 0.2571330213050403,
+          "remainingRepeatedRatio": 0,
+          "closed": true,
+          "nearStart": true,
+          "attempts": 2,
+          "elapsedMs": 572
+        },
+        "maneuvers": 58
+      },
+      {
+        "check": "shared-access-round-trip",
+        "input": {
+          "center": {
+            "latitude": 51.487429,
+            "longitude": -0.020573
+          },
+          "targetKm": 40,
+          "direction": 90,
+          "profile": "winding",
+          "avoidMotorways": true
+        },
+        "status": 200,
+        "seconds": 1.631,
+        "planner": {
+          "engine": "valhalla",
+          "valid": true,
+          "distanceKm": 35.093,
+          "distanceErrorKm": 4.9069999999999965,
+          "overlapRatio": 0.0073329198276878066,
+          "repeatedKm": 0.257068506880983,
+          "sharedAccessKm": 0.2571330213050403,
+          "remainingRepeatedRatio": 0,
+          "closed": true,
+          "nearStart": true,
+          "attempts": 5,
+          "elapsedMs": 937
+        },
+        "maneuvers": 75
+      },
+      {
+        "check": "shared-access-round-trip",
+        "input": {
+          "center": {
+            "latitude": 51.487429,
+            "longitude": -0.020573
+          },
+          "targetKm": 40,
+          "direction": 180,
+          "profile": "winding",
+          "avoidMotorways": true
+        },
+        "status": 200,
+        "seconds": 1.292,
+        "planner": {
+          "engine": "valhalla",
+          "valid": true,
+          "distanceKm": 38.917,
+          "distanceErrorKm": 1.0829999999999984,
+          "overlapRatio": 0.006614663904158998,
+          "repeatedKm": 0.2571716147535052,
+          "sharedAccessKm": 0.2571330213050403,
+          "remainingRepeatedRatio": 0,
+          "closed": true,
+          "nearStart": true,
+          "attempts": 5,
+          "elapsedMs": 1103
+        },
+        "maneuvers": 64
+      },
+      {
+        "check": "bounded-search-no-match",
+        "input": {
+          "center": {
+            "latitude": 51.487429,
+            "longitude": -0.020573
+          },
+          "targetKm": 40,
+          "direction": 270,
+          "profile": "winding",
+          "avoidMotorways": true
+        },
+        "status": 422,
+        "seconds": 4.317,
+        "code": "NO_MATCH"
+      }
+    ]
+  }
+}

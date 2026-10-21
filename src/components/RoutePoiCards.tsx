@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { RoutePointOfInterest } from '@/types';
 import { colors } from '@/theme';
 
@@ -11,9 +11,10 @@ type Props = {
   error: boolean;
   onSelect: (point: RoutePointOfInterest) => void;
   onRetry: () => void;
+  onOpen?: (point: RoutePointOfInterest) => void;
 };
 
-export function RoutePoiCards({ points, selectedId, tint, loading, error, onSelect, onRetry }: Props) {
+export function RoutePoiCards({ points, selectedId, tint, loading, error, onSelect, onRetry, onOpen }: Props) {
   const scroll = useRef<ScrollView>(null);
   const [cardWidth, setCardWidth] = useState(280);
   useEffect(() => {
@@ -39,12 +40,14 @@ export function RoutePoiCards({ points, selectedId, tint, loading, error, onSele
               {points.map((point) => (
                 <Pressable key={point.id} accessibilityRole="button" accessibilityState={{ selected: selectedId === point.id }}
                   accessibilityLabel={`Point ${point.number}, ${point.name}, ${point.distanceAlongKm.toFixed(1)} kilometres into the ride. ${point.detail}. Show on map.`}
-                  onPress={() => onSelect(point)} style={[styles.card, { width: cardWidth, borderColor: selectedId === point.id ? tint : colors.line }]}>
+                  onPress={() => { onSelect(point); onOpen?.(point); }} style={[styles.card, { width: cardWidth, borderColor: selectedId === point.id ? tint : colors.line }]}>
                   <View style={styles.heading}>
                     <View style={[styles.number, { backgroundColor: tint }]}><Text style={styles.numberText}>{point.number}</Text></View>
                     <Text style={styles.name} numberOfLines={2}>{point.name}</Text>
                   </View>
-                  <Text style={styles.detail} numberOfLines={2}>{point.detail}</Text>
+                  {point.category === 'sight' ? point.imageUrl ? <Image source={{ uri: point.imageUrl }} style={{ width: '100%', height: 90, borderRadius: 6 }} accessibilityLabel={point.name} />
+                    : <Text style={styles.meta}>Tap to view photo and place details</Text>
+                    : <Text style={styles.detail} numberOfLines={2}>{point.detail}</Text>}
                   <Text style={styles.meta}>{point.distanceAlongKm.toFixed(1)} km into ride · {point.distanceFromRouteKm < 0.02 ? 'By the road' : `${Math.round(point.distanceFromRouteKm * 1000)} m from route`}</Text>
                 </Pressable>
               ))}

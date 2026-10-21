@@ -1,25 +1,67 @@
 # Deploy the routing pilot to EC2
 
+**Active deployment, 2026-10-21:** The [UK routing graph and ratings](uk-routing-expansion.md)
+serve the existing API hostname using Valhalla and a SQLite rating overlay on the
+existing t3.medium/64 GiB disk. PostGIS/Neo4j data and the London deployment are
+preserved for rollback. [Deployment and verification](../routing/catalogue/ec2/deployment.json).
+The older London build instructions below are retained as historical background;
+use the UK handoff for current operation and rollback.
+
+**Bounded road reuse, 2026-10-07 — deployed:** Physical segments may be ridden
+twice, with additional repeated distance capped at 10%. Repetition is penalised
+in scoring and cannot inflate unique section quality. The reported 60 km north
+request now returns 63.158 km with 2.93% repetition and a maximum of two passes.
+All five public pilot fixtures, actual app parsing, 63 relevant tests, lint and
+typecheck passed. [Policy and verification](../routing/catalogue/ROAD_REUSE.md).
+
+**Pilot optimisations, 2026-10-07 — deployed:** The catalogue host now uses
+`t3.medium` (4 GiB) with bounded exact-request and road-query caching, cached
+catalogue counts, and early rejection of too-short candidates. Neo4j data is
+preserved and available on demand; routine routing uses PostGIS/Valhalla.
+The fixed monthly baseline is approximately $46.03 before tax, transfer and
+logging usage, including the old retained disk and hosted zone. See
+[behaviour, graph startup and verification](../routing/catalogue/OPTIMISATIONS.md).
+
+**Server logging, 2026-10-07 — deployed:** Structured request/failure logs and
+API, engine and HTTPS proxy output are delivered to CloudWatch Logs in eu-west-2,
+group `/bendbound/routing/london`, retained for 14 days. API errors include a
+reference ID; failed round trips record exact starts/settings and bounded policy
+diagnostics. Use `bash catalogue/compose-aws.sh` for EC2 rebuilds to retain the
+logging overlay. [Find logs and debug a reference](../routing/catalogue/LOGGING.md).
+
+**E14 loop availability fix, 2026-10-07 — deployed:** Catalogue exploration now
+retains policy-valid loops that miss the suggested section, reserving more time
+for ordinary-loop search and skipping redundant search after success. Selected
+sections still require verified full traversal. Live HTTPS Winding/40 km tests
+from the E14 3TA postcode fixture returned 38.917 km south (9.788 s) and 44.289 km
+west (7.792 s). Greenwich, Dorking and Ashdown regression checks also passed;
+all five responses passed the actual app parser and shared-access validator.
+11 catalogue tests, 25 legacy/app tests, lint and typecheck passed.
+[Verification](../routing/catalogue/ec2/e14-verification.json).
+The reported TestFlight error confirmed server rejection, but its exact phone
+GPS coordinate was unavailable; these results do not reproduce that precise
+request. Round trips use the current GPS location rather than a postcode centre.
+
 **Client policy update, 2026-10-07 — pending app release:** The self-hosted app now
 uses the server's `planner.valid: true` decision and checks response integrity
 only. Distance, overlap, closure and snapping limits are no longer repeated in
 the client. One new app build is required; future compatible server policy
 changes do not require another build. This client works with the existing API
-contract. The shared-access server deployment below remains pending.
+contract. The shared-access server update below is deployed and verified.
 
-**Shared-access update, 2026-10-07 — local only:** The app and API now allow a
-continuous start/finish access section of up to 500 m one way, also capped at 5%
-of the full route one way. Both traversals count toward the route distance;
-repeats elsewhere remain invalid. Local checks from the reported start passed
-40 km Winding searches north/east/south (37.361 / 35.093 / 38.917 km), with
-257 m of shared access. West still exhausted the search budget. All three
-successful results also passed the app's then-current independent validation with manoeuvres.
-122 app tests, 11 routing tests, lint and typecheck passed. Deployment is pending:
-AWS MCP returned `Unknown tool: aws___run_script` on both attempts; no remote
-files were changed. Copy the updated `service/engine.mjs`, `service/geometry.mjs`
-and `service/planner.mjs`, restart the API, and verify live routes when MCP is
-available again. A new TestFlight build is also required for the app validator.
-See [the shared-access policy](../routing/README.md#shared-startfinish-access).
+**Shared-access update, 2026-10-07 — deployed:** The latest local API service
+files were deployed through AWS MCP/SSM to the London instance. File SHA-256
+checks matched, the API was recreated, and health, standard-route and 20 km loop
+smoke checks passed. Live HTTPS 40 km Winding searches from the reported start
+passed north/east/south (37.361 / 35.093 / 38.917 km), each with 257 m of shared
+access and zero remaining repeated ratio. West still returns HTTP 422
+`NO_MATCH` within the search budget. Missing credentials still return HTTP 401.
+11 routing tests, 14 app integration/shared-access tests, lint and typecheck
+passed locally. The previous service is backed up on the instance; checksums,
+SSM command ID, backup path and live results are recorded in
+[shared-access-deployment.json](../routing/ec2/shared-access-deployment.json).
+Existing TestFlight binaries still enforce their compiled client policy; an app
+release is required to use the server-owned validator described above.
 
 **Deployment status, 2026-10-06:** Valhalla 3.9.0 is serving HTTPS at
 `https://api.bendboundapp.com` on
@@ -171,3 +213,67 @@ This keeps the app on Valhalla and frees the benchmark engine's memory. Set an A
 budget alert and stop the EC2 instance when not testing; attached disks/public IPs
 can still incur charges. Back up the map manifest and service config. Map upgrades
 should use a fresh graph set, with health/benchmark checks before switching over.
+
+
+### Directional area deployment — 8 October 2026
+
+The catalogue API now accepts `radiusKm` for a buffered 120° cone, filters full
+PostGIS sections before its shortlist limit, and validates every route vertex
+against that area. Existing clients without the field retain the prior policy.
+The deployment remains on the t3.medium instance with CloudWatch logging and
+Neo4j on demand. No map or graph import was changed.
+
+Five live cone requests passed, covering all four headings and two radii.
+E14 3TA south / 40 km succeeds with radius 25 km, returning 38.917 km in 10.35 s;
+radius 20 km was too tight for the tested road access. Existing pilot gates also
+passed. The rollback source archive is
+`/opt/bendbound/cone-routing-backup-20261008.tgz`.
+
+See [directional area policy](../routing/catalogue/DIRECTIONAL_AREA.md) and
+[deployment verification](../routing/catalogue/ec2/directional-area-verification.json).
+The map UI still needs a new TestFlight build; no build has been submitted.
+
+
+### Cone-angle correction and internal-detour cleanup — 8 October 2026
+
+The second planning slider selects the cone angle (10–180°); reach scales with
+half the ride distance, capped at 100 km for current pilot coverage. The API
+accepts `coneAngleDegrees` and remains compatible with previous radius clients.
+
+The confirmed client request at 16:15 BST returned 47.267 km with 2.672 km
+repeated. The planner had stopped after fully traversing a short geometry-rated
+section. Accepted loops now receive cleanup of internal spurs and side circuits
+with doubled connectors, legal rerouting, and comparison with clean alternatives.
+Clean valid loops win over a higher road score with internal backtracking. The
+physical two-pass / 10% allowance remains a fallback; road identity and distance
+checks are unchanged.
+
+Live recreations return 38.920 km with the phone's current protocol and 39.258 km
+with the new angle protocol. Both have zero detected internal repetition and
+0.342 km common access. These checks took about 16 seconds. All five existing
+pilot-route checks and three angle checks passed. The revised slider needs an
+app rebuild. See [verification](../routing/catalogue/ec2/angle-excursion-verification.json).
+
+### Valhalla graph ratings experiment — 8 October 2026
+
+The active London API now uses the Valhalla graph for road identity, geometry,
+spatial catalogue searches and route-reuse validation. Motorcycle ratings and
+recommendation provenance are attached through a compressed overlay tied to the
+SHA-256 of the existing tile archive. Native edge and shortcut cost factors make
+ratings influence motorcycle pathfinding. Directions and the ordered edge path
+come from one native protobuf route calculation; PostGIS and trace matching no
+longer verify generated loops.
+
+PostGIS is stopped temporarily. Its volume, original catalogue adapter and source
+metadata export are retained. Neo4j remains preserved for future work. The cone,
+distance bounds, twice-per-segment rule and 10% repeated-distance allowance remain
+active. CloudWatch distinguishes the main planner from the fallback and records
+whether the fallback was attempted, including when the main candidate wins.
+
+The AWS wrapper enables this backend when `.data/graph/enabled` exists and retains
+CloudWatch logging. Operational and rollback details are in
+`routing/catalogue/graph/README.md`; the runtime backup is
+`/opt/bendbound/valhalla-graph-backup-20261008.tgz`. The API retains its 512 MB limit
+with a 320 MB Node heap, and the native graph bridge has a 256 MB limit with a
+64 MB tile cache. The app's existing radius protocol and the new angle protocol
+are both supported by this server change.

@@ -79,6 +79,15 @@ function plannerHarness(initial=stops){
  });
  return{actions,get stops(){return props.stops;},get tree(){return element;},render(extra={}){props={...props,...extra};cursor=0;element=StandardTripPlanner(props);return element;},press(label){const n=[...nodes(element,'Pressable'),...nodes(element,'ActionButton')].find(n=>(n.props.label??n.props.accessibilityLabel)===label);assert.ok(n,label);assert.ok(!n.props.disabled,label);n.props.onPress();},searchSelect(place){const search=nodes(element,'DestinationSearch')[0];assert.ok(search);search.props.onSelect(place);}};
 }
+test('trip editor keeps sharing available after adding stops and disables it during planning',()=>{
+ const h=plannerHarness(),shared=[];
+ h.render({onShare:()=>shared.push([...h.stops])});h.press('Add stop');h.render();
+ h.searchSelect({...stops[0],id:'extra',name:'Added stop'});h.render();
+ const button=nodes(h.tree,'ActionButton').find(n=>n.props.label==='Share route');assert.ok(button);assert.equal(button.props.disabled,false);
+ h.press('Share route');assert.deepEqual(shared[0].map(s=>s.id),['cafe','view','extra','hotel']);
+ h.render({busy:true});assert.equal(nodes(h.tree,'ActionButton').find(n=>n.props.label==='Share route').props.disabled,true);
+ h.render({stops:[],busy:false});assert.equal(nodes(h.tree,'ActionButton').find(n=>n.props.label==='Share route'),undefined);
+});
 test('adding a stop inserts before the destination, and places can be replaced, reordered and removed',()=>{
  const h=plannerHarness();h.render();h.press('Add stop');h.render();h.searchSelect({...stops[0],id:'fuel',name:'Fuel'});h.render();
  assert.deepEqual(h.stops.map(p=>p.id),['cafe','view','fuel','hotel']);
