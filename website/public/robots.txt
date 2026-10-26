@@ -1,3 +1,8 @@
+# Public product pages are available to search and AI retrieval crawlers.
 User-agent: *
 Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
 Sitemap: https://bendboundapp.com/sitemap.xml

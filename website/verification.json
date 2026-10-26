@@ -3,34 +3,81 @@
   "website": "https://bendboundapp.com",
   "checks": [
     {
+      "path": "IndexNow ownership file",
+      "status": 200,
+      "sha256": "ab059aa72d6b42e28ceac08bd9a3b8beffbf132c701400b88bf0914d45b76db0"
+    },
+    {
       "path": "/",
       "status": 200,
-      "bytes": 6060
+      "bytes": 11148,
+      "sha256": "72f7615c10c6262c2c9ac9a42d3b9fdd7d34ee3dcf5612234c34423693d4aca7"
     },
     {
       "path": "/styles.css",
       "status": 200,
-      "bytes": 7023
+      "bytes": 8860,
+      "sha256": "f025c85cbb8679b95d1ffc8330f8454521d3715a3442e01b1e49decb7df4f7f6"
     },
     {
       "path": "/site.js",
       "status": 200,
-      "bytes": 2523
+      "bytes": 2634,
+      "sha256": "6b7af643bfe002048eda3497dcebd44e9f497a64d8ec98b2562a6886d366552e"
     },
     {
       "path": "/assets/map.webp",
       "status": 200,
-      "bytes": 159670
+      "bytes": 191082,
+      "sha256": "bfdb1010651b754db7bf58362bde2deaca3745ddef7365a94629693ebf7983e6"
+    },
+    {
+      "path": "/assets/planner.webp",
+      "status": 200,
+      "bytes": 122656,
+      "sha256": "d35a2e26ee39ab9047d9d67e0b8168ef4e4773b3aabd86f328a26c5c77be99ab"
+    },
+    {
+      "path": "/assets/tours.webp",
+      "status": 200,
+      "bytes": 126022,
+      "sha256": "7df30df5105342838a5c8479c23bc536243f321e549115ae9b923c16527d6205"
+    },
+    {
+      "path": "/assets/route-detail.webp",
+      "status": 200,
+      "bytes": 132790,
+      "sha256": "2747d849401f5edf4fb2ac272aabfee1b3c8d555cb6e5ed130ff8c01cd44a797"
+    },
+    {
+      "path": "/assets/social-card.png",
+      "status": 200,
+      "bytes": 172400,
+      "sha256": "a1bee6e57f3818d0861caa1d669bcf7d52707762ac99655f6b6652b757deb933"
+    },
+    {
+      "path": "/llms.txt",
+      "status": 200,
+      "bytes": 931,
+      "sha256": "91f6b4f9e843a8fb001e8281018e93c25ef7e6a3a2557400e828e58bf356b3a0"
+    },
+    {
+      "path": "/index.md",
+      "status": 200,
+      "bytes": 2061,
+      "sha256": "c5dc80428ba6505277d8dfa7169817faf0d116c5aeca42005fe0a6821094e5d9"
     },
     {
       "path": "/robots.txt",
       "status": 200,
-      "bytes": 69
+      "bytes": 180,
+      "sha256": "d80a0aef185ec2f825b1a46ea9da5e466e5aa43bdc9271ca89d50ec4496f7d60"
     },
     {
       "path": "/sitemap.xml",
       "status": 200,
-      "bytes": 156
+      "bytes": 189,
+      "sha256": "b6868e0ff4fd0ead8db7d6a2bf78761a04779e2d9e1d8029cca08825379c02a9"
     }
   ],
   "httpsRedirect": true,
@@ -38,5 +85,5 @@
   "notFound": 404,
   "unsignedOrigin": 403,
   "securityHeaders": true,
-  "dnsResolver": "1.1.1.1"
+  "dnsResolver": "system"
 }

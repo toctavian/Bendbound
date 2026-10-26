@@ -1,9 +1,6 @@
 {
   "type": "object",
   "properties": {
-    "approved": {
-      "type": "boolean"
-    },
     "reviewedLedgerSha256": {
       "type": "string"
     },
@@ -25,13 +22,22 @@
           },
           "reason": {
             "type": "string"
+          },
+          "disposition": {
+            "type": "string",
+            "enum": [
+              "supported",
+              "quarantined",
+              "rejected"
+            ]
           }
         },
         "required": [
           "url",
           "sectionId",
           "weight",
-          "reason"
+          "reason",
+          "disposition"
         ],
         "additionalProperties": false
       }
@@ -51,12 +57,21 @@
           },
           "reason": {
             "type": "string"
+          },
+          "disposition": {
+            "type": "string",
+            "enum": [
+              "supported",
+              "quarantined",
+              "rejected"
+            ]
           }
         },
         "required": [
           "observationId",
           "weight",
-          "reason"
+          "reason",
+          "disposition"
         ],
         "additionalProperties": false
       }
@@ -69,16 +84,62 @@
     },
     "reviewedProposalSha256": {
       "type": "string"
+    },
+    "integrity": {
+      "type": "object",
+      "properties": {
+        "accountingPassed": {
+          "type": "boolean"
+        },
+        "graphIdentityPassed": {
+          "type": "boolean"
+        },
+        "historyReviewComplete": {
+          "type": "boolean"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "ACCOUNTING_MISMATCH",
+                  "GRAPH_VERSION_DRIFT",
+                  "INCOMPLETE_HISTORY_AUDIT",
+                  "INPUT_BINDING_MISMATCH"
+                ]
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "accountingPassed",
+        "graphIdentityPassed",
+        "historyReviewComplete",
+        "issues"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
-    "approved",
     "reviewedLedgerSha256",
     "decisions",
     "adjustments",
     "summary",
     "reviewedBaselineSha256",
-    "reviewedProposalSha256"
+    "reviewedProposalSha256",
+    "integrity"
   ],
   "additionalProperties": false
 }

@@ -55,6 +55,26 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(before, (self.state / 'contributions.jsonl').read_bytes())
         self.assertTrue((self.state / 'latest-reviewed.json').exists())
 
+    def test_dry_run_after_completed_batch_never_publishes(self):
+        with patch.object(runner, 'call_agent', side_effect=self.agent):
+            self.assertEqual(runner.run(self.args), 0)
+        self.args.dry_run = True
+        self.args.publish = True
+        with patch.object(runner, 'publish_if_requested', side_effect=AssertionError('Dry run must not publish')):
+            self.assertEqual(runner.run(self.args), 0)
+
+    def test_unmapped_source_is_registered_without_inventing_an_observation(self):
+        run=self.state/'runs'/'fixture';run.mkdir(parents=True)
+        proposal,_=self.fixture.inputs()
+        empty={**proposal['pages'][0], 'url':'https://example.com/unresolved','roads':[]}
+        proposal['pages'].append(empty)
+        actual=runner.prepare_proposal(proposal,self.state,run,'fixture')
+        self.assertEqual(len(actual['pages']),1)
+        self.assertEqual(len((self.state/'processed-pages.jsonl').read_text().splitlines()),2)
+        self.assertEqual(json.loads((run/'unmapped-pages.json').read_text())[0]['roads'],[])
+        runner.prepare_proposal(proposal,self.state,run,'fixture')
+        self.assertEqual(len((self.state/'processed-pages.jsonl').read_text().splitlines()),2)
+
     def test_reviewer_still_runs_when_research_fails(self):
         def agent(*args):
             if args[5] == 'proposal.json':

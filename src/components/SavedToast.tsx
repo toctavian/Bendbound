@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import { colors, radii } from '@/theme';
 
-/** Mounted with a new key for each save; never intercepts touches or asks for input. */
-export function SavedToast({ bottom }: { bottom: number }) {
+/** Mounted with a new key for each save or removal; never intercepts touches or asks for input. */
+export function SavedToast({ bottom, saved = true }: { bottom: number; saved?: boolean }) {
   const [opacity] = useState(() => new Animated.Value(0));
   const [finished, setFinished] = useState(false);
   useEffect(() => {
@@ -19,8 +19,8 @@ export function SavedToast({ bottom }: { bottom: number }) {
   if (finished) return null;
   return <View pointerEvents="none" style={[styles.position, { bottom }]}>
     <Animated.View accessibilityRole="text" accessibilityLiveRegion="polite" style={[styles.toast, { opacity }]}>
-      <Ionicons name="checkmark-circle" size={20} color={colors.actionGreen} />
-      <Text style={styles.text}>Saved</Text>
+      <Ionicons name={saved ? 'checkmark-circle' : 'close-circle'} size={20} color={colors.actionGreen} />
+      <Text style={styles.text}>{saved ? 'Saved' : 'Removed'}</Text>
     </Animated.View>
   </View>;
 }

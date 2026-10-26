@@ -1,0 +1,8 @@
+{
+  "endpoint": "https://api.indexnow.org/indexnow",
+  "httpStatus": 202,
+  "urls": [
+    "https://bendboundapp.com/"
+  ],
+  "meaning": "Notification received; ownership verification pending"
+}

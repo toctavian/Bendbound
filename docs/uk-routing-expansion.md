@@ -9,10 +9,11 @@ No app rebuild is required for this backend release.
 
 - Graph SHA256 `8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2`,
   2,872,217,600bytes,1341tiles; source Geofabrik united-kingdom-261018.osm.pbf.
-- Ratings SHA256 `05478fee42d89429a2e12ad804c04828dbe73043a72d9ae4ebe38ad25ae7895f`,
+- Original national baseline SHA256 `05478fee42d89429a2e12ad804c04828dbe73043a72d9ae4ebe38ad25ae7895f`,
   752,939,008bytes.141,445rated sections,1,035,781physical edges,
   1,036,593memberships,134guide-recommended sections;173unmapped source sections,
-  zero lost guide-recommended sections. All original scores/citations preserved.
+  zero lost guide-recommended sections during export. Subsequent reviewed rating
+  changes are recorded in the daily publication checkpoint below.
 - API image `bendbound-routing-api:uk-20261020`, amd64,
   SHA `e6ac53017287993a8cfcbc104233b40263c51c820400cce4fec64bb98dc17019`.
   25deployed public source files match local checksums exactly.
@@ -61,13 +62,92 @@ restores wrapper/bridge and restarts the preserved London image/graph without
 building. Original API image SHA4281f711bec193a6baf7aadb3a38f5034b40188caa5fcdcf56291b714839bed4.
 Do not execute rollback unless needed; this successful release remains live.
 
+### Current daily ratings — published, 22 October 2026
+
+Today's scheduled research started at 06:00 BST and parsed 20 new pages. One
+independent review supported 13 observations; three disputed observations and
+four unmapped pages received no points. Under Octavian's new standing rules,
+the supported subset published at 10:51 BST without another model review.
+No historical corrections were needed today; yesterday's 31 remain in the ledger.
+
+- 13 sections updated; 128 sections now have supported guide recommendations.
+  The cumulative overlay differs from the original national baseline in 55 sections.
+- Active ratings SHA256 `2aa2e8686525001ff8ec399205ab77a4c609204c5c3d40191e7f943a47383588`.
+  Previous daily overlay and original national baseline are retained for rollback.
+- AWS MCP SSM publication `ea1b05e6-e6a0-4d4e-b816-2d971fb84644` succeeded.
+  Independent remote checksum/receipt verification
+  `9de0fc60-6dd4-46c0-9ea9-0ee5e1ba43b4` succeeded; active SHA matches.
+- Public routes across all five UK regions and the strict-cone round trip passed.
+  Graph, API image, EC2 allocation and scoring formula are unchanged.
+- Today's 13 exact signed deltas sum to -0.5613716224539711 under the existing
+  formula; a first recommendation can lower a geometry score. Zero arithmetic
+  mismatches or broken ledger chains. No artificial positive uplift was added.
+- Original held review is preserved. Its exact hash-bound, explicit policy adoption
+  and deterministic application views record why only the supported subset applied.
+  No new researcher/reviewer call was made for this publication retry.
+- 33 research tests passed; project lint/typecheck passed. Mac LaunchAgent verified
+  for 06:00 with `--publish`. One review automatically authorizes supported items
+  and historical corrections, while disputed items are quarantined. Integrity and
+  route failures still block publication. The later verified machine-identity
+  setup removes daily browser renewal from scheduled publication; manual prompts
+  keep the existing login. See [identity operations](routing-research-machine-identity.md).
+
+Evidence: `routing/.data/research/runs/2026-10-22/` contains publication,
+remote-verification, accounting-verification, selection and original review files.
+No work remains pending for this batch. See [standing rules](routing-rating-review-policy.md).
+
+### Historical daily research — published, 21 October 2026
+
+The Mac catch-up completed. Reviewed overlay published at15:11:28UTC (16:11BST).
+No daily research/review/publication work remains pending for21October.
+
+-20new source pages parsed;16source pages/16observations approved. Four unresolved
+  pages remain withheld with no points. ABR duplicate coverage counts once;
+ 15effective new endorsements across13sections. Sources are listed in the human
+  source register and processed-pages.jsonl; existing/held URLs are not counted new.
+- Independent full-history reviewer approved31append-only compensating reweights
+  for overbroad historical source scope. Earlier held review/failed attempts remain
+  archived. Current decision: `runs/2026-10-21/review.json`, approved=true.
+-44sections updated.141,445sections and all native geometry/edges/membership/RTree
+  data remain unchanged.117sections now have supported guide recommendations
+  (previously134; unsupported historical credits were removed).
+-47individual addition/correction events retained, with exact signed per-road
+  before/after values. Addition deltas sum-0.8319021303662488; correction deltas
+  sum-3.65873243229066. Zero broken chains or arithmetic mismatches. Original
+  historical per-source deltas remain unknown/null. Formula unchanged.
+- Ratings SHA256 at that publication (superseded above)
+  `49274572a8569d184e68c9a53d717706508b55e5cefb39d26e1986395bed40bc`.
+  National original `05478fee...` retained as a rollback hard link; graph8cc789... unchanged.
+- Local full overlay comparison passed. AWS MCP SSM publication
+  `0b416b75-43ca-468a-a1ab-b97495aa9909` Success, independent remote verification
+  `02634ec4-c41d-4655-ac03-7ef5a6952f2d` Success. Active checksum matches.
+  Public London/England/Wales/Scotland/NI routes and strict-cone round trip passed.
+ 18.137km loop,3.73% repeated, maxTraversals2, native identity verified.
+- API-only restart; engine and native bridge stayed running/healthy. No OOM;
+ 38GiB free on unchanged EC2 disk. Daily rollback and original national baseline
+  exist under `.data/research-published/`. Temporary S3 transfer removed.
+-24research/publication tests PASS; lint/typecheck PASS. Actual cloud installation,
+  native consumer validation, public smoke and receipt are now evidenced.
+
+Schedule remains local06:00 Europe/London, with `--publish` and `caffeinate -i`.
+Mac must be awake/online, Codex signed in with allowance, and the scheduled
+certificate identity valid (manual browser sessions are separate). No AWS agent or API billing
+integration, credit polling or generic retry autopilot was installed.
+
+Audit files: `.data/research/runs/2026-10-21/{publication.json,remote-verification.json,
+publication-validation.json,accounting-verification.json,review.json}`;
+`.data/research/{remote-published.json,sources.jsonl,contributions.jsonl,ledger.sqlite}`.
+Future daily receipts are authoritative for the active overlay; deployment manifest
+records this first publication. No need to rerun today's agents or rebuild the graph.
+
 ### Next work
 
 UK baseline deployment is complete. Do not rebuild it or repeat completed smoke
 checks absent new changes/failures. Daily06:00 research now has its completed local
-national baseline;21October's run remains historically blocked, not retroactively
-successful. Reviewed daily overlays are still local: their safe publication to the
-live SQLite overlay needs separate integration. See `docs/routing-daily-research.md`.
+national baseline. The original21October06:00 failure remains in its historical
+record; the manual catch-up is now complete and published. Daily overlays are built locally: their publication to the
+live SQLite overlay now uses the reviewed Mac publisher through AWS MCP; check
+`routing/.data/research/remote-published.json` for actual success, not just local review. See `docs/routing-daily-research.md`.
 Preserve local source/ledger/completed artifacts and resumable ratings.work.sqlite.
 AWS authentication recovery: normal `aws login --profile bendbound --region eu-west-2`
 browser flow, then verify actual MCP access. Never save sign-in links or credentials.

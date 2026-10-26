@@ -1,0 +1,15 @@
+# Bendbound
+
+> Bendbound is a motorcycle route planner and GPS ride recorder for iPhone, currently in early beta.
+
+The official website is https://bendboundapp.com/. Public App Store downloads and TestFlight invitations are not open yet. There is no public Android release. The route screenshots show the app’s existing example tours, not customer reviews or recorded rider activity.
+
+## Product information
+
+- [Bendbound overview](https://bendboundapp.com/index.md): Current capabilities, iPhone availability, GPX support and links to the public project, in Markdown.
+- [Official website](https://bendboundapp.com/): Product screenshots and an interactive feature tour.
+- [Questions and answers](https://bendboundapp.com/#questions): Downloads, motorcycle round trips, GPX and Android availability.
+
+## Project
+
+- [Public source and development updates](https://github.com/toctavian/Bendbound): Bendbound’s GitHub repository.

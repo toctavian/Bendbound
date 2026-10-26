@@ -58,8 +58,10 @@ Do not delete or replace unrelated app infrastructure.
 ## Content and assets
 
 The approved logo is copied unchanged from `../assets/bendbound-logo.png`.
-Screenshots are WebP conversions of actual native simulator captures from
-`../output/design-review/`. The saved tours are the app's existing example routes,
+Screenshots are WebP conversions of fresh native simulator captures from
+`../output/website-captures/2026-10-21/`, taken from a local Xcode Release build
+of the current checkout. Original captures are retained locally; `screenshots.json`
+records their hashes and dimensions. The saved tours are the app's existing example routes,
 labelled as examples. No stock photography or generated assets are used.
 
 The app remains an early beta. Until a public App Store or TestFlight URL is
@@ -68,9 +70,13 @@ Update that copy and the main button together when public distribution begins.
 
 ## Verified deployment
 
-CloudFormation `CREATE_COMPLETE`, CloudFront `Deployed`. Public smoke checks passed
+Updated 21 October 2026: CloudFormation `UPDATE_COMPLETE`, CloudFront `Deployed`,
+cache invalidation completed. Public smoke checks passed
 for HTML/CSS/JS, screenshot assets, robots/sitemap, HTTPS and www redirects, 404s,
-security headers and the unsigned-origin 403. See `verification.json`.
+security headers and the unsigned-origin 403. Every served file, including all four
+app screenshots, matches the local release SHA-256. Live browser inspection and
+feature-tour keyboard checks pass at desktop, tablet and phone sizes. See
+`verification.json` and the deployment entry in `review.md`.
 
 At launch the Mac's default resolver retained an earlier negative domain lookup.
 Authoritative Route53 and public 1.1.1.1 DNS returned the published CloudFront
@@ -78,3 +84,12 @@ addresses. Checks used `scripts/verify.py --dns-server 1.1.1.1`, which resolves 
 inside that process and preserves normal TLS hostname/certificate verification;
 it changes no system DNS settings. New DNS records may take time to reach every
 resolver. Retry the plain verifier once local DNS has refreshed.
+
+## Search and AI-agent discovery
+
+SEO.md documents metadata, structured product data, crawler access, Markdown,
+llms.txt, social sharing and IndexNow. Discovery and structured-data tests are
+included in the standard website test command. After a verified deployment,
+run scripts/submit-indexnow.py once to notify participating search engines.
+Notification receipt does not guarantee indexing. Google Search Console ownership
+verification and URL inspection remain a separate account step.

@@ -18,7 +18,8 @@ import { routeColors, routeColorOrDefault } from '@/data/routeColors';
 import { DriveOverlay } from '@/components/DriveOverlay';
 import { DestinationSearch } from '@/components/DestinationSearch';
 import { StandardTripPlanner } from '@/components/StandardTripPlanner';
-import { ActionButton, IconButton, Sheet, Stat, ToggleRow } from '@/components/ui';
+import { RoutePreviewSheet } from '@/components/RoutePreviewSheet';
+import { ActionButton, IconButton, Stat, ToggleRow } from '@/components/ui';
 import { defaultCenter, nearbyPlaces } from '@/data/seed';
 import { useApp } from '@/state/AppProvider';
 import { Coordinate, PointOfInterest, PoiCategory, RoutePointOfInterest, RoutingProfile, TrackPoint, TripStop } from '@/types';
@@ -44,11 +45,11 @@ const directions = [
 export default function MapScreen() {
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
-  const { activeRoute, setActiveRoute, saveTour, tours = [], settings, updateSettings } = useApp();
+  const { activeRoute, setActiveRoute, saveTour, toggleSaved, tours = [], settings, updateSettings } = useApp();
   const savedRoute = useMemo(() => findSavedRoute(activeRoute, tours), [activeRoute, tours]);
   const { imported } = useLocalSearchParams<{ imported?: string }>();
   const [mode, setMode] = useState<Mode>(activeRoute ? 'preview' : 'home');
-  const [savedNotice, setSavedNotice] = useState(0);
+  const [savedNotice, setSavedNotice] = useState<{ sequence: number; saved: boolean } | null>(null);
   const [location, setLocation] = useState<Coordinate>(defaultCenter);
   const [search, setSearch] = useState('');
   const [searchExpanded, setSearchExpanded] = useState(false);
@@ -669,9 +670,9 @@ export default function MapScreen() {
       ) : null}
 
       {visibleMode === 'preview' && activeRoute ? (
-        <Sheet onLayout={(event) => setPreviewHeight(Math.ceil(event.nativeEvent.layout.height))}>
+        <RoutePreviewSheet title={activeRoute.title} maxHeight={windowHeight - insets.top - 100}
+          onVisibleHeightChange={setPreviewHeight}>
           {poiFilters}
-          <Text style={styles.routeTitle} numberOfLines={1}>{activeRoute.title}</Text>
           <View style={styles.statsRow}>
             <Stat label="Distance" value={`${activeRoute.distanceKm} km`} />
             <Stat label="Time" value={formatDuration(activeRoute.durationMin)} />
@@ -688,16 +689,18 @@ export default function MapScreen() {
           <View style={{ marginTop: spacing.md }}><ActionButton icon="people-outline" label="Group ride" onPress={() => setGroupOpen(true)} /></View>
           <Text style={{ color: colors.muted, fontSize: 11, marginTop: 6 }}>Link includes the route and stops · available for 90 days</Text>
           <View style={styles.actionRow}>
-            <IconButton active={savedRoute?.saved} icon={savedRoute?.saved ? 'bookmark' : 'bookmark-outline'} label={savedRoute?.saved ? 'Route saved' : 'Save tour'} onPress={() => {
-              if (!savedRoute?.saved) saveTour(savedRoute ? { ...savedRoute, saved: true } : tourFromDraft(activeRoute));
-              setSavedNotice(value => value + 1);
+            <IconButton active={savedRoute?.saved} icon={savedRoute?.saved ? 'bookmark' : 'bookmark-outline'} label={savedRoute?.saved ? 'Remove from saves' : 'Save tour'} onPress={() => {
+              const saved = !savedRoute?.saved;
+              if (savedRoute) toggleSaved(savedRoute.id);
+              else saveTour(tourFromDraft(activeRoute));
+              setSavedNotice(value => ({ sequence: (value?.sequence ?? 0) + 1, saved }));
             }} />
             <View style={styles.flex}><ActionButton icon="navigate" label="Start navigation" onPress={() => beginTracking('navigation')} variant="success" /></View>
           </View>
-        </Sheet>
+        </RoutePreviewSheet>
       ) : null}
 
-      {savedNotice > 0 ? <SavedToast key={savedNotice} bottom={insets.bottom + 86} /> : null}
+      {savedNotice ? <SavedToast key={savedNotice.sequence} saved={savedNotice.saved} bottom={insets.bottom + 86} /> : null}
 
       <Modal visible={groupOpen} animationType="slide" onRequestClose={() => setGroupOpen(false)}>
         <ScrollView contentContainerStyle={{ padding: spacing.md, paddingTop: insets.top + spacing.md, paddingBottom: insets.bottom + spacing.md, gap: spacing.md }} style={{ flex: 1, backgroundColor: colors.canvas }}>
@@ -763,7 +766,6 @@ const styles = StyleSheet.create({
   recordCopy: { flex: 1, minWidth: 0 },
   recordRow: { alignItems: 'center', borderTopColor: colors.line, borderTopWidth: StyleSheet.hairlineWidth, flexDirection: 'row', justifyContent: 'space-between', gap: 12, marginTop: 18, paddingTop: 18 },
   recordTitle: { color: colors.ink, fontSize: 17, fontWeight: '600' },
-  routeTitle: { color: colors.white, fontSize: 22, fontWeight: '600', letterSpacing: -0.4, marginBottom: 18, marginTop: 12 },
   screen: { backgroundColor: '#dfe4d9', flex: 1 },
   segment: { alignItems: 'center', justifyContent: 'center', borderRadius: 6, minHeight: 44, paddingHorizontal: 10, paddingVertical: 8 },
   segmentActive: { backgroundColor: colors.line },

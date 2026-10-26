@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Install this specific daily workflow, without reviving the old work autopilot."""
 import os
+import json
 from pathlib import Path
 import plistlib
 import subprocess
@@ -15,6 +16,10 @@ CODEX = Path('/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.ap
 def install():
     if not CODEX.is_file():
         raise RuntimeError('Stable bundled Codex CLI is missing; select a working CLI path first.')
+    identity = Path.home()/'.aws/bendbound-research/enrollment.json'
+    verification = Path.home()/'.aws/bendbound-research/verification.json'
+    if not identity.is_file() or not verification.is_file() or json.loads(verification.read_text()).get('status')!='verified':
+        raise RuntimeError('Verify the scheduled machine identity before switching the 06:00 job; see docs/routing-research-machine-identity.md.')
     timezone = Path('/etc/localtime').resolve()
     if not str(timezone).endswith('Europe/London'):
         raise RuntimeError('Mac calendar timezone must be Europe/London for the requested 06:00 schedule.')
@@ -23,7 +28,7 @@ def install():
     plist.parent.mkdir(parents=True, exist_ok=True)
     data = {
         'Label': LABEL,
-        'ProgramArguments': ['/usr/bin/python3', str(ROOT / 'routing/catalogue/research/run_daily.py'), '--codex', str(CODEX)],
+        'ProgramArguments': ['/usr/bin/caffeinate', '-i', '/usr/bin/python3', str(ROOT / 'routing/catalogue/research/run_daily.py'), '--codex', str(CODEX), '--publish'],
         'WorkingDirectory': str(ROOT),
         'StartCalendarInterval': {'Hour': 6, 'Minute': 0},
         'RunAtLoad': False,
@@ -31,7 +36,8 @@ def install():
         'StandardOutPath': str(STATE / 'scheduler.stdout.log'),
         'StandardErrorPath': str(STATE / 'scheduler.stderr.log'),
         'EnvironmentVariables': {'PATH': '/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin',
-                                 'TZ': 'Europe/London', 'PYTHONUNBUFFERED': '1'},
+                                 'TZ': 'Europe/London', 'PYTHONUNBUFFERED': '1',
+                                 'BENDBOUND_RESEARCH_AWS_PROFILE': 'bendbound-research'},
     }
     domain = 'gui/' + str(os.getuid())
     existing = subprocess.run(['launchctl', 'print', domain + '/' + LABEL], capture_output=True)

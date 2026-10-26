@@ -46,6 +46,18 @@ Expo remains the app framework and dependency/configuration tooling.
 
 ## AWS MCP authentication
 
+### Scheduled ratings identity
+
+The 06:00 ratings publisher uses the separate `bendbound-research` certificate
+profile (IAM Roles Anywhere), selected only in its dedicated MCP subprocess.
+Keep the shared/manual MCP on `bendbound`. Unattended recovery refreshes machine
+credentials and retries that transport; it must never open browser login or fall
+back to the administrative profile. Manual prompts and administrative repair
+continue to follow the browser-login-first rule below. See
+[identity operations](docs/routing-research-machine-identity.md) for scope,
+certificate renewal and actual verification state.
+
+
 For ANY AWS/MCP access issue, check/renew AWS login FIRST and then retry the
 configured MCP. This includes authentication failures, expired/invalid sessions,
 AccessDenied, Unknown tool and apparently missing AWS tools. The connector is

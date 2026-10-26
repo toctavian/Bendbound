@@ -8,10 +8,16 @@ An open-source motorcycle ride planner and GPS ride recorder, built
 with React Native, Expo, and TypeScript. Find interesting roads, follow a planned
 route, and keep the track you actually rode.
 
-**Status: early beta.** The first iOS archive has been uploaded for TestFlight
-testing. This is not a finished navigation product or a feature-for-feature
-replacement for commercial apps. Android release setup and on-device validation
+**Status: early beta — updated 26 October 2026.** iOS version 1.1.0, build 10
+is available to the configured internal and friends TestFlight groups. It installed
+and launched on a real BrowserStack iPhone 15 running iOS 17.3. This is not a
+finished navigation product or a feature-for-feature replacement for commercial
+apps. Android release setup and on-device validation
 are still needed. There is no public TestFlight invitation link in this repository.
+
+Project website: [bendboundapp.com](https://bendboundapp.com). UK routing is
+deployed on AWS; accounts and private group lobbies are in a controlled pilot.
+**Live rider location sharing remains disabled.**
 
 ## Built So Far
 
@@ -34,18 +40,18 @@ are still needed. There is no public TestFlight invitation link in this reposito
 - Fast, winding, and twisty preferences; motorway avoidance enabled by default.
 - Road-following geometry from Valhalla motorcycle routing. OSRM driving routing
   is a fallback only when motorway avoidance is disabled and no self-hosted URL
-  is configured. The [self-hosted Valhalla pilot](routing/README.md) provides one
-  app-facing service, with [EC2 deployment instructions](docs/routing-ec2.md) and
-  a repeatable GraphHopper comparison. Set `EXPO_PUBLIC_ROUTING_URL` to enable it.
-- Round-trip planning rejects repeated road sections in either direction,
-  including short overlaps and differently sampled copies of the same section.
-  It requires the actual road distance to differ from the selected distance by
-  less than 10 km. The legacy provider tries six loop shapes. The self-hosted
-  planner searches up to 24 candidates within 25 seconds, repairs waypoint spurs,
-  recalculates legal directions and validates the complete route. POIs are found
-  after routing instead of forcing detours into the loop. If no
-  candidate satisfies both rules, it asks for a different direction, distance,
-  or starting point instead of returning a route that breaks either rule.
+  is configured. The [self-hosted Valhalla service](routing/README.md) is deployed
+  at `https://api.bendboundapp.com`, covering England, Wales, Scotland and Northern
+  Ireland. Native road sections and shortcuts use a graph-matched SQLite ratings
+  overlay. GraphHopper remains a benchmark only. See the
+  [UK deployment handoff](docs/uk-routing-expansion.md).
+- Round-trip planning applies distance, direction and road-reuse checks. The
+  deployed UK service uses native road identity, a directional cone and bounded
+  search; it does not promise zero repeated road. The verified UK release smoke
+  stayed inside a 120° cone with 3.73% repeated road, below its 10% limit.
+  Per-search distance is capped at 100 km. A failed search asks for a different
+  direction, distance or start rather than claiming no valid loop exists.
+  Public-provider fallback uses a separate legacy search and validation path.
 - Nearby fuel, mountain passes, cafes/pubs, sights, forests, and nature reserves.
 - Round-trip previews show numbered highlights in riding order along the final
   route, with horizontally scrolling cards for names, place types, addresses
@@ -98,9 +104,59 @@ are still needed. There is no public TestFlight invitation link in this reposito
   riding time; **Saved** contains bookmarked routes for later.
 - Local tour and settings persistence using Expo SQLite's key-value store.
 - GPX import and export. Recorded exports preserve segments and timestamps.
+- Share generated routes through the native share sheet using planning links
+  retained for 90 days. Recipients can open the route in Bendbound; planning links
+  do not authenticate a rider or enable location sharing.
 - Waze destination handoff, with an explicit warning that Waze calculates its own
   route and cannot reproduce Bendbound's route exactly through this integration.
 - Bendbound branding, approved logo assets, and migration of earlier local data.
+
+### Accounts and Private Group Rides
+
+- Native Sign in with Apple exchanges verified Apple authorization for Cognito
+  sessions. Pilot access requires explicit, expiring server-side tester approval.
+  Ordinary planning, local recordings and settings remain usable without login.
+- After generating a route, **Group ride** opens the private lobby. Implemented
+  controls include rider-name editing, invitations, member roster/refresh and
+  host end/member leave. Rooms allow up to 10 approved riders; invitations expire
+  within an hour and rooms within 12 hours. Sending a new invite replaces the old one.
+- The lobby API is deployed in **lobby-only mode**. Shared route links are planning
+  links, not immutable group route snapshots. Each rider navigates independently.
+- Session refresh, logout recovery and account-deletion UI/backend foundations
+  exist. Full device acceptance of refresh, logout, deletion and group lifecycle
+  is still pending; these are not public-launch claims.
+- Native Apple sign-in has been reported working on the owner's physical iPhone.
+  The 26 October BrowserStack trial proved build 10 installation and launch, but
+  native sign-in stopped at the requirement for device-level Apple ID sign-in.
+  BrowserStack's exposed Settings controls did not provide that login, and its
+  [iCloud Settings FAQ](https://www.browserstack.com/support/faq/app-live/features-app-live/my-app-requires-access-to-icloud-settings-can-i-test-this-on-app-live)
+  lists support as planned. No authenticated group test passed in that session.
+
+See the [group/account implementation tracker](docs/group-rides-implementation.md)
+for deployed versus local versus device-validated work and the remaining gates.
+
+### Routing Ratings and Operations
+
+- The UK baseline contains 141,445 rated road sections. A Mac LaunchAgent runs
+  daily at **06:00 Europe/London**: research new road recommendations, independently
+  review the cumulative evidence, then deterministically apply supported changes.
+  Disputed mappings remain unscored; individual rating deltas retain an audit trail.
+- Reviewed ratings publish through AWS MCP using a dedicated machine identity.
+  Checksum, immutable graph, native-consumer and public-route checks guard
+  activation, with rollback on verification failure.
+- After successful AWS publication, the same Mac job automatically pushes a
+  compact rating/evidence snapshot and checksum metadata to the separate
+  [`ratings-data` branch](https://github.com/toctavian/Bendbound/tree/ratings-data).
+  The first upload was verified on 25 October. This is a Mac-scheduled workflow;
+  the Mac must be awake, online and authenticated. It is not a hosted GitHub Action.
+- On 25 October, 10.8 GB of build artifacts were checksum-verified and moved to
+  the NAS. The immutable baseline, research ledger, reviews and recent published
+  databases remain local (about 3.5 GiB); the daily task does not need the NAS mounted.
+
+See [daily research operations](docs/routing-daily-research.md) and the
+[UK routing handoff](docs/uk-routing-expansion.md). The promotional website is
+served through AWS Lambda and CloudFront; its source and deployment notes are in
+[`website/`](website/README.md).
 
 ## Known Limitations
 
@@ -114,21 +170,23 @@ are still needed. There is no public TestFlight invitation link in this reposito
 - iOS builds compile Expo modules from source (`usePrecompiledModules: false`)
   to avoid the precompiled native-view startup crash observed with this dependency
   combination. The first native build takes longer; subsequent builds use Xcode's cache.
-- There is no automatic off-route recalculation, offline map download, account
-  system, cloud synchronization, live group tracking, or crowdsourced hazard feed.
-- Some UI is still demonstration content: the profile identity and activity chart,
-  seeded tours, and the tour-detail group-ride action. The latter displays an alert
-  but does not create a working invitation. Hazard/private-profile toggles do not
-  connect to a live service.
+- There is no automatic off-route recalculation, offline map download, cloud
+  backup of local rides/settings, enabled live group tracking or crowdsourced
+  hazard feed. Accounts and lobbies do not upload local recordings implicitly.
+- Two-user lobby create/invite/join, account lifecycle and live peer-location
+  delivery still need physical-device acceptance. Screen-lock and battery testing
+  on the owner's phone remain pending. Live sharing needs further GPS, transport,
+  peer-map and operational work before it can be enabled.
+- Some content remains seeded or illustrative. Hazard/private-profile toggles
+  do not connect to a live service; Profile now uses actual account identity and
+  local recorded-ride totals rather than the previous synthetic activity chart.
 - Direction and scenic value remain routing heuristics. The public provider's
-  motorway avoidance is a preference. The self-hosted Valhalla pilot enables
+  motorway avoidance is a preference. The self-hosted Valhalla service enables
   hard motorway exclusions, which still allow excluded features at endpoints.
-- The round-trip search is limited to six attempts on the public provider, or
-  24 candidates / 25 seconds on the self-hosted pilot, and may not find a loop
-  within the requested distance tolerance, even where one exists. Repeated road
-  sections may be unavoidable from a dead end or across a sole access road. If
-  no candidate satisfies both constraints, no round trip is offered.
-  Point-to-point routes and imported tracks are not subject to these checks.
+- Bounded round-trip search may fail to find a route within the requested limits
+  even where one exists. Dead ends and sole access roads can require repeated
+  sections. Provider-specific limits differ; see the active UK deployment notes.
+  Imported GPX tracks do not gain the planner's route-quality guarantees.
 - OSRM fallback routes do not currently include turn instructions. Imported GPX
   tracks do not automatically gain turn instructions either.
 - Route highlights depend on named OpenStreetMap places and the availability of
@@ -150,8 +208,9 @@ authoritative source of road access, hazards, speed limits, or safe riding advic
 ## Development Setup
 
 The current stack is Expo SDK 57, React Native 0.86.3, React 19.2.3, Expo Router,
-and MapLibre React Native 11. The entry point is `expo-router/entry` and screens live in
-`src/app/`; root `App.tsx` and `index.ts` are unused scaffold files.
+and MapLibre React Native 11. The entry point is `entry.js`, which initializes
+background tracking before loading Expo Router. Screens live in `src/app/`;
+root `App.tsx` and `index.ts` are unused scaffold files.
 
 Use Node.js 22.13 or newer on the Node 22 line, or a compatible newer LTS release,
 and npm. iOS development needs macOS, Xcode, and CocoaPods. Android development
@@ -170,8 +229,9 @@ animation peers without it can select React DOM or Worklets versions incompatibl
 with this Expo SDK. This workaround does not prove native compatibility. Do not
 upgrade React independently of the Expo SDK.
 
-`npm start` launches Metro. Use a compatible Expo Go installation for a quick
-preview, or build the native app locally:
+`npm start` launches Metro. The native map and Apple sign-in modules require
+a compatible native development build; Expo Go cannot validate these flows.
+Build locally:
 
 ```sh
 npm run ios
@@ -194,7 +254,9 @@ required at launch. After changing this configuration, regenerate the iOS projec
 and create a new native build; a JavaScript update cannot fix an older binary.
 See [Expo's SDK 57 scene migration guide](https://github.com/expo/fyi/blob/main/ios-scene-lifecycle.md#staying-on-sdk-57-with-xcode-27).
 
-No separate application backend is included or required for the current beta.
+The repository includes self-hosted routing and private group/account backends.
+Public-provider planning and local recordings can operate without pilot login;
+private groups require the configured deployed APIs and approved identities.
 Do not commit service secrets or signing credentials. Values bundled into a
 mobile app, including `EXPO_PUBLIC_*` variables, are not secret.
 
@@ -256,9 +318,10 @@ JavaScript and do not require Expo Go, Metro, or the developer's computer.
 
 ## Data, Services, and Privacy
 
-Completed rides and preferences are stored locally; there is no Bendbound account
-or cloud backup. Export important rides before uninstalling or changing app
-identity. Legacy storage migration works within the same app sandbox, not across
+Completed rides and preferences are stored locally, without automatic cloud
+backup. Optional pilot accounts support private group lobbies; signing in does
+not automatically upload local rides or settings. Export important rides before
+uninstalling or changing app identity. Legacy storage migration works within the same app sandbox, not across
 separate app installations or Expo Go project identities.
 
 The app makes direct requests to third-party services. Configuring
@@ -274,6 +337,9 @@ service; the other lookups below, including road/speed-limit lookup, remain:
 | `photon.komoot.io` | Place autocomplete | Search text and nearby coordinates |
 | Overpass public instances | Nearby/scenic points of interest | Search center, radius, and categories |
 | Waze | Explicit destination handoff | Destination coordinates |
+| Configured route-sharing service | Create/open an explicitly shared planning link | Planned route geometry, stops and instructions |
+| Apple and configured Cognito/auth APIs | Optional pilot sign-in and account/session lifecycle | Authorization proofs and session credentials |
+| Configured group API | Private lobby and membership controls | Authorized room actions, rider name and motorcycle choice; live location publication is disabled |
 
 Providers also receive normal network metadata such as the client's IP address.
 The public routing/search/POI endpoints have no availability guarantee for this
@@ -291,12 +357,16 @@ has its own licensing and attribution requirements separate from this repository
 src/app/          Map, tour, profile, and motorcycle-settings screens
 src/components/   Map, navigation overlay, search sheet, markers, shared controls
 src/hooks/        Place suggestions and voice-guidance lifecycle
-src/services/     Persistent background GPS task and ride recovery journal
+src/services/     Background GPS, recovery, authentication and group clients
 src/state/        App state, local persistence, and legacy migration
 src/utils/        Routing, POIs, road context, recording, GPX, and speed conversion
 src/data/         Sample tours and motorcycle metadata
 assets/           App branding and motorcycle illustrations
-tests/            Node test-runner regression suite
+tests/            App Node test-runner regression suite
+services/group-rides/  Private account/lobby/location backend and infrastructure
+routing/          Routing engine, ratings catalogue and daily research workflow
+website/          Promotional site, verification and AWS deployment tooling
+docs/             Implementation trackers, deployment evidence and policies
 ```
 
 ## Contributing
@@ -312,7 +382,8 @@ for repository development guidance.
 
 Useful next steps include dependency alignment for clean installs, physical-device
 background-recording regression coverage, Android release setup,
-better route-quality evaluation, automatic rerouting, and removing demo-only UI.
+account/lobby acceptance, live-sharing implementation and privacy/operational
+release gates, better route-quality evaluation and automatic rerouting.
 See the [Calimoto public-repository review](docs/calimoto-routing-review.md) for
 routing ideas and the limits of the available public code.
 

@@ -34,10 +34,10 @@
   "catalogue": {
     "evaluatedSourceSections": 138564,
     "nativeRatedSections": 141445,
-    "sectionsWithGuideRecommendations": 134,
+    "sectionsWithGuideRecommendations": 117,
     "indexedRatedPhysicalEdges": 1035781,
     "sectionEdgeMemberships": 1036593,
-    "guidePublishers": 3,
+    "guidePublishers": 12,
     "ratingBasis": "geometry-and-independent-guide-frequency; not rider votes"
   },
   "sourceChecksums": {
@@ -187,7 +187,7 @@
     "ratingOverlaySchema": 3,
     "ratedPhysicalEdges": 1035781,
     "sections": 141445,
-    "recommendedSections": 134,
+    "recommendedSections": 117,
     "unmappedOriginalSections": 173,
     "unmappedRecommendedSections": 0,
     "shortcutEdgesWithRatings": 104596,
@@ -403,6 +403,251 @@
         "apiImage": "sha256:ee84b30cf14440a5791c2e4db62f5b56b3b5cc912961a8992c924c978a81972c"
       }
     },
-    "dailyResearchPublishing": "pending integration; this deployment is the verified national baseline"
+    "dailyResearchPublishing": "Enabled from the Mac via AWS MCP; first live reviewed batch published2026-10-21. See dailyRatingsPublication and runtime receipts for subsequent updates."
+  },
+  "dailyRatingsPublication": {
+    "status": "published",
+    "sha256": "2aa2e8686525001ff8ec399205ab77a4c609204c5c3d40191e7f943a47383588",
+    "previousSha256": "49274572a8569d184e68c9a53d717706508b55e5cefb39d26e1986395bed40bc",
+    "graphVersion": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2",
+    "runId": "2026-10-22",
+    "ssmCommandId": "ea1b05e6-e6a0-4d4e-b816-2d971fb84644",
+    "changedSectionsVsNationalBaseline": 55,
+    "selection": {
+      "policyId": "single-review-supported-subset-v1",
+      "sourceReviewSha256": "50a7de7ae1230e30f093ca2d1e04335209633262ae4995006f58e6154b9b8331",
+      "supportedObservations": 13,
+      "supportedCorrections": 0,
+      "quarantined": [
+        {
+          "url": "https://www.jadomoto.com/blogs/guides/best-motorcycle-roads-england-wales",
+          "sectionId": "uk-way-1037412810-0",
+          "weight": 0,
+          "reason": "All 73 vertices lie within Glossop\u2013Ladybower, but the Snake Pass entry relies on historical facts and a Caterham driving survey. The team byline and product-oriented About page do not establish an independently researched motorcycle recommendation. Pending provenance; delta=0."
+        },
+        {
+          "url": "https://scenic.app/the-best-motorcycle-roads-in-scotland-top-10-routes/",
+          "sectionId": "uk-way-4779967-0",
+          "weight": 0,
+          "reason": "All 234 vertices fit the A821 Kilmahog\u2013Aberfoyle leg. However, this entry repeatedly bases its riding assessments on unnamed local riders and reports without identifying the underlying works. Scenic's identifiable business ownership does not resolve this recommendation's independent provenance. Pending attribution, not proven plagiarism; delta=0."
+        },
+        {
+          "url": "https://www.adventurebikerider.com/article/north-west-cumbria/",
+          "sectionId": "uk-way-22690556-0",
+          "weight": 0,
+          "reason": "The article approaches from Caldbeck and turns left toward Uldale. The selected B5299 section instead extends northwest from the Uldale-road junction at approximately -3.120135,54.733928. Baseline geometry and the council's C2004 road description identify this junction; the 26-vertex section beyond that turn is not fully supported. Rectangle containment concealed the scope error. n remains 0; rating 1.7668067647528172; delta=0."
+        }
+      ],
+      "rejected": [],
+      "independentReviewPasses": 1,
+      "legacyPolicyAdoption": true
+    },
+    "publishedAt": "2026-10-22T09:51:35.977006+00:00",
+    "changedSections": 13,
+    "parsedPages": 20,
+    "approvedSourcePages": 13,
+    "unresolvedPages": 7,
+    "newObservations": 13,
+    "historicalCorrections": 0,
+    "recommendedSections": 128,
+    "verification": {
+      "commandId": "9de0fc60-6dd4-46c0-9ea9-0ee5e1ba43b4",
+      "status": "Success",
+      "activeSha256": "2aa2e8686525001ff8ec399205ab77a4c609204c5c3d40191e7f943a47383588",
+      "rollbackPresent": true,
+      "nationalBaselinePresent": true,
+      "report": {
+        "status": "verified",
+        "graphVersion": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2",
+        "health": {
+          "status": "ready",
+          "engine": "valhalla",
+          "version": "3.9.0",
+          "implementation": "road-catalogue-v1",
+          "area": {
+            "country": "GB",
+            "coverage": "United Kingdom",
+            "source": "Geofabrik United Kingdom extract boundary"
+          },
+          "catalogue": {
+            "version": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2",
+            "graph_version": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2",
+            "sections": 141445,
+            "recommended_sections": 128,
+            "indexed_rated_edges": 1035781,
+            "sourceSections": 138564,
+            "unmappedSections": 173,
+            "backend": "valhalla",
+            "postgis": "retired",
+            "connectivity": {
+              "mode": "valhalla",
+              "status": "online"
+            }
+          }
+        },
+        "cases": [
+          {
+            "area": "London",
+            "km": 7.0175299644470215,
+            "seconds": 0.28
+          },
+          {
+            "area": "England",
+            "km": 28.94700050354004,
+            "seconds": 0.12
+          },
+          {
+            "area": "Wales",
+            "km": 32.61619186401367,
+            "seconds": 0.06
+          },
+          {
+            "area": "Scotland",
+            "km": 72.43476104736328,
+            "seconds": 0.09
+          },
+          {
+            "area": "Northern Ireland",
+            "km": 12.706440925598145,
+            "seconds": 0.06
+          },
+          {
+            "type": "strict-cone-round-trip",
+            "seconds": 11.08,
+            "valid": true,
+            "distanceKm": 18.13698959350586,
+            "insideCone": true,
+            "maxTraversals": 2,
+            "repeatedRatio": 0.037317813771082106,
+            "verifiedRatio": 0.9999999989186668
+          }
+        ]
+      }
+    },
+    "accounting": {
+      "badNumericDeltas": 0,
+      "brokenChains": 0,
+      "todayEvents": [
+        [
+          "addition",
+          13,
+          -0.5613716224539711
+        ]
+      ]
+    },
+    "localReceipt": "routing/.data/research/remote-published.json",
+    "remoteReceiptsDirectory": "/opt/bendbound/routing/.data/research-published",
+    "schedule": "06:00 Europe/London on Mac; one independent reviewer; supported items/corrections publish automatically; disputed items quarantined"
+  },
+  "dailyRatingsPublicationHistory": [
+    {
+      "status": "published",
+      "sha256": "49274572a8569d184e68c9a53d717706508b55e5cefb39d26e1986395bed40bc",
+      "previousSha256": "05478fee42d89429a2e12ad804c04828dbe73043a72d9ae4ebe38ad25ae7895f",
+      "graphVersion": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2",
+      "runId": "2026-10-21",
+      "ssmCommandId": "0b416b75-43ca-468a-a1ab-b97495aa9909",
+      "publishedAt": "2026-10-21T15:11:28.443160+00:00",
+      "changedSections": 44,
+      "parsedPages": 20,
+      "approvedSourcePages": 16,
+      "unresolvedPages": 4,
+      "newObservations": 16,
+      "effectiveNewEndorsements": 15,
+      "historicalCorrections": 31,
+      "recommendedSections": 117,
+      "verification": {
+        "commandId": "02634ec4-c41d-4655-ac03-7ef5a6952f2d",
+        "status": "Success",
+        "report": {
+          "status": "verified",
+          "graphVersion": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2",
+          "health": {
+            "status": "ready",
+            "engine": "valhalla",
+            "version": "3.9.0",
+            "implementation": "road-catalogue-v1",
+            "area": {
+              "country": "GB",
+              "coverage": "United Kingdom",
+              "source": "Geofabrik United Kingdom extract boundary"
+            },
+            "catalogue": {
+              "version": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2",
+              "graph_version": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2",
+              "sections": 141445,
+              "recommended_sections": 117,
+              "indexed_rated_edges": 1035781,
+              "sourceSections": 138564,
+              "unmappedSections": 173,
+              "backend": "valhalla",
+              "postgis": "retired",
+              "connectivity": {
+                "mode": "valhalla",
+                "status": "online"
+              }
+            }
+          },
+          "cases": [
+            {
+              "area": "London",
+              "km": 7.0175299644470215,
+              "seconds": 0.35
+            },
+            {
+              "area": "England",
+              "km": 28.94700050354004,
+              "seconds": 0.14
+            },
+            {
+              "area": "Wales",
+              "km": 32.61619186401367,
+              "seconds": 0.09
+            },
+            {
+              "area": "Scotland",
+              "km": 72.43476104736328,
+              "seconds": 0.07
+            },
+            {
+              "area": "Northern Ireland",
+              "km": 12.706440925598145,
+              "seconds": 0.08
+            },
+            {
+              "type": "strict-cone-round-trip",
+              "seconds": 11.27,
+              "valid": true,
+              "distanceKm": 18.13698959350586,
+              "insideCone": true,
+              "maxTraversals": 2,
+              "repeatedRatio": 0.037317813771082106,
+              "verifiedRatio": 0.9999999989186668
+            }
+          ]
+        },
+        "checks": {
+          "activeSha256": "49274572a8569d184e68c9a53d717706508b55e5cefb39d26e1986395bed40bc",
+          "rollbackPresent": true,
+          "nationalBaselinePresent": true,
+          "oomKilled": false,
+          "freeDiskGiB": 38
+        }
+      },
+      "accounting": {
+        "badNumericDeltas": 0,
+        "brokenChains": 0
+      },
+      "localReceipt": "routing/.data/research/remote-published.json",
+      "remoteReceiptsDirectory": "/opt/bendbound/routing/.data/research-published",
+      "schedule": "06:00 Europe/London on Mac; independent approval required"
+    }
+  ],
+  "dailyResearchIdentity": {
+    "profile": "bendbound-research",
+    "roleArn": "arn:aws:iam::843872332156:role/bendbound-research-publisher",
+    "ssmDocument": "Bendbound-PublishReviewedRatings",
+    "status": "verified",
+    "evidence": "routing/catalogue/ec2/research-identity.json"
   }
 }

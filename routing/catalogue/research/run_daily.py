@@ -17,6 +17,8 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+from selection import prepare as prepare_application
 STATE = ROOT / 'routing/.data/research'
 LONDON = ZoneInfo('Europe/London')
 
@@ -92,6 +94,30 @@ def call_agent(codex, prompt_name, schema_name, context, run_dir, output_name, t
                        cwd=ROOT, env=env, timeout=timeout, check=True)
     return json.loads(output.read_text())
 
+def prepare_proposal(proposal, state, run_dir, day):
+    """Retain every parsed page; unresolved roads never enter the scoring batch."""
+    register = state / 'processed-pages.jsonl'
+    known = {json.loads(line)['url'] for line in register.read_text().splitlines()} if register.exists() else set()
+    with register.open('a') as out:
+        for page in proposal.get('pages', []):
+            if page['url'] not in known:
+                out.write(json.dumps({'url': page['url'], 'title': page['title'],
+                    'checkedAt': page['checkedAt'], 'runId': day,
+                    'status': 'parsed-application-review-pending',
+                    'reviewFile': str(run_dir / 'review.json')}) + '\n')
+                known.add(page['url'])
+    unresolved = [page for page in proposal.get('pages', []) if not page.get('roads')]
+    if unresolved:
+        raw = run_dir / 'research-proposal.json'
+        if not raw.exists():
+            dump(raw, proposal)
+        dump(run_dir / 'unmapped-pages.json', unresolved)
+        proposal = {**proposal, 'pages': [p for p in proposal['pages'] if p.get('roads')],
+                    'summary': proposal.get('summary', '') +
+                    f' {len(unresolved)} unmapped pages retained outside the scoring batch; no invented observations.'}
+        dump(run_dir / 'proposal.json', proposal)
+    return proposal
+
 def run(args):
     state = Path(args.state).resolve()
     state.mkdir(parents=True, exist_ok=True)
@@ -104,13 +130,18 @@ def run(args):
         return run_locked(args, state)
 
 def run_locked(args, state):
-    day = dt.datetime.now(LONDON).date().isoformat()
+    today = dt.datetime.now(LONDON).date()
+    explicit_day = getattr(args, 'run_id', None)
+    selected = dt.date.fromisoformat(explicit_day) if explicit_day else today
+    if selected > today:
+        raise ValueError('Cannot run a future research date')
+    day = selected.isoformat()
     run_dir = state / 'runs' / day
     run_dir.mkdir(parents=True, exist_ok=True)
     status_path = run_dir / 'status.json'
-    if status_path.exists() and json.loads(status_path.read_text()).get('status') == 'complete':
+    if not args.dry_run and status_path.exists() and json.loads(status_path.read_text()).get('status') == 'complete':
         print('Today\'s reviewed batch is already complete; no agent calls.')
-        return 0
+        return publish_if_requested(args, state)
     baseline = baseline_path(args.baseline)
     codex = args.codex or shutil.which('codex')
     if args.dry_run:
@@ -118,7 +149,7 @@ def run_locked(args, state):
                           'codex': codex, 'state': str(state),
                           'steps': ['research: up to 20 new pages', 'independent full-history review',
                                     'validated append-only ledger + local ratings overlay'],
-                          'deployment': 'pending UK release integration'}, indent=2))
+                          'deployment': 'publish reviewed overlay via AWS MCP' if getattr(args, 'publish', False) else 'local only'}, indent=2))
         return 0
     status = {'runId': day, 'startedAt': dt.datetime.now(dt.timezone.utc).isoformat()}
     try:
@@ -151,6 +182,8 @@ def run_locked(args, state):
                        'existingEvidence': str(ROOT / 'routing/catalogue/evidence.json'),
                        'scope': 'UK only; no access/topology changes; no production deployment'}
             dump(context_path, context)
+        context['processedPages'] = str(state / 'processed-pages.jsonl')
+        dump(context_path, context)
         proposal_file, review_file = run_dir / 'proposal.json', run_dir / 'review.json'
         if committed and not (proposal_file.is_file() and review_file.is_file()):
             raise RuntimeError('Committed run requires its saved proposal and review for crash recovery.')
@@ -166,6 +199,7 @@ def run_locked(args, state):
                 proposal = {'pages': [], 'summary': 'Research failed: ' + str(error)}
                 dump(proposal_file, proposal)
                 context['researchFailed'] = True
+        proposal = prepare_proposal(proposal, state, run_dir, day)
         context['proposalSha256'] = proposal_sha(proposal)
         dump(context_path, context)
         if review_file.is_file():
@@ -174,29 +208,60 @@ def run_locked(args, state):
             status['status'] = 'reviewing'; dump(status_path, status)
             review = call_agent(codex, 'review-prompt.md', 'review.schema.json', context_path,
                                 run_dir, 'review.json', args.agent_timeout)
-        if review.get('approved') is not True:
-            status.update(status='held', reason=review.get('summary', 'Independent review held this batch.'))
+        try:
+            application, authorization, selection = prepare_application(run_dir, proposal, review, context)
+        except ValueError as error:
+            status.update(status='held', reason=str(error) + '\n' + review.get('summary', 'Independent review held this batch.'))
             dump(status_path, status)
             return 0
+        dump(run_dir / 'application-proposal.json', application)
+        dump(run_dir / 'application-authorization.json', authorization)
+        dump(run_dir / 'selection.json', selection)
         output = run_dir / 'ratings.sqlite'
         subprocess.run([sys.executable, str(HERE / 'ledger.py'), '--baseline', str(baseline),
-                        '--ledger', str(ledger), '--proposal', str(run_dir / 'proposal.json'),
-                        '--review', str(run_dir / 'review.json'), '--output', str(output),
+                        '--ledger', str(ledger), '--proposal', str(run_dir / 'application-proposal.json'),
+                        '--review', str(run_dir / 'application-authorization.json'), '--output', str(output),
                         '--run-id', day], check=True, cwd=ROOT, timeout=600)
         if not output.is_file():
             raise RuntimeError('Ledger did not produce the reviewed ratings artifact.')
+        if selection.get('supportedObservations') == 0 and selection.get('supportedCorrections') == 0:
+            # Keep the exact served bytes on a no-change morning, including SQLite headers.
+            previous = state / 'remote-published.json'
+            old = json.loads(previous.read_text()) if previous.exists() else None
+            existing = state / 'runs' / old['runId'] / 'ratings.sqlite' if old else baseline
+            expected = old['sha256'] if old else context['baselineSha256']
+            if existing != output and existing.is_file() and sha(existing) == expected:
+                temporary = output.with_suffix('.unchanged.tmp')
+                temporary.unlink(missing_ok=True)
+                os.link(existing, temporary)
+                temporary.replace(output)
         dump(state / 'latest-reviewed.json', {'runId': day, 'artifact': str(output),
                                             'sha256': sha(output), 'deployment': 'pending'})
         status.update(status='complete', artifact=str(output), deployment='pending',
+                      selection=selection,
                       finishedAt=dt.datetime.now(dt.timezone.utc).isoformat())
         dump(status_path, status)
-        print(json.dumps(status))
-        return 0
+        print(json.dumps(status), flush=True)
+        return publish_if_requested(args, state)
     except (RuntimeError, ValueError, sqlite3.Error, OSError, subprocess.SubprocessError) as error:
         status.update(status='blocked', reason=str(error), finishedAt=dt.datetime.now(dt.timezone.utc).isoformat())
         dump(status_path, status)
         print(json.dumps(status), file=sys.stderr)
         return 1
+
+def publish_if_requested(args, state):
+    if not getattr(args, 'publish', False):
+        return 0
+    # The system scheduler uses Python3.9; MCP configuration parsing needs3.11+.
+    python = sys.executable if sys.version_info >= (3, 11) else '/opt/homebrew/bin/python3'
+    result = subprocess.run([python, str(HERE / 'publish_reviewed.py'), '--state', str(state)],
+                            cwd=ROOT, timeout=1800)
+    if result.returncode:
+        return result.returncode
+    # Runs after the deployment receipt, including completed-day retries. Separate
+    # checkout and explicit filenames preserve all developer work in this repo.
+    return subprocess.run([python, str(HERE / 'sync_github.py'), '--state', str(state)],
+                          cwd=ROOT, timeout=600).returncode
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
@@ -205,4 +270,6 @@ if __name__ == '__main__':
     parser.add_argument('--codex')
     parser.add_argument('--agent-timeout', type=int, default=5400)
     parser.add_argument('--dry-run', action='store_true')
+    parser.add_argument('--run-id', help='Resume a saved YYYY-MM-DD batch, including after the calendar date changes')
+    parser.add_argument('--publish', action='store_true', help='Publish only reviewed ratings via AWS MCP; retry without new agent calls')
     raise SystemExit(run(parser.parse_args()))

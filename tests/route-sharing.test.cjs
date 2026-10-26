@@ -87,8 +87,8 @@ test('preview shares once with all stops, and editing replans from the shared or
   'expo-router':{Tabs:{Screen:'Screen'},useLocalSearchParams:()=>({})},
   'expo-haptics':{NotificationFeedbackType:{},notificationAsync:async()=>{}},'expo-location':{requestForegroundPermissionsAsync:async()=>{gpsCalls++;return {granted:false}}},
   'react-native-safe-area-context':{useSafeAreaInsets:()=>({top:0,bottom:0})},
-  '@/state/AppProvider':{useApp:()=>({activeRoute:activeDraft,tours:savedTours,saveTour:tour=>savedTours.push(tour),settings:{routingProfile:'winding',avoidMotorways:true},setActiveRoute:r=>{activated.push(r);activeDraft=r;}})},
-  '@/components/SavedToast':{SavedToast:'SavedToast'},'@/utils/savedRoutes':load('src/utils/savedRoutes.ts'),
+  '@/state/AppProvider':{useApp:()=>({activeRoute:activeDraft,tours:savedTours,saveTour:tour=>savedTours.push(tour),toggleSaved:id=>{const tour=savedTours.find(t=>t.id===id);tour.saved=!tour.saved;},settings:{routingProfile:'winding',avoidMotorways:true},setActiveRoute:r=>{activated.push(r);activeDraft=r;}})},
+  '@/components/RoutePreviewSheet':{RoutePreviewSheet:'RoutePreviewSheet'},'@/components/SavedToast':{SavedToast:'SavedToast'},'@/utils/savedRoutes':load('src/utils/savedRoutes.ts'),
   '@/components/ui':{Sheet:'Sheet',ActionButton:'ActionButton',IconButton:'IconButton',Stat:'Stat'},
   '@/components/PoiDetails': { PoiDetails: 'PoiDetails' }, '@/components/RideMap':{RideMap:'RideMap'},'@/components/DriveOverlay':{},'@/components/RoutePoiCards':{},'@/components/DestinationSearch':{},'@/components/StandardTripPlanner':{StandardTripPlanner:'Planner'},
   '@/hooks/useRoutePois':{useRoutePois:()=>({points:[]})},'@/data/routeColors':{},'@/data/seed':{defaultCenter:{latitude:52,longitude:0},nearbyPlaces:[]},'@/theme':{colors:{},spacing:{}},
@@ -102,8 +102,14 @@ test('preview shares once with all stops, and editing replans from the shared or
  const find=(node,predicate)=>{if(!node||typeof node!=='object')return;if(predicate(node))return node;for(const child of [node.props?.children].flat(Infinity)){const found=find(child,predicate);if(found)return found;}};
  let tree=render();
  const save=find(tree,n=>n.props?.label==='Save tour');assert.equal(save.props.icon,'bookmark-outline');save.props.onPress();
- tree=render();const saved=find(tree,n=>n.props?.label==='Route saved');assert.equal(saved.props.icon,'bookmark');assert.equal(saved.props.active,true);
- assert.ok(find(tree,n=>n.type==='SavedToast'));saved.props.onPress();assert.equal(savedTours.length,1);
+ tree=render();const saved=find(tree,n=>n.props?.label==='Remove from saves');assert.equal(saved.props.icon,'bookmark');assert.equal(saved.props.active,true);
+ assert.equal(find(tree,n=>n.type==='SavedToast').props.saved,true);
+ saved.props.onPress();tree=render();assert.equal(savedTours.length,1);assert.equal(savedTours[0].saved,false);
+ assert.equal(find(tree,n=>n.type==='SavedToast').props.saved,false);
+ assert.equal(find(tree,n=>n.props?.label==='Save tour').props.icon,'bookmark-outline');
+ find(tree,n=>n.props?.label==='Save tour').props.onPress();tree=render();
+ assert.equal(savedTours.length,1);assert.equal(savedTours[0].saved,true);
+ assert.equal(find(tree,n=>n.type==='SavedToast').props.saved,true);
  const button=find(tree,n=>n.props?.label==='Share route');assert.ok(button);
  const first=button.props.onPress(),second=button.props.onPress();assert.equal(shares.length,1);assert.deepEqual(shares[0],[shared.route,true]);
  resolveShare(`https://routing.test/shared/${id}`);await Promise.all([first,second]);assert.equal(sheet.length,1);assert.ok(sheet[0].message.includes(id));

@@ -3,3 +3,7 @@
 /scripts/__pycache__/
 /.taste-skill/inspect/
 /.taste-skill/impeccable-detect.json
+/.taste-skill/before/
+/.taste-skill/after/
+/.taste-skill/score-before/
+/.taste-skill/live/

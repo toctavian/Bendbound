@@ -1,15 +1,44 @@
 # Group rides and accounts: current handoff
 
-Updated 2026-10-21. This file replaces the accumulated implementation diary.
+Updated 2026-10-22. This file replaces the accumulated implementation diary.
 It contains the current state, remaining scope and instructions for continuing.
 The [feasibility PDF](../output/pdf/bendbound-group-ride-feasibility-report.pdf)
 is background research; this file governs the next work.
 
 ## Current position
 
+22 October machine identity COMPLETE: the 06:00 Mac schedule now uses
+`bendbound-research` via IAM Roles Anywhere and the official MCP. Two fresh
+credential sessions, scoped S3 transfer/cleanup and fixed SSM server verification
+passed without browser login. Full publisher no-change smoke passed separately;
+live ratings unchanged. Generic shell/secrets/out-of-prefix access is denied by
+IAM simulation. 39 research/security tests, lint/typecheck passed. Manual prompts
+retain the existing `bendbound` browser login. Certificate expires 22 October 2027;
+renew by September 2027. Evidence and maintenance:
+[identity operations](routing-research-machine-identity.md). No identity work pending.
+
+22 October research handoff: COMPLETE and ratings published at 10:51 BST.
+20 pages parsed; 13 supported recommendations applied to 13 sections; seven pages
+withheld (four unmapped, three disputed). No historical corrections needed today.
+Active overlay has 128 guide-recommended sections. Remote checksum, five regional
+routes and cone checks passed. 33 research tests, lint/typecheck passed.
+User-approved standing rules now use one reviewer, automatically publish supported
+items and historical corrections, quarantine disputed items and log every delta.
+No second review/model run was used to release today's already-reviewed subset.
+06:00 Mac schedule verified. Initial publication used browser AWS renewal; the
+subsequent machine-identity setup above removes that dependency for scheduled
+publication. No batch work remains pending. Exact live checksum,
+receipts, rollback and rules: [UK routing handoff](uk-routing-expansion.md).
+
+22 October mapping rule: daily research/review now checks available publisher
+maps and GPX to identify exact road sections. Existing unresolved pages may be
+followed up without counting them as new or duplicating credits. Source URLs and
+matching rationale are retained; full tracks are not redistributed. Prompt/policy
+change only; no additional research or rating publication was run for this rule.
+
 Routing backend update21October: UK graph and ratings deployed and public HTTPS
 verified on the existing instance/disk. No app rebuild required. Deployment evidence,
-rollback and remaining daily-research publication work: [UK routing handoff](uk-routing-expansion.md).
+rollback and local daily-research publication status: [UK routing handoff](uk-routing-expansion.md).
 Group/account acceptance scope below is unchanged.
 
 Octavian reports successful native Apple sign-in on the physical iPhone (screenshot
@@ -51,6 +80,13 @@ within one hour, rooms within12 hours, at most10 riders. No automatic GPS sharin
 
 ## Preferred iOS workflow
 
+21 October archive preparation: repaired `Missing package product 'MapLibre'` by
+resolving workspace Swift packages with Xcode. Pinned MapLibre6.31.0 checkout and
+device XCFramework restored; Release `-showBuildSettings` succeeds. Lint/typecheck
+pass. No native references or package versions changed. 22 October recheck: Xcode Organizer shows build10 archived on21 October and
+uploaded to Apple at14:23. Separate App Store validation and physical group
+acceptance were not established by this recheck.
+
 Always use local Xcode for builds, Run, archives and distribution. No new EAS build
 was started. Local `.env` enables the account pilot and includes the separate public
 lobby endpoint. Metro is running on8081 and serves the new iOS bundle; relaunch/reload
@@ -85,7 +121,9 @@ extension was applied in this session.
    login/refresh/logout and Apple deletion/revocation proof. Follow [the native handoff](group-native-apple.md);
    the deployed hosted provider does not implement this bridge. Apple identifiers and signing key
    are configured; do not recreate them. London Lambda capacity is now 1000;
-   the old quota block is cleared. Room/location storage exists; its group services
+   verified again via AWS MCP GetAccountSettings on 22 October 2026 after the
+   support confirmation (975 unreserved, 25 allocated to reservations).
+   The old quota block is cleared; 1001 is not required for the current prototype. Room/location storage exists; its group services
    are disabled. Prove real
    login, verified identity, refresh, logout, server revocation and the Apple
    deletion/revocation path. Keep pilot admission closed except for explicitly
@@ -363,3 +401,168 @@ contracts; do not treat an old suggested test candidate as the current priority.
 - No app build, account/group operation, live sharing or phone acceptance was
   performed. P01/P02 gates and existing backend state remain unchanged. Resume app
   work from the earlier native handoff; website updates use `website/scripts/deploy.py`.
+
+
+### 2026-10-22 — AWS and phone availability recheck
+
+- Acceptance: verify deployed stack/function state, lobby guard, anonymous/invalid
+  bearer boundaries and current pilot admission; establish physical-phone availability
+  before claiming any device acceptance. Read-only AWS resource operations used the
+  configured official MCP. Normal Bendbound London browser login completed; actual
+  MCP resource reads succeeded. No rollout, grant change or account deletion performed.
+- All five identity/session/native-Apple/room/deletion stacks UPDATE_COMPLETE. All
+  ten group Lambda functions Active/Successful; code digests match the saved manifest.
+  Room stack EnableServices=true, LobbyOnly=true; room Lambda GROUP_LOBBY_ONLY=true.
+  London capacity remains 1000, 975 unreserved. AlarmTopicArn remains empty.
+- Strongly consistent USER-grant scan completed: one active-state row, no lifecycle
+  hold, but pilot deadline expired 21 October 2026 at 12:06:41 BST. The state label
+  does not confer access past expiry. No extension applied; explicit tester renewal
+  authorization is needed before authenticated lobby testing. No identifiers saved.
+- Live HTTP: missing/invalid bearer create/read/start/session requests returned
+  401 with no-store. Deletion malformed body returned 400/no-store; valid synthetic
+  receipt body with missing/invalid bearer returned 401/no-store. An initial probe
+  used the wrong deletion path and returned Gateway404; corrected to the documented
+  POST /v1/account/deletion. These checks establish rejection only, not a completed
+  authenticated lifecycle, real deletion, cleanup or live sharing.
+- Device tooling reported a paired physical iPhone16 over localNetwork, Bendbound
+  1.1.0 build10 installed, and a successful launch. Octavian then clarified the phone
+  is not connected: do not count these tool reports as current device availability
+  or acceptance. Device Hub observed only simulator UI; no physical app UI, account,
+  lobby or GPS acceptance was performed. Physical checks remain pending.
+- Xcode Organizer shows build10 archived on21 October and Uploaded to Apple at14:23;
+  this supersedes the older claim that no complete archive exists. It does not prove
+  TestFlight availability or group/device acceptance.
+- Checks: root Expo lint and TypeScript typecheck PASS; documentation only changed.
+- Resume: connect/unlock the physical phone and provide a usable physical screen
+  surface; obtain explicit approval for the intended tester's expired grant renewal,
+  then perform P01 and lobby create/invite/join/name persistence on real phones.
+  Keep live sharing disabled; a second approved physical iPhone is still required.
+
+
+### 2026-10-25 — Routing storage and automatic GitHub ratings backup
+
+- User requested moving routing build scratch to NAS192.168.1.247 while preserving
+  daily research, plus automatic GitHub updates. No group/account behavior changed.
+- Added archive_build.py: explicit build-only allowlist, daily lock, NAS mount
+  check, per-file SHA256 and final destination verification before local removal.
+  NAS archive destination `/Volumes/home/Bendbound/routing-builds/2026-10-25`.
+  Transfer COMPLETE: 10,798,488,339bytes /1,408files SHA256-verified and removed
+  locally. Both manifests match; original baseline checksum unchanged, ledger
+  quick_check ok and scheduler dry-run PASS. Baseline/research remain local;
+  data-volume free space increased16GiB to26GiB. Exact manifest:
+  `routing/.data/research/build-archive.json`.
+- Added sync_github.py, hooked after successful AWS daily publication. Separate
+  ignored checkout pushes only compact per-section ratings/metadata/README to
+  `ratings-data`; no app worktree staging or force pushes. Real GitHub push and
+  idempotent retry verified at a4a48f565e1b2aebc0d9c9b26b227375e6ee70d5.
+  141,445 sections in2.1MB gzip; AWS database SHA recorded in public manifest.
+- Four new GitHub tests (real temporary Git remote, deterministic export,
+  rejection of unpublished/tampered data and AWS-before-Git ordering) and five
+  runner tests PASS. Expo lint/typecheck PASS. No new model or AWS run triggered.
+- Details/resume: docs/routing-storage-and-github.md. GitHub-only retry is
+  `python3 routing/catalogue/research/sync_github.py`. No gh CLI login needed;
+  existing Git credential helper successfully pushed. Physical group checks remain
+  pending; live sharing state unchanged.
+
+
+### 2026-10-26 — BrowserStack trial preparation
+
+- Octavian selected BrowserStack for remote real-iPhone group testing. Acceptance
+  for this step: two simultaneous real iPhones install the existing TestFlight
+  build and complete native Apple sign-in, before lobby create/invite/join tests.
+- Local Xcode archive 1.1.0 build10 verified: com.octavian.bendbound, native
+  Apple sign-in entitlement Default, embedded JS bundle containing lobby UI,
+  configured lobby endpoint and native Apple endpoint. No rebuild needed from
+  these checks. Current TestFlight availability remains unverified.
+- BrowserStack connector is not available among exposed tools. Computer-use
+  inventory reports no browser/app surfaces and native-pipe startup failure;
+  opening App Live in the in-app browser also reports unavailable. No device
+  session, app upload, login, purchase or subscription was performed.
+- Dependency/owner: Octavian opens https://app-live.browserstack.com/ and signs
+  in or creates a trial, then confirms the device dashboard. Browser control must
+  be restored for agent-driven sessions; otherwise user operates the UI with
+  agent guidance. Terms/payment decisions remain with Octavian.
+- Resume: select two iPhones with independent sessions (no mirrored interactions),
+  install Bendbound build10 through TestFlight, validate native Apple sign-in
+  using dedicated test accounts. Match and explicitly approve any intended test
+  identities via the existing controlled enrollment workflow before group access.
+  The last recorded grant expired21October; no renewal was applied today.
+- Keep lobby-only mode enabled. All physical P01/P02/P04 checks remain pending;
+  no cloud test is counted as successful device acceptance. No source code,
+  account grants or deployment configuration changed.
+
+
+### 2026-10-26 — Browser control restored; BrowserStack trial limits verified
+
+- Chrome control now works; App Live is signed in. Install via TestFlight is
+  selectable and real iPhones are listed. No device session was started.
+- App Store Connect now directly verifies build10 is Testing and assigned to
+  Internal/Friends. This supersedes the earlier unverified TestFlight availability.
+- App Live explicitly limits each free-trial device to two minutes, insufficient
+  for the planned account/lobby/background acceptance session. Subscription page
+  viewed only: month-to-month Individual49USD, Team175USD, TeamPro289USD;
+  comparison lists multi-device testing under TeamPro. No subscription, payment,
+  tester invitation, grant change, build upload or Apple login was performed.
+- Resume with Octavian's plan/budget decision and two dedicated test identities.
+  Keep lobby-only enabled; P01/P02/P04 physical acceptance remains pending.
+
+
+### 2026-10-26 — Free BrowserStack real-iPhone attempt
+
+- Octavian authorized the free trial smoke test and will perform the longer
+  screen-lock/battery measurements on his own phone. No paid plan authorized.
+- Started a real iPhone15, iOS17.3, through App Live Install via TestFlight.
+  Observed TestFlight launch and its native Apple ID sign-in sheet. Contrary to
+  the dashboard's generic two-minute limit, this session explicitly provides a
+  five-minute PRO trial and offers one complimentary multi-device session.
+  Neither offer is counted as proof of successful two-device testing.
+- TestFlight has no signed-in test identity yet. Requested Octavian enter a
+  suitable test Apple account directly on the remote device, not in chat.
+  Bendbound installation/launch, native app Apple sign-in and lobby operations
+  remain unverified; no credentials, account references or coordinates saved.
+- Resume from the live BrowserStack tab after user sign-in; install build10 and
+  check app launch/Apple sign-in before attempting invite/join. User interaction
+  is the current dependency. No grant renewal, tester enrollment, cloud changes,
+  subscription, purchase or app-source change performed. Live-sharing acceptance
+  remains pending; personal-phone battery evidence and peer-delivery evidence
+  will be recorded separately when available.
+
+
+### 2026-10-26 — BrowserStack build10 launch PASS; native login blocked
+
+- Octavian completed TestFlight login/installation directly. Verified TestFlight
+  lists Bendbound1.1.0(10), then opened it on the real iPhone15/iOS17.3.
+  First-launch TestFlight information completed; map and Profile screens rendered.
+  Location permission was denied for this account-only smoke test; no recording,
+  location publication or sharing acceptance is claimed.
+- Profile shows Continue with Apple. Tapping it produces the native system alert
+  requiring Apple ID sign-in in iOS Settings. The TestFlight/App Store account
+  does not establish the device-level Apple identity needed by this flow.
+- Tapping the alert's Settings opens BrowserStack's restricted settings controls,
+  without an Apple ID sign-in control. BrowserStack's official FAQ says iCloud
+  Settings support remains on its roadmap:
+  https://www.browserstack.com/support/faq/app-live/features-app-live/my-app-requires-access-to-icloud-settings-can-i-test-this-on-app-live
+  Do not assume buying the normal TeamPro plan resolves this restriction.
+- Screenshot evidence (no credentials or rider coordinates):
+  output/group-testing/browserstack-20261026-apple-settings.jpg.
+  Ended session explicitly and verified return to dashboard. No paid plan,
+  second device, complimentary multi-device activation, invitation, grant change
+  or source code change. No app account authenticated and no group was created.
+- P01/P02/P04 acceptance remains pending. Resume native login/group acceptance
+  on phones permitting device-level Apple ID sign-in, or obtain explicit provider
+  confirmation of that capability on dedicated devices before spending money.
+  User-owned personal-phone screen-lock/battery work remains separate and pending.
+
+
+### 2026-10-26 — README refresh and focused commit preparation
+
+- Updated root README with build10 TestFlight/BrowserStack launch evidence,
+  native Apple device-account blocker, private account/lobby state and remaining
+  device/live-sharing gates. Added UK routing, daily reviewed AWS/GitHub ratings
+  publication, completed NAS archive, website and current service/privacy details.
+  Corrected stale no-account/demo-profile/backend/entry-point/ExpoGo claims.
+- README local-link and whitespace checks PASS; Expo lint/typecheck PASS.
+  No application or backend code changed during this documentation step.
+- Prepared a focused README-only staged change. All pre-existing app, routing,
+  website and tracker work remains unstaged; no commit or push performed.
+  Suggested message: docs: refresh project status and testing notes.

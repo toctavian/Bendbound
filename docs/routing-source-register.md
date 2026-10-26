@@ -44,3 +44,69 @@ registry at `routing/.data/research/sources.jsonl`, and individual signed per-ro
 changes at `routing/.data/research/contributions.jsonl`. These files are generated
 when the first reviewed batch has a valid national baseline; their absence today
 does not imply the three historical manifest pages have been freshly parsed.
+
+## 21 October manual catch-up — published source register
+
+The researcher parsed20 new pages. The first independent review held the batch;
+A fresh independent review approved16 source pages;4unresolved pages are retained
+without points. The reviewed batch and31historical corrections were published
+at16:11BST. Actual evidence is in the run status and publication receipt.
+Original proposal, first held review and correction notes are preserved.
+
+| Source | Editorial family | State |
+| --- | --- | --- |
+| [RAPID ROADS - B6255](https://www.rapidtraining.co.uk/blog/2023/02/21/2023-2-21-rapid-roads-b6255) | RAPID Training | Approved; published21Oct |
+| [My five favourite roads in the North of England](https://www.simonweir.co.uk/post/my-five-favourite-roads-in-the-north-of-england) | Simon Weir | Approved; published21Oct |
+| [Adventuring Wales - Wrexham to Brynamman](https://rideruk.com/adventuring-wales-wrexham-to-brynamman/) | Rider UK | Approved; published21Oct |
+| [A great route to ride... The Circuit of Wales](https://www.ride.co.uk/articles/a-great-route-to-ride-the-circuit-of-wales) | Bauer Media Motorcycling | Approved; published21Oct |
+| [Where to ride a motorbike in Northern Ireland](https://www.motorcyclesni.co.uk/where-to-ride-motorbike-northern-ireland) | Motorcycles NI | Approved; published21Oct |
+| [A weekend motorcycle route through the Cairngorms and South-East Scotland](https://www.adventurebikerider.com/a-weekend-motorcycle-route-through-the-cairngorms-and-south-east-scotland/) | Adventure Bike Rider / Adventurize Ltd | Approved; published21Oct |
+| [Scotland’s top-five touring roads by motorcycle](https://www.adventurebikerider.com/article/scotlands-top-five-touring-roads/) | Adventure Bike Rider / Adventurize Ltd | Approved; published21Oct |
+| [8 of Britain’s most Scenic Rides](https://www.adventurebikerider.com/article/8-of-britains-most-scenic-rides/) | Adventure Bike Rider / Adventurize Ltd | Approved; published21Oct |
+| [Top Ten Motorcycle Routes in Scotland](https://www.bennetts.co.uk/bikesocial/news-and-views/features/travel/motorcycle-routes-scotland) | Bennetts BikeSocial | Approved; published21Oct |
+| [Top five… roads to ride in Wales](https://www.carolenash.com/news/bike-news/detail/top-five-roads-to-ride-in-wales) | Markerstudy / Carole Nash | Approved; published21Oct |
+| [12 British Roads You Need To Ride in 2021](https://www.adventurebikerider.com/article/uk-roads-to-ride-in-2021/) | Adventure Bike Rider / Adventurize Ltd | Approved; published21Oct |
+| [Best Motorcycle Roads in Scotland](https://www.jadomoto.com/blogs/guides/best-motorcycle-roads-scotland) | JADO Moto | Unresolved; no points |
+| [Day 16, Redcastle to Carrickfergus. Scenic Route through Cushendun: Exploring the North Coast’s Coastal Beauty](https://woodendwanderer.com/2024/08/08/day-16-redcastle-to-carrickfergus-scenic-route-through-cushendun-exploring-the-north-coasts-coastal-beauty/) | Woodend Wanderer | Approved; published21Oct |
+| [RAPID ROADS - A268 (THE ROYAL MILITARY CANAL ROAD)](https://www.rapidtraining.co.uk/blog/2022/11/04/2022-11-4-rapid-roads-a268-the-royal-military-canal-road) | RAPID Training | Unresolved; no points |
+| [Black Mountain Pass (A4069)](https://www.welshbikers.co.uk/routes/black-mountain-pass.html) | Welsh Bikers | Unresolved; no points |
+| [Conquering the Dragon: The Essential Motorcycle Ride Routes of South Wales](https://mallorymotorcycles.com/conquering-the-dragon-the-essential-motorcycle-ride-routes-of-south-wales/) | Mallory Motorcycles | Unresolved; no points |
+| [Bridgend](https://www.ride.co.uk/routes-content/bridgend) | Bauer Media Motorcycling | Approved; published21Oct |
+| [Top ten motorcycle riding routes in the UK](https://www.bennetts.co.uk/bikesocial/news-and-views/features/travel/what-are-the-best-motorcycle-routes-in-the-uk) | Bennetts BikeSocial | Approved; published21Oct |
+| [RAPID ROADS - B3081](https://www.rapidtraining.co.uk/blog/2022/12/01/2022-12-1-rapid-roads-b3081) | RAPID Training | Approved; published21Oct |
+| [Llangollen](https://www.ride.co.uk/routes-content/llangollen) | Bauer Media Motorcycling | Approved; published21Oct |
+
+The processed-page registry is `routing/.data/research/processed-pages.jsonl`.
+It prevents held/unmapped URLs being counted as new again. Only the reviewed
+ledger records applied observations and their exact signed per-road deltas.
+
+## 22 October — supported subset published
+
+20 new pages parsed at the scheduled 06:00 run. One independent reviewer supported
+13 source pages/observations; four pages had no safe native mapping and three
+observations were withheld. The supported subset published at 10:51 BST under the
+user-approved standing policy, without a second review. Original source notes,
+reasons and signed per-road deltas are retained in the run and cumulative ledger.
+
+| Source | Editorial family | State |
+| --- | --- | --- |
+| [Best Motorcycle Roads in England and Wales](https://www.jadomoto.com/blogs/guides/best-motorcycle-roads-england-wales) | JADO Moto | Withheld: reviewer disputed provenance or route scope |
+| [The ten best biking roads in Scotland](https://www.simonweir.co.uk/post/the-ten-best-biking-roads-in-scotland) | Simon Weir | Supported; published 22 Oct |
+| [A Four-Day Motorcycle Tour of Wales](https://avantmotodesign.com/blogs/news/four-days-through-wales-a-motorcycle-tour-on-two-triumphs) | Avant Moto Design | Supported; published 22 Oct |
+| [Five of the best motorcycle routes in the UK](https://www.rac.co.uk/drive/travel/motorbike-routes/best-motorcycle-routes-UK/) | RAC | Supported; published 22 Oct |
+| [Visor Down: Motorcycling around Ards and North Down](https://www.visitardsandnorthdown.com/explore/itineraries/driving-routes-through-ards-and-north-down/visor-down-motorcycling-around-ards-and-north-down) | Ards and North Down Borough Council / Visit Ards and North Down | Supported; published 22 Oct |
+| [Peak District Loop (Cat & Fiddle and Snake Pass)](https://rigsville.com/peak-district-loop-cat-fiddle-and-snake-pass/) | RigsVille | Supported; published 22 Oct |
+| [B1190 – Bardney to Horncastle](https://rigsville.com/b1190-bardney-to-horncastle/) | RigsVille | Supported; published 22 Oct |
+| [Top five… roads to ride in Scotland](https://www.carolenash.com/news/bike-news/detail/top-five-roads-to-ride-in-scotland) | Markerstudy / Carole Nash | Supported; published 22 Oct |
+| [B1257 – Helmsley TT (Helmsley to Clay Bank)](https://rigsville.com/b1257-helmsley-clay-bank/) | RigsVille | Supported; published 22 Oct |
+| [B1176 – Grantham to Corby Glen](https://rigsville.com/grantham-corby-glen-b1176/) | RigsVille | Supported; published 22 Oct |
+| [The Best Motorcycle Roads in Scotland: Top 10 Scenic Routes](https://scenic.app/the-best-motorcycle-roads-in-scotland-top-10-routes/) | Scenic | Withheld: reviewer disputed provenance or route scope |
+| [The Best Motorcycle Roads in England: Top 10 Routes](https://scenic.app/the-top-10-motorcycle-routes-in-england/) | Scenic | Supported; published 22 Oct |
+| [5 of the best roads in the UK](https://www.adventurebikerider.com/5-of-the-best-roads-in-the-uk/) | Adventure Bike Rider / Adventurize Ltd | Supported; published 22 Oct |
+| [North West & Cumbria](https://www.adventurebikerider.com/article/north-west-cumbria/) | Adventure Bike Rider / Adventurize Ltd | Withheld: reviewer disputed provenance or route scope |
+| [The best of the Yorkshire Dales by motorcycle](https://www.adventurebikerider.com/article/the-best-of-the-yorkshire-dales/) | Adventure Bike Rider / Adventurize Ltd | Supported; published 22 Oct |
+| [B4246 – Blaenavon to Abergavenny](https://rigsville.com/b4246-abbergavenny-to-blaenavon/) | RigsVille | Supported; published 22 Oct |
+| [The Numbers Game](https://www.simonweir.co.uk/post/the-numbers-game) | Simon Weir | Withheld: mapping unresolved |
+| [A483 – Newtown to Llandrindod Wells](https://rigsville.com/a483-newtown-crossgates/) | RigsVille | Withheld: mapping unresolved |
+| [Great roads of the North: Part 5](https://www.motorcyclenews.com/news/2017/august/top-6-great-north-roads-part-5/) | Bauer Media Motorcycling | Withheld: mapping unresolved |
+| [Tilton on the Hill to Oakham](https://rigsville.com/tilton-on-the-hill-to-oakham/) | RigsVille | Withheld: mapping unresolved |

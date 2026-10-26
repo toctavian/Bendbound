@@ -4,14 +4,13 @@
   "stackName": "bendbound-website",
   "stackId": "arn:aws:cloudformation:eu-west-2:843872332156:stack/bendbound-website/78fedc20-cca3-11f1-9f8a-06ffdfdc38d9",
   "artifactBucket": "bendbound-website-artifacts-843872332156-eu-west-2",
-  "artifactKey": "releases/4dc1889d56f6d4daf4c2944972f224be09af137edbae498acb74c44e6f0d7ab8/website.zip",
-  "artifactSha256": "4dc1889d56f6d4daf4c2944972f224be09af137edbae498acb74c44e6f0d7ab8",
+  "artifactKey": "releases/1fc464839338052280271a68381f97ae596af39e5366fd5f4dd69a62291f319d/website.zip",
+  "artifactSha256": "1fc464839338052280271a68381f97ae596af39e5366fd5f4dd69a62291f319d",
   "certificateArn": "arn:aws:acm:us-east-1:843872332156:certificate/725b366d-f0f4-489b-8c7b-150009f0a090",
-  "status": "CREATE_COMPLETE",
+  "status": "UPDATE_COMPLETE",
   "distributionId": "E12GWLMW2DYJQV",
   "distributionDomain": "d3twv41ghc49ef.cloudfront.net",
   "functionUrl": "https://ur2vj55kfrqhwn34kfnb4qh7qy0fzqlm.lambda-url.eu-west-2.on.aws/",
-  "distributionStatus": "Deployed",
   "outputs": [
     {
       "OutputKey": "DistributionDomain",
@@ -34,7 +33,12 @@
       "OutputValue": "E12GWLMW2DYJQV"
     }
   ],
+  "previousArtifactKey": "releases/0c7837a9d867c61428fe2205cf37fc0045252c452e4b544048ee6024c5d8d831/website.zip",
   "verified": true,
+  "distributionStatus": "Deployed",
+  "invalidationId": "I4DEXJEIFBUS4OVHA8Y8T7DPJQ",
+  "invalidationStatus": "Completed",
   "verification": "verification.json",
-  "dnsNote": "Authoritative and public 1.1.1.1 DNS verified; local resolver retained an earlier negative lookup at launch."
+  "verifiedOn": "2026-10-21",
+  "browserReview": ".taste-skill/live/report.json"
 }

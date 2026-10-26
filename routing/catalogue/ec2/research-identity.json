@@ -1,0 +1,87 @@
+{
+  "status": "enrolled",
+  "awsProfile": "bendbound-research",
+  "manualProfile": "bendbound",
+  "trustAnchorArn": "arn:aws:rolesanywhere:eu-west-2:843872332156:trust-anchor/29a12abf-861a-4788-a611-d4f232761473",
+  "rolesAnywhereProfileArn": "arn:aws:rolesanywhere:eu-west-2:843872332156:profile/7c25fec5-e649-442b-b7a3-f933d16bca04",
+  "roleArn": "arn:aws:iam::843872332156:role/bendbound-research-publisher",
+  "ssmDocument": "Bendbound-PublishReviewedRatings",
+  "permissions": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "RatingsTransferOnly",
+        "Effect": "Allow",
+        "Action": [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject"
+        ],
+        "Resource": "arn:aws:s3:::bendbound-group-artifacts-843872332156-eu-west-2/route-research/*"
+      },
+      {
+        "Sid": "ResolveTransferBucketRegion",
+        "Effect": "Allow",
+        "Action": "s3:GetBucketLocation",
+        "Resource": "arn:aws:s3:::bendbound-group-artifacts-843872332156-eu-west-2"
+      },
+      {
+        "Sid": "FixedRatingsCommandOnly",
+        "Effect": "Allow",
+        "Action": "ssm:SendCommand",
+        "Resource": [
+          "arn:aws:ssm:eu-west-2:843872332156:document/Bendbound-PublishReviewedRatings",
+          "arn:aws:ec2:eu-west-2:843872332156:instance/i-0c392dc16f7c9d857"
+        ]
+      },
+      {
+        "Sid": "ReadCommandCompletion",
+        "Effect": "Allow",
+        "Action": "ssm:GetCommandInvocation",
+        "Resource": "*"
+      }
+    ]
+  },
+  "certificateExpiry": "notAfter=Oct 22 10:15:05 2027 GMT",
+  "verification": {
+    "status": "verified",
+    "checkedAt": "2026-10-22T10:24:40.562130+00:00",
+    "principal": "arn:aws:sts::843872332156:assumed-role/bendbound-research-publisher/00b4032e361e0b73c404f383b176d95185",
+    "freshCredentialSessions": 2,
+    "credentialExpirations": [
+      "2026-10-22T11:24:11Z",
+      "2026-10-22T11:24:11Z"
+    ],
+    "s3TransferAndCleanup": true,
+    "ssmCommandId": "e9f2f6d5-2574-45b6-89e2-51fa889a9f64",
+    "server": {
+      "status": "already-published",
+      "sha256": "2aa2e8686525001ff8ec399205ab77a4c609204c5c3d40191e7f943a47383588",
+      "graphVersion": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2"
+    },
+    "ratingsModified": false,
+    "browserLoginUsed": false,
+    "publisherNoChangeSmoke": {
+      "status": "already-published",
+      "ssmCommandId": "97afd142-d895-4ca0-a245-89967a483253",
+      "sha256": "2aa2e8686525001ff8ec399205ab77a4c609204c5c3d40191e7f943a47383588",
+      "isolatedLocalState": true
+    },
+    "permissionBoundaryChecks": {
+      "generalShellCommand": "implicitDeny",
+      "secretsManagerRead": "implicitDeny",
+      "outsideTransferPrefix": "implicitDeny",
+      "attachedPolicyCount": 0,
+      "inlinePolicyNames": [
+        "RatingsPublicationOnly"
+      ]
+    },
+    "schedule": {
+      "label": "com.bendbound.route-research",
+      "time": "06:00 Europe/London",
+      "profile": "bendbound-research",
+      "installed": true
+    }
+  },
+  "documentation": "docs/routing-research-machine-identity.md"
+}

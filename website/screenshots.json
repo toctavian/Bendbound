@@ -1,0 +1,45 @@
+{
+  "captured_on": "2026-10-21",
+  "device": "iPhone 16 Pro simulator",
+  "os": "iOS 18.6",
+  "build": "Local Xcode Release build from current working tree; no source edits for capture",
+  "processing": "WebP quality 88, no image retouching or cropping",
+  "screenshots": [
+    {
+      "asset": "public/assets/map.webp",
+      "source": "output/website-captures/2026-10-21/map.png",
+      "width": 1206,
+      "height": 2622,
+      "source_sha256": "354b65424120c38ebbb147d0b6cad7ce2cf642690eb6b6cb11bcfccbabdc21e4",
+      "webp_sha256": "bfdb1010651b754db7bf58362bde2deaca3745ddef7365a94629693ebf7983e6",
+      "bytes": 191082
+    },
+    {
+      "asset": "public/assets/planner.webp",
+      "source": "output/website-captures/2026-10-21/planner.png",
+      "width": 1206,
+      "height": 2622,
+      "source_sha256": "bf9da5739cec4afe0bcea1499ca23666bb787e5b7123d2a5985ec310666eb5c6",
+      "webp_sha256": "d35a2e26ee39ab9047d9d67e0b8168ef4e4773b3aabd86f328a26c5c77be99ab",
+      "bytes": 122656
+    },
+    {
+      "asset": "public/assets/tours.webp",
+      "source": "output/website-captures/2026-10-21/tours.png",
+      "width": 1206,
+      "height": 2622,
+      "source_sha256": "47bba8e6f456c26a3a326be1cd007169f99931f1113a085c78d9caae7a775316",
+      "webp_sha256": "7df30df5105342838a5c8479c23bc536243f321e549115ae9b923c16527d6205",
+      "bytes": 126022
+    },
+    {
+      "asset": "public/assets/route-detail.webp",
+      "source": "output/website-captures/2026-10-21/route-detail.png",
+      "width": 1206,
+      "height": 2622,
+      "source_sha256": "d8f8f8769da32cf239240a4b6bcadbdc401c0816c5cca0a37006c5696d52236c",
+      "webp_sha256": "2747d849401f5edf4fb2ac272aabfee1b3c8d555cb6e5ed130ff8c01cd44a797",
+      "bytes": 132790
+    }
+  ]
+}

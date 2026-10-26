@@ -1,0 +1,11 @@
+{
+  "policyId": "single-review-supported-subset-v1",
+  "reviewPasses": 1,
+  "publishSupportedItems": true,
+  "quarantineDisputedItems": true,
+  "automaticHistoricalCorrections": true,
+  "minimumNewPagesToPublish": 0,
+  "changeScoringFormula": false,
+  "hardStops": ["review or input hash mismatch", "graph identity drift", "broken accounting", "incomplete cumulative review", "failed artifact or route validation"],
+  "approvedBy": "Octavian, 2026-10-22; one reviewer, automatic supported subset and supported historical corrections"
+}

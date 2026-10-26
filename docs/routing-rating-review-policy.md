@@ -2,6 +2,36 @@
 
 This is the independent review policy for the requested daily motorcycle-route research. It describes acceptance criteria; it does not claim that a scheduler, ingestion job, review or deployment has run.
 
+## Standing automation rules — approved22October2026
+
+Octavian chose one independent review per morning, automatic publication of its
+supported observations, and automatic evidence-backed corrections to older credits.
+The code-readable policy is `research/single_review_rules.json`.
+
+- A source attribution problem, wrong road stretch, uncertain ownership or inaccessible
+  article affects only that observation: quarantine unresolved claims, reject known
+  bad mappings, and give neither points. Keep their original evidence and reasons.
+- Publish the supported subset after that one review; no researcher restart or second
+  AI review is needed to remove disputed items. Review every original observation.
+- Apply supported historical corrections automatically, including reducing/removing
+  unsupported credits. Quarantine disputed corrections. Keep all original events and
+  append exact signed compensating deltas.
+- Whole-dataset failures still stop publication: hash/input mismatch, graph drift,
+  accounting errors, incomplete cumulative review, invalid artifacts or failed routes.
+- Fewer than20articles/observations never blocks supported updates. If nothing is
+  supported and no correction is supported, report no change; never invent points.
+- Formula and weights remain unchanged. Native road eligibility, access, geometry,
+  graph IDs, route limits, publisher/syndication caps and rollback checks remain.
+- Preserve `proposal.json` and the independent `review.json` exactly. The deterministic
+  selector writes an application proposal and policy authorization, linking hashes
+  to both originals. These derived files are not another AI review or an alteration
+  of the reviewer's original verdict. Publisher recomputes the selection before use.
+
+The new review contract has explicit integrity results and per-item dispositions,
+instead of using a source dispute to veto a whole batch. Legacy held reviews require
+an explicit, hash-bound, run-specific policy adoption record; they are never silently
+relabelled as approved.
+
 ## Existing baseline
 
 The checked-in `routing/catalogue/evidence.json` records three source entries, with `checkedAt: 2026-10-07`. Treat these as declared existing citations, not proof of historical crawl dates or individual rating changes. The original importer links a recommendation by exact road reference and complete section containment in its geographic scope. The UK geometry-only additions have no recommendation count and must retain that distinction.
@@ -24,6 +54,32 @@ Only record identifiable motorcycle-road recommendations from accessible publish
 - An article-to-road proposal is not an applied native-section endorsement. Keep proposed road references/corridors separate from `verifiedFullScope` decisions; only a reviewed complete mapping to the target section can affect a served rating. A generated research ledger alone does not update the graph overlay.
 - Split evidence scope at real native edges where possible. If a native edge straddles an unverified boundary, leave it uncredited or map a defensible verified range; never widen the claim for convenience. Reject wrong road branches, similarly named roads, off-road/private roads and disconnected sections.
 - Recommendations change desirability only. They cannot override motor-access rules, paved-road eligibility, turn restrictions, route-distance limits, road-reuse rules or native graph verification.
+
+## Source maps and GPX — approved 22 October 2026
+
+Check every article for a publisher-provided route map, embedded map link or GPX.
+Use accessible maps and tracks to resolve exact roads before leaving a source
+unmapped. Read GPX as coordinate data in memory and inspect maps visually; retain
+factual road matches and provenance, rather than copying or redistributing full
+tracks or map images. Respect access restrictions and treat downloads as untrusted.
+
+Record the source article, map/GPX URL, actual retrieval time, format, hash or
+revision limitations and matching method in the proposal's existing notes and
+retrievalMethod fields. Each road reason must explain the route leg and complete
+native-section match. The independent reviewer checks this evidence and records
+its rationale in the existing decision reason. No schema or scoring change is needed.
+
+A bounding rectangle only filters candidates. Check the full road geometry,
+endpoints, turns, branches and carriageways against the source route. Sparse
+waypoints, gaps, straight-line links and schematic maps do not prove all intervening
+roads. Do not guess missing legs by routing between points. Conflicting text,
+map or GPX evidence remains an item-level hold. A track establishes location;
+it does not prove independent endorsement or justify extra weight.
+
+Previously parsed unresolved sources can receive explicit map/GPX follow-up.
+They do not count towards the 20 new pages and cannot earn duplicate credits.
+Supported remapping or removal uses the existing reviewed, append-only correction
+process. This rule does not claim that older pages have already been revisited.
 
 ## Append-only road-level accounting
 
@@ -52,7 +108,7 @@ The reviewer must first recompute every cumulative section from accepted indepen
 
 A proposed monotonic alternative is `R(q,n) = q + (5-q) * w * n/(n+k)`, with `R(q,0)=q`, initial candidate `w=0.3`, `k=2`, and `q` constrained to `[0,5]`. It retains geometry, caps evidence influence at 30% of the remaining headroom and has diminishing returns. This is a candidate calibration, not a claim that it is deployed or empirically proven. Under it the nth independent family's marginal uplift is `(5-q)*w*k/((n+k)*(n-1+k))`. Changing weights is a versioned, independently reviewed batch decision; do not automatically retune from the same 20 daily articles or silently mix formulas.
 
-Each review reports accepted, rejected, duplicate and pending sources; affected road sections and exact signed deltas; cumulative anomalies; previous versus proposed distributions; and a decision to approve unchanged, hold, or propose a versioned correction. Compare a fixed route benchmark before and after a proposed correction, including good uncited roads, cited straight roads, repeatedly cited roads and regions with sparse coverage. Failure to fetch evidence or resolve a discrepancy leaves the current deployed ratings unchanged.
+Each review reports accepted, rejected, duplicate and pending sources; affected road sections and exact signed deltas; cumulative anomalies; previous versus proposed distributions; and a decision to approve unchanged, hold, or propose a versioned correction. Compare a fixed route benchmark before and after a proposed correction, including good uncited roads, cited straight roads, repeatedly cited roads and regions with sparse coverage. Failure to fetch or resolve an individual source quarantines that item; supported items can publish. Whole-dataset integrity failures leave the deployed ratings unchanged.
 
 ## Required checks before applying a batch
 
