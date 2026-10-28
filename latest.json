@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "runId": "2026-10-27",
-  "publishedAt": "2026-10-27T06:29:18.899119+00:00",
+  "runId": "2026-10-28",
+  "publishedAt": "2026-10-28T06:29:17.008681+00:00",
   "graphVersion": "8cc789c4ceb36866622af1a26b787f9b5515c40537b569b9beebcc069a93acd2",
-  "databaseSha256": "60c996eb582c2e917f18352a54a5d7746a46822c8f7d36adedd3f88690b10f2f",
-  "snapshotSha256": "020b664ac484964acf78d8959b0fc415c372efa3d26a87b9420f07886224797d",
+  "databaseSha256": "246e207b18aae6d3290bf9eeef31eb3d1c8d29623b16556a1efc0435f0338587",
+  "snapshotSha256": "ec3497246b236d015ed49687eca1b780668484e7f02c758e8d829d5b5dc82712",
   "sections": 141445,
-  "recommendedSections": 159,
+  "recommendedSections": 171,
   "format": "gzip JSONL, one section per line; rating/evidence only; no geometry"
 }
